@@ -1,0 +1,55 @@
+
+Dog10.png
+size: 119, 132
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Body
+  rotate: true
+  xy: 72, 72
+  size: 58, 42
+  orig: 65, 49
+  offset: 3, 3
+  index: -1
+Bomb
+  rotate: false
+  xy: 2, 67
+  size: 68, 63
+  orig: 74, 74
+  offset: 3, 5
+  index: -1
+Head
+  rotate: false
+  xy: 2, 23
+  size: 61, 42
+  orig: 71, 49
+  offset: 7, 4
+  index: -1
+Leg_B
+  rotate: false
+  xy: 97, 35
+  size: 20, 12
+  orig: 26, 16
+  offset: 3, 2
+  index: -1
+Leg_F
+  rotate: true
+  xy: 97, 49
+  size: 21, 20
+  orig: 26, 24
+  offset: 3, 2
+  index: -1
+Shade
+  rotate: false
+  xy: 2, 2
+  size: 78, 19
+  orig: 84, 23
+  offset: 3, 1
+  index: -1
+Tails
+  rotate: false
+  xy: 65, 29
+  size: 30, 36
+  orig: 37, 42
+  offset: 3, 3
+  index: -1

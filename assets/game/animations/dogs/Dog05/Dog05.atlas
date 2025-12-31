@@ -1,0 +1,62 @@
+
+Dog05.png
+size: 451, 228
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Body
+  rotate: true
+  xy: 385, 35
+  size: 58, 43
+  orig: 64, 50
+  offset: 3, 3
+  index: -1
+Bomb
+  rotate: true
+  xy: 385, 158
+  size: 68, 63
+  orig: 74, 75
+  offset: 2, 4
+  index: -1
+Head
+  rotate: true
+  xy: 385, 95
+  size: 61, 43
+  orig: 71, 52
+  offset: 4, 4
+  index: -1
+Leg_B
+  rotate: true
+  xy: 430, 55
+  size: 21, 12
+  orig: 25, 16
+  offset: 2, 2
+  index: -1
+Leg_F
+  rotate: false
+  xy: 424, 12
+  size: 21, 21
+  orig: 26, 26
+  offset: 2, 3
+  index: -1
+Shade
+  rotate: true
+  xy: 430, 78
+  size: 78, 19
+  orig: 86, 26
+  offset: 5, 3
+  index: -1
+Tails
+  rotate: true
+  xy: 385, 3
+  size: 30, 37
+  orig: 38, 43
+  offset: 4, 5
+  index: -1
+box
+  rotate: false
+  xy: 2, 2
+  size: 381, 224
+  orig: 381, 224
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,69 @@
+
+Dog06.png
+size: 495, 234
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Body
+  rotate: false
+  xy: 385, 65
+  size: 61, 82
+  orig: 67, 85
+  offset: 2, 1
+  index: -1
+Hand_F
+  rotate: true
+  xy: 431, 13
+  size: 25, 55
+  orig: 35, 59
+  offset: 4, 2
+  index: -1
+Head
+  rotate: true
+  xy: 385, 149
+  size: 83, 79
+  orig: 89, 85
+  offset: 4, 3
+  index: -1
+Leg_B
+  rotate: true
+  xy: 466, 169
+  size: 33, 18
+  orig: 39, 22
+  offset: 3, 2
+  index: -1
+Leg_F
+  rotate: true
+  xy: 466, 204
+  size: 28, 27
+  orig: 31, 31
+  offset: 1, 2
+  index: -1
+Shade
+  rotate: false
+  xy: 385, 40
+  size: 96, 23
+  orig: 103, 32
+  offset: 4, 4
+  index: -1
+Shield
+  rotate: false
+  xy: 448, 68
+  size: 45, 79
+  orig: 54, 86
+  offset: 4, 3
+  index: -1
+Tails
+  rotate: true
+  xy: 385, 2
+  size: 36, 44
+  orig: 43, 50
+  offset: 4, 3
+  index: -1
+box
+  rotate: false
+  xy: 2, 8
+  size: 381, 224
+  orig: 381, 224
+  offset: 0, 0
+  index: -1

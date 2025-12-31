@@ -1,0 +1,55 @@
+
+Effect.png
+size: 512, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Images/1
+  rotate: false
+  xy: 2, 3
+  size: 152, 150
+  orig: 152, 150
+  offset: 0, 0
+  index: -1
+Images/2
+  rotate: false
+  xy: 301, 2
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+Images/3
+  rotate: true
+  xy: 397, 27
+  size: 62, 61
+  orig: 62, 61
+  offset: 0, 0
+  index: -1
+Images/4
+  rotate: true
+  xy: 156, 7
+  size: 146, 143
+  orig: 146, 143
+  offset: 0, 0
+  index: -1
+Images/5
+  rotate: true
+  xy: 301, 91
+  size: 62, 162
+  orig: 62, 162
+  offset: 0, 0
+  index: -1
+Images/Crash
+  rotate: false
+  xy: 2, 155
+  size: 339, 99
+  orig: 339, 99
+  offset: 0, 0
+  index: -1
+Images/Dor
+  rotate: false
+  xy: 301, 42
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1

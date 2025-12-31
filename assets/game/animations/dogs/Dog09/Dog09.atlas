@@ -1,0 +1,69 @@
+
+Dog09.png
+size: 482, 232
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Body
+  rotate: true
+  xy: 385, 2
+  size: 40, 47
+  orig: 45, 51
+  offset: 2, 2
+  index: -1
+Hand_B
+  rotate: true
+  xy: 406, 69
+  size: 53, 30
+  orig: 58, 37
+  offset: 2, 4
+  index: -1
+Hand_F
+  rotate: true
+  xy: 438, 83
+  size: 39, 30
+  orig: 46, 39
+  offset: 4, 6
+  index: -1
+Head
+  rotate: true
+  xy: 385, 124
+  size: 106, 95
+  orig: 114, 103
+  offset: 4, 4
+  index: -1
+Leg_B
+  rotate: false
+  xy: 431, 52
+  size: 27, 15
+  orig: 32, 18
+  offset: 2, 1
+  index: -1
+Leg_F
+  rotate: false
+  xy: 406, 44
+  size: 23, 23
+  orig: 25, 25
+  offset: 0, 1
+  index: -1
+Shade
+  rotate: true
+  xy: 385, 44
+  size: 78, 19
+  orig: 84, 24
+  offset: 3, 3
+  index: -1
+Tails
+  rotate: false
+  xy: 434, 13
+  size: 30, 37
+  orig: 35, 40
+  offset: 3, 1
+  index: -1
+box
+  rotate: false
+  xy: 2, 6
+  size: 381, 224
+  orig: 381, 224
+  offset: 0, 0
+  index: -1

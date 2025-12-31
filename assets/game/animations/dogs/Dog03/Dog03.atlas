@@ -1,0 +1,69 @@
+
+Dog03.png
+size: 458, 228
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Body
+  rotate: false
+  xy: 406, 100
+  size: 33, 48
+  orig: 39, 54
+  offset: 4, 2
+  index: -1
+Hand_B
+  rotate: false
+  xy: 385, 16
+  size: 37, 24
+  orig: 45, 30
+  offset: 4, 3
+  index: -1
+Hand_F
+  rotate: false
+  xy: 385, 42
+  size: 39, 24
+  orig: 43, 30
+  offset: 2, 2
+  index: -1
+Head
+  rotate: false
+  xy: 385, 150
+  size: 70, 76
+  orig: 81, 85
+  offset: 6, 5
+  index: -1
+Leg_B
+  rotate: true
+  xy: 441, 121
+  size: 27, 15
+  orig: 33, 22
+  offset: 4, 4
+  index: -1
+Leg_F
+  rotate: false
+  xy: 426, 43
+  size: 23, 23
+  orig: 28, 26
+  offset: 3, 2
+  index: -1
+Shade
+  rotate: true
+  xy: 385, 70
+  size: 78, 19
+  orig: 84, 27
+  offset: 4, 5
+  index: -1
+Tails
+  rotate: false
+  xy: 406, 68
+  size: 39, 30
+  orig: 44, 36
+  offset: 3, 3
+  index: -1
+box
+  rotate: false
+  xy: 2, 2
+  size: 381, 224
+  orig: 381, 224
+  offset: 0, 0
+  index: -1
