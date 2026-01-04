@@ -1,0 +1,79 @@
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: env-post-effect-vs
+      frag: env-post-effect-fs
+      blendState:
+        targets:
+        - blend: true
+      properties:
+        u_ambientLight: { value: [1.0, 1.0, 1.0, 1.0], editor: { type: color } }
+        u_fogColor: { value: [1.0, 1.0, 1.0, 1.0], editor: { type: color } }
+        u_fogDensity: { value: 0.05, min: 0.0, max: 1.0 }
+        u_sunIntensity: { value: 0.8, min: 0.0, max: 2.0 }
+        u_sunWarmth: { value: 0.9, min: 0.0, max: 1.0 }
+        u_texture: { value: white }
+}%
+
+CCProgram env-post-effect-vs %{
+    precision highp float;
+    #include <cc-global>
+    #include <cc-local>
+    in vec3 a_position;
+    in vec2 a_texCoord;
+    out vec2 v_uv;
+
+    void main() {
+
+        vec4 pos = vec4(a_position, 1);
+    #if USE_LOCAL
+      pos = cc_matWorld * pos;
+    #endif
+        gl_Position = cc_matProj * cc_matView * pos;
+        v_uv = a_texCoord;
+    }
+}%
+
+CCProgram env-post-effect-fs %{
+    precision highp float;
+
+    #include <builtin/uniforms/cc-global>
+
+    in vec2 v_uv;
+
+    uniform sampler2D u_texture;
+    uniform Constants {
+        vec4 u_ambientLight;
+        vec4 u_fogColor;
+        float u_fogDensity;
+        float u_sunIntensity;
+        float u_sunWarmth;
+    };
+
+    layout(location = 0) out vec4 o_color;
+
+    void main () {
+        // 1. 原始颜色
+        vec4 srcColor = texture(u_texture, v_uv);
+
+        // 2. 环境光调色
+        vec3 ambientTint = u_ambientLight.rgb * u_sunIntensity;
+        vec3 tintedColor = mix(srcColor.rgb, srcColor.rgb * ambientTint, 0.5);
+
+        // 3. 雾效（基于 UV）
+        float fogFactor = smoothstep(0.0, 1.0, v_uv.y * u_fogDensity * 10.0);
+        vec3 foggedColor = mix(tintedColor, u_fogColor.rgb, fogFactor * u_fogColor.a);
+
+        // 4. 阳光暖色
+        float warmR = mix(1.0, 1.2, u_sunWarmth);
+        float warmB = mix(1.0, 0.8, u_sunWarmth);
+
+        vec3 warmColor = vec3(
+            foggedColor.r * warmR,
+            foggedColor.g,
+            foggedColor.b * warmB
+        );
+
+        o_color = vec4(clamp(warmColor, 0.0, 1.0), srcColor.a);
+    }
+}%

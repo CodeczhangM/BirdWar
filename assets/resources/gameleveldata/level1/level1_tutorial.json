@@ -1,0 +1,474 @@
+{
+  "tutorialId": "level1_tutorial",
+  "version": "1.0.0",
+  "levelId": "level1",
+  "tutorialType": "interactive_guided",
+  "language": "zh-CN",
+  
+  "metadata": {
+    "title": "植物大战僵尸 - 新手教程",
+    "description": "学习游戏的基础操作和策略",
+    "estimatedDuration": 300,
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "learningObjectives": [
+      "学会种植向日葵收集阳光",
+      "学会种植豌豆射手攻击僵尸",
+      "理解基本的防御策略",
+      "掌握资源管理技巧"
+    ]
+  },
+
+  "tutorialFlow": {
+    "introduction": {
+      "stepId": "intro",
+      "type": "dialogue",
+      "trigger": "level_start",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "欢迎来到我的后院！僵尸们想要吃掉你的大脑，但是我们有植物来保护你！",
+        "duration": 5000,
+        "skippable": true,
+        "voiceOver": "audio/tutorial/intro_welcome"
+      },
+      "ui": {
+        "showSkipButton": true,
+        "dimBackground": true,
+        "highlightElements": []
+      },
+      "nextStep": "explain_sunflower"
+    },
+
+    "explain_sunflower": {
+      "stepId": "explain_sunflower",
+      "type": "explanation",
+      "trigger": "previous_complete",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "首先，我们需要阳光来种植物！向日葵是你最好的朋友，它们会产生阳光。点击向日葵卡片来选择它！",
+        "duration": 6000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/explain_sunflower"
+      },
+      "ui": {
+        "highlightElements": ["sunflower_card"],
+        "highlightStyle": "pulse_glow",
+        "showPointer": true,
+        "pointerTarget": "sunflower_card",
+        "blockOtherInputs": true
+      },
+      "validation": {
+        "type": "plant_selected",
+        "plantType": "sunflower",
+        "timeout": 30000,
+        "hint": "点击向日葵卡片来选择它！"
+      },
+      "nextStep": "plant_sunflower"
+    },
+
+    "plant_sunflower": {
+      "stepId": "plant_sunflower",
+      "type": "action",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "很好！现在点击网格上发光的位置来种植向日葵。记住，向日葵需要50点阳光！",
+        "duration": 5000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/plant_sunflower"
+      },
+      "ui": {
+        "highlightElements": ["grid_cell_2_1"],
+        "highlightStyle": "bright_glow",
+        "showPointer": true,
+        "pointerTarget": "grid_cell_2_1",
+        "blockOtherInputs": true,
+        "showCostIndicator": true
+      },
+      "validation": {
+        "type": "plant_placed",
+        "plantType": "sunflower",
+        "position": { "row": 2, "col": 1 },
+        "timeout": 30000,
+        "hint": "点击发光的网格位置来种植向日葵！"
+      },
+      "nextStep": "wait_for_sun"
+    },
+
+    "wait_for_sun": {
+      "stepId": "wait_for_sun",
+      "type": "observation",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "太棒了！现在等待向日葵产生阳光。看到阳光掉落时，快速点击它们来收集！",
+        "duration": 4000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/wait_for_sun"
+      },
+      "ui": {
+        "highlightElements": ["sun_counter"],
+        "showWaitIndicator": true,
+        "waitMessage": "等待向日葵产生阳光..."
+      },
+      "validation": {
+        "type": "sun_produced",
+        "minAmount": 25,
+        "timeout": 15000,
+        "autoProgress": true
+      },
+      "nextStep": "collect_sun"
+    },
+
+    "collect_sun": {
+      "stepId": "collect_sun",
+      "type": "action",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "阳光来了！快点击它来收集。阳光是种植其他植物的货币！",
+        "duration": 3000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/collect_sun"
+      },
+      "ui": {
+        "highlightElements": ["sun_drops"],
+        "highlightStyle": "pulse_bright",
+        "showPointer": true,
+        "pointerTarget": "nearest_sun",
+        "urgencyLevel": "medium"
+      },
+      "validation": {
+        "type": "sun_collected",
+        "minAmount": 25,
+        "timeout": 10000,
+        "hint": "点击掉落的阳光来收集它们！"
+      },
+      "nextStep": "explain_peashooter"
+    },
+
+    "explain_peashooter": {
+      "stepId": "explain_peashooter",
+      "type": "explanation",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "现在我们需要防御！豌豆射手会射击豌豆来攻击僵尸。等你有100点阳光时，选择豌豆射手卡片！",
+        "duration": 6000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/explain_peashooter"
+      },
+      "ui": {
+        "highlightElements": ["peashooter_card"],
+        "showResourceRequirement": {
+          "resource": "sun",
+          "required": 100,
+          "current": "dynamic"
+        }
+      },
+      "validation": {
+        "type": "sun_threshold",
+        "minAmount": 100,
+        "timeout": 45000,
+        "hint": "收集更多阳光！你需要100点阳光来种植豌豆射手。"
+      },
+      "nextStep": "select_peashooter"
+    },
+
+    "select_peashooter": {
+      "stepId": "select_peashooter",
+      "type": "action",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "太好了！现在你有足够的阳光了。点击豌豆射手卡片来选择它！",
+        "duration": 4000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/select_peashooter"
+      },
+      "ui": {
+        "highlightElements": ["peashooter_card"],
+        "highlightStyle": "pulse_glow",
+        "showPointer": true,
+        "pointerTarget": "peashooter_card",
+        "blockOtherInputs": true
+      },
+      "validation": {
+        "type": "plant_selected",
+        "plantType": "peashooter",
+        "timeout": 20000,
+        "hint": "点击豌豆射手卡片来选择它！"
+      },
+      "nextStep": "plant_peashooter"
+    },
+
+    "plant_peashooter": {
+      "stepId": "plant_peashooter",
+      "type": "action",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "在向日葵前面种植豌豆射手！它会向右射击，攻击从右边来的僵尸。",
+        "duration": 5000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/plant_peashooter"
+      },
+      "ui": {
+        "highlightElements": ["grid_cell_2_3"],
+        "highlightStyle": "bright_glow",
+        "showPointer": true,
+        "pointerTarget": "grid_cell_2_3",
+        "blockOtherInputs": true,
+        "showStrategyHint": "豌豆射手应该种在向日葵前面"
+      },
+      "validation": {
+        "type": "plant_placed",
+        "plantType": "peashooter",
+        "position": { "row": 2, "col": 3 },
+        "timeout": 30000,
+        "hint": "在发光的位置种植豌豆射手！"
+      },
+      "nextStep": "prepare_for_zombies"
+    },
+
+    "prepare_for_zombies": {
+      "stepId": "prepare_for_zombies",
+      "type": "preparation",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "完美的防线！僵尸很快就会来了。记住继续收集阳光，并在需要时种植更多植物！",
+        "duration": 5000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/prepare_for_zombies"
+      },
+      "ui": {
+        "showCountdown": {
+          "duration": 10000,
+          "message": "第一波僵尸即将到来！"
+        },
+        "highlightElements": ["sun_counter", "plant_cards"]
+      },
+      "nextStep": "first_zombie_wave"
+    },
+
+    "first_zombie_wave": {
+      "stepId": "first_zombie_wave",
+      "type": "combat",
+      "trigger": "countdown_complete",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "僵尸来了！观察你的豌豆射手如何攻击它们。继续收集阳光！",
+        "duration": 4000,
+        "skippable": true,
+        "voiceOver": "audio/tutorial/first_zombie_wave"
+      },
+      "ui": {
+        "showCombatUI": true,
+        "highlightElements": ["attacking_plants", "sun_drops"],
+        "showTips": [
+          "豌豆射手会自动攻击僵尸",
+          "继续收集阳光",
+          "观察僵尸的血量"
+        ]
+      },
+      "validation": {
+        "type": "wave_complete",
+        "waveNumber": 1,
+        "timeout": 60000
+      },
+      "nextStep": "wave_complete"
+    },
+
+    "wave_complete": {
+      "stepId": "wave_complete",
+      "type": "celebration",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "太棒了！你击败了第一波僵尸！准备好迎接更多的挑战吧！",
+        "duration": 4000,
+        "skippable": true,
+        "voiceOver": "audio/tutorial/wave_complete"
+      },
+      "ui": {
+        "showCelebration": true,
+        "celebrationEffect": "confetti",
+        "showProgress": {
+          "current": 1,
+          "total": 2,
+          "message": "第一波完成！"
+        }
+      },
+      "nextStep": "prepare_second_wave"
+    },
+
+    "prepare_second_wave": {
+      "stepId": "prepare_second_wave",
+      "type": "strategy",
+      "trigger": "celebration_complete",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "下一波会更困难！考虑种植更多向日葵和豌豆射手。坚果墙可以保护你的植物！",
+        "duration": 6000,
+        "skippable": false,
+        "voiceOver": "audio/tutorial/prepare_second_wave"
+      },
+      "ui": {
+        "highlightElements": ["wallnut_card"],
+        "showStrategyTips": [
+          "种植更多向日葵获得阳光",
+          "在不同行种植豌豆射手",
+          "使用坚果墙保护重要植物"
+        ],
+        "showCountdown": {
+          "duration": 30000,
+          "message": "第二波僵尸准备中..."
+        }
+      },
+      "nextStep": "second_zombie_wave"
+    },
+
+    "second_zombie_wave": {
+      "stepId": "second_zombie_wave",
+      "type": "combat",
+      "trigger": "countdown_complete",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "第二波来了！这次有更多僵尸，包括戴着路锥的强化僵尸！",
+        "duration": 4000,
+        "skippable": true,
+        "voiceOver": "audio/tutorial/second_zombie_wave"
+      },
+      "ui": {
+        "showCombatUI": true,
+        "showEnemyInfo": {
+          "newEnemies": ["cone_zombie"],
+          "tips": ["路锥僵尸更强壮", "需要更多攻击才能击败"]
+        }
+      },
+      "validation": {
+        "type": "wave_complete",
+        "waveNumber": 2,
+        "timeout": 90000
+      },
+      "nextStep": "tutorial_complete"
+    },
+
+    "tutorial_complete": {
+      "stepId": "tutorial_complete",
+      "type": "completion",
+      "trigger": "validation_passed",
+      "content": {
+        "speaker": "疯狂戴夫",
+        "avatar": "characters/crazy_dave",
+        "text": "恭喜！你已经掌握了基础知识！现在你可以独自面对僵尸大军了！",
+        "duration": 5000,
+        "skippable": true,
+        "voiceOver": "audio/tutorial/tutorial_complete"
+      },
+      "ui": {
+        "showCompletion": true,
+        "completionEffect": "fireworks",
+        "showRewards": {
+          "experience": 500,
+          "coins": 100,
+          "unlocks": ["level2", "plant_almanac"]
+        }
+      },
+      "nextStep": null
+    }
+  },
+
+  "hints": {
+    "contextual": [
+      {
+        "id": "low_sun_hint",
+        "trigger": "sun_below_threshold",
+        "threshold": 50,
+        "delay": 5000,
+        "message": "阳光不足！种植更多向日葵来获得阳光。",
+        "priority": "high",
+        "showOnce": false
+      },
+      {
+        "id": "zombie_approaching_hint",
+        "trigger": "zombie_distance",
+        "distance": 4,
+        "delay": 2000,
+        "message": "僵尸很接近了！确保你有足够的防御植物。",
+        "priority": "urgent",
+        "showOnce": false
+      },
+      {
+        "id": "plant_placement_hint",
+        "trigger": "wrong_plant_position",
+        "delay": 1000,
+        "message": "考虑植物的位置！向日葵应该在后面，攻击植物在前面。",
+        "priority": "medium",
+        "showOnce": true
+      }
+    ],
+    "progressive": [
+      {
+        "id": "sun_management",
+        "unlockCondition": "sun_collected_total > 100",
+        "message": "管理好你的阳光！不要全部花光，保留一些以备紧急情况。",
+        "showDuration": 4000
+      },
+      {
+        "id": "plant_variety",
+        "unlockCondition": "plants_placed > 3",
+        "message": "尝试种植不同类型的植物来应对各种威胁！",
+        "showDuration": 4000
+      }
+    ]
+  },
+
+  "validation": {
+    "strictMode": false,
+    "allowSkipping": true,
+    "retryAttempts": 3,
+    "timeoutBehavior": "show_hint",
+    "errorHandling": {
+      "wrongAction": "gentle_correction",
+      "timeout": "helpful_hint",
+      "technicalError": "restart_step"
+    }
+  },
+
+  "accessibility": {
+    "colorBlindSupport": true,
+    "highContrast": false,
+    "fontSize": "normal",
+    "voiceOverEnabled": true,
+    "subtitlesEnabled": true,
+    "reducedMotion": false
+  },
+
+  "analytics": {
+    "trackProgress": true,
+    "trackErrors": true,
+    "trackTiming": true,
+    "trackSkips": true,
+    "customEvents": [
+      "tutorial_step_complete",
+      "tutorial_hint_shown",
+      "tutorial_error_occurred",
+      "tutorial_skipped"
+    ]
+  }
+}

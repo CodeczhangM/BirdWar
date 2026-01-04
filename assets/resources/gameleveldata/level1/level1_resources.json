@@ -1,0 +1,485 @@
+{
+  "levelId": "level1",
+  "resourceManifest": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-04",
+    "totalSize": "2.5MB",
+    "compressionEnabled": true
+  },
+
+  "textures": {
+    "backgrounds": [
+      {
+        "id": "grassland_morning",
+        "path": "textures/backgrounds/grassland_morning",
+        "format": "png",
+        "size": "1920x1080",
+        "compressed": true,
+        "preload": true
+      },
+      {
+        "id": "sky_clear",
+        "path": "textures/backgrounds/sky_clear",
+        "format": "png",
+        "size": "1920x1080",
+        "compressed": true,
+        "preload": true
+      },
+      {
+        "id": "clouds_white",
+        "path": "textures/backgrounds/clouds_white",
+        "format": "png",
+        "size": "1920x1080",
+        "compressed": true,
+        "preload": false
+      },
+      {
+        "id": "hills_distant",
+        "path": "textures/backgrounds/hills_distant",
+        "format": "png",
+        "size": "1920x1080",
+        "compressed": true,
+        "preload": false
+      },
+      {
+        "id": "trees_background",
+        "path": "textures/backgrounds/trees_background",
+        "format": "png",
+        "size": "1920x1080",
+        "compressed": true,
+        "preload": false
+      }
+    ],
+    "plants": [
+      {
+        "id": "sunflower_idle",
+        "path": "textures/plants/sunflower/idle",
+        "format": "png",
+        "frames": 8,
+        "frameRate": 12,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "sunflower_produce",
+        "path": "textures/plants/sunflower/produce",
+        "format": "png",
+        "frames": 12,
+        "frameRate": 15,
+        "looping": false,
+        "preload": true
+      },
+      {
+        "id": "peashooter_idle",
+        "path": "textures/plants/peashooter/idle",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 10,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "peashooter_shoot",
+        "path": "textures/plants/peashooter/shoot",
+        "format": "png",
+        "frames": 8,
+        "frameRate": 20,
+        "looping": false,
+        "preload": true
+      },
+      {
+        "id": "wallnut_idle",
+        "path": "textures/plants/wallnut/idle",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 8,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "wallnut_damaged",
+        "path": "textures/plants/wallnut/damaged",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 12,
+        "looping": true,
+        "preload": true
+      }
+    ],
+    "zombies": [
+      {
+        "id": "basic_zombie_walk",
+        "path": "textures/zombies/basic/walk",
+        "format": "png",
+        "frames": 10,
+        "frameRate": 12,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "basic_zombie_eat",
+        "path": "textures/zombies/basic/eat",
+        "format": "png",
+        "frames": 8,
+        "frameRate": 15,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "basic_zombie_death",
+        "path": "textures/zombies/basic/death",
+        "format": "png",
+        "frames": 12,
+        "frameRate": 18,
+        "looping": false,
+        "preload": true
+      },
+      {
+        "id": "cone_zombie_walk",
+        "path": "textures/zombies/cone/walk",
+        "format": "png",
+        "frames": 10,
+        "frameRate": 10,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "cone_zombie_eat",
+        "path": "textures/zombies/cone/eat",
+        "format": "png",
+        "frames": 8,
+        "frameRate": 15,
+        "looping": true,
+        "preload": true
+      }
+    ],
+    "projectiles": [
+      {
+        "id": "pea_normal",
+        "path": "textures/projectiles/pea_normal",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 20,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "pea_impact",
+        "path": "textures/projectiles/pea_impact",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 30,
+        "looping": false,
+        "preload": true
+      }
+    ],
+    "ui": [
+      {
+        "id": "plant_card_sunflower",
+        "path": "textures/ui/cards/sunflower",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "plant_card_peashooter",
+        "path": "textures/ui/cards/peashooter",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "plant_card_wallnut",
+        "path": "textures/ui/cards/wallnut",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "sun_icon",
+        "path": "textures/ui/sun_icon",
+        "format": "png",
+        "frames": 8,
+        "frameRate": 12,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "tutorial_arrow",
+        "path": "textures/ui/tutorial_arrow",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 8,
+        "looping": true,
+        "preload": true
+      }
+    ],
+    "decorations": [
+      {
+        "id": "flower_patch",
+        "path": "textures/decorations/flower_patch",
+        "format": "png",
+        "preload": false
+      },
+      {
+        "id": "small_tree",
+        "path": "textures/decorations/small_tree",
+        "format": "png",
+        "preload": false
+      },
+      {
+        "id": "butterfly_group",
+        "path": "textures/decorations/butterfly_group",
+        "format": "png",
+        "frames": 12,
+        "frameRate": 8,
+        "looping": true,
+        "preload": false
+      },
+      {
+        "id": "welcome_sign",
+        "path": "textures/decorations/welcome_sign",
+        "format": "png",
+        "preload": false
+      }
+    ]
+  },
+
+  "audio": {
+    "music": [
+      {
+        "id": "peaceful_tutorial",
+        "path": "audio/music/peaceful_tutorial",
+        "format": "ogg",
+        "duration": 180,
+        "looping": true,
+        "volume": 0.7,
+        "preload": true
+      }
+    ],
+    "sfx": [
+      {
+        "id": "plant_place",
+        "path": "audio/sfx/plant_place",
+        "format": "ogg",
+        "duration": 0.5,
+        "volume": 0.8,
+        "preload": true
+      },
+      {
+        "id": "sun_collect",
+        "path": "audio/sfx/sun_collect",
+        "format": "ogg",
+        "duration": 0.3,
+        "volume": 0.9,
+        "preload": true
+      },
+      {
+        "id": "pea_shoot",
+        "path": "audio/sfx/pea_shoot",
+        "format": "ogg",
+        "duration": 0.2,
+        "volume": 0.6,
+        "preload": true
+      },
+      {
+        "id": "zombie_groan",
+        "path": "audio/sfx/zombie_groan",
+        "format": "ogg",
+        "duration": 1.0,
+        "volume": 0.7,
+        "preload": true
+      },
+      {
+        "id": "zombie_death",
+        "path": "audio/sfx/zombie_death",
+        "format": "ogg",
+        "duration": 1.5,
+        "volume": 0.8,
+        "preload": true
+      },
+      {
+        "id": "tutorial_ding",
+        "path": "audio/sfx/tutorial_ding",
+        "format": "ogg",
+        "duration": 0.4,
+        "volume": 0.9,
+        "preload": true
+      }
+    ],
+    "ambient": [
+      {
+        "id": "peaceful_meadow",
+        "path": "audio/ambient/peaceful_meadow",
+        "format": "ogg",
+        "duration": 120,
+        "looping": true,
+        "volume": 0.4,
+        "preload": false
+      },
+      {
+        "id": "gentle_breeze",
+        "path": "audio/ambient/gentle_breeze",
+        "format": "ogg",
+        "duration": 60,
+        "looping": true,
+        "volume": 0.3,
+        "preload": false
+      }
+    ]
+  },
+
+  "particles": {
+    "effects": [
+      {
+        "id": "pollen",
+        "path": "particles/pollen",
+        "format": "json",
+        "maxParticles": 50,
+        "duration": -1,
+        "preload": false
+      },
+      {
+        "id": "gentle_breeze",
+        "path": "particles/gentle_breeze",
+        "format": "json",
+        "maxParticles": 30,
+        "duration": -1,
+        "preload": false
+      },
+      {
+        "id": "sunlight_rays",
+        "path": "particles/sunlight_rays",
+        "format": "json",
+        "maxParticles": 20,
+        "duration": -1,
+        "preload": false
+      },
+      {
+        "id": "sun_sparkle",
+        "path": "particles/sun_sparkle",
+        "format": "json",
+        "maxParticles": 10,
+        "duration": 2.0,
+        "preload": true
+      }
+    ]
+  },
+
+  "fonts": [
+    {
+      "id": "tutorial_text",
+      "path": "fonts/comic_sans_bold",
+      "format": "ttf",
+      "size": 24,
+      "preload": true
+    },
+    {
+      "id": "ui_numbers",
+      "path": "fonts/digital_display",
+      "format": "ttf",
+      "size": 32,
+      "preload": true
+    }
+  ],
+
+  "preloadGroups": {
+    "essential": [
+      "grassland_morning",
+      "sky_clear",
+      "sunflower_idle",
+      "peashooter_idle",
+      "wallnut_idle",
+      "basic_zombie_walk",
+      "pea_normal",
+      "plant_card_sunflower",
+      "plant_card_peashooter",
+      "plant_card_wallnut",
+      "sun_icon",
+      "peaceful_tutorial",
+      "plant_place",
+      "sun_collect",
+      "tutorial_text",
+      "ui_numbers"
+    ],
+    "gameplay": [
+      "sunflower_produce",
+      "peashooter_shoot",
+      "basic_zombie_eat",
+      "basic_zombie_death",
+      "cone_zombie_walk",
+      "pea_impact",
+      "pea_shoot",
+      "zombie_groan",
+      "zombie_death"
+    ],
+    "tutorial": [
+      "tutorial_arrow",
+      "tutorial_ding",
+      "sun_sparkle"
+    ],
+    "optional": [
+      "clouds_white",
+      "hills_distant",
+      "trees_background",
+      "flower_patch",
+      "small_tree",
+      "butterfly_group",
+      "welcome_sign",
+      "peaceful_meadow",
+      "gentle_breeze",
+      "pollen",
+      "sunlight_rays"
+    ]
+  },
+
+  "loadingStrategy": {
+    "phase1": {
+      "name": "essential",
+      "description": "加载核心游戏资源",
+      "groups": ["essential"],
+      "showProgress": true,
+      "progressWeight": 0.6
+    },
+    "phase2": {
+      "name": "gameplay",
+      "description": "加载游戏玩法资源",
+      "groups": ["gameplay", "tutorial"],
+      "showProgress": true,
+      "progressWeight": 0.3
+    },
+    "phase3": {
+      "name": "optional",
+      "description": "加载装饰性资源",
+      "groups": ["optional"],
+      "showProgress": false,
+      "progressWeight": 0.1,
+      "async": true
+    }
+  },
+
+  "optimization": {
+    "textureCompression": {
+      "enabled": true,
+      "format": "etc2",
+      "quality": "high"
+    },
+    "audioCompression": {
+      "enabled": true,
+      "format": "ogg",
+      "quality": "medium"
+    },
+    "atlasing": {
+      "enabled": true,
+      "maxAtlasSize": 2048,
+      "padding": 2,
+      "groups": [
+        {
+          "name": "ui_atlas",
+          "textures": ["plant_card_sunflower", "plant_card_peashooter", "plant_card_wallnut", "sun_icon", "tutorial_arrow"]
+        },
+        {
+          "name": "projectiles_atlas",
+          "textures": ["pea_normal", "pea_impact"]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,494 @@
+{
+  "id": "level1",
+  "name": "第一关：新手村",
+  "description": "欢迎来到植物大战僵尸的世界！这是你的第一次冒险，学习基础的种植和防御技巧。",
+  "difficulty": 1,
+  "version": "1.0.0",
+  "author": "GameDeveloper",
+  "tags": ["tutorial", "beginner", "easy", "grassland"],
+
+  "grid": {
+    "rows": 5,
+    "cols": 9,
+    "cellWidth": 100,
+    "cellHeight": 120,
+    "startPosition": {
+      "x": -400,
+      "y": 240,
+      "z": 0
+    },
+    "showGrid": true,
+    "gridColor": {
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 120
+    },
+    "highlightColor": {
+      "r": 255,
+      "g": 255,
+      "b": 0,
+      "a": 180
+    }
+  },
+
+  "environment": {
+    "weather": "sunny",
+    "timeOfDay": "morning",
+    "temperature": 22,
+    "windSpeed": 3,
+    "visibility": 100,
+    "ambientLight": {
+      "r": 255,
+      "g": 248,
+      "b": 220,
+      "a": 255
+    },
+    "fogColor": {
+      "r": 220,
+      "g": 230,
+      "b": 255,
+      "a": 30
+    },
+    "fogDensity": 0.05,
+    "soundscape": "peaceful_meadow",
+    "particles": ["pollen", "gentle_breeze", "sunlight_rays"],
+    "customEffects": [
+      {
+        "type": "gentle_wind",
+        "strength": 0.2,
+        "direction": "right_to_left"
+      },
+      {
+        "type": "sunlight_filter",
+        "intensity": 0.8,
+        "warmth": 0.9
+      }
+    ]
+  },
+
+  "background": {
+    "backgroundImage": "backgrounds/grassland_morning",
+    "backgroundMusic": "music/peaceful_tutorial",
+    "parallaxLayers": [
+      {
+        "image": "backgrounds/sky_clear",
+        "speed": 0.1,
+        "depth": 0
+      },
+      {
+        "image": "backgrounds/clouds_white",
+        "speed": 0.25,
+        "depth": 1
+      },
+      {
+        "image": "backgrounds/hills_distant",
+        "speed": 0.4,
+        "depth": 2
+      },
+      {
+        "image": "backgrounds/trees_background",
+        "speed": 0.6,
+        "depth": 3
+      }
+    ],
+    "skybox": "skyboxes/morning_clear",
+    "groundTexture": "textures/grass_fresh",
+    "decorations": [
+      {
+        "sprite": "decorations/flower_patch",
+        "position": { "x": -480, "y": 80 },
+        "scale": 1.0,
+        "rotation": 0
+      },
+      {
+        "sprite": "decorations/small_tree",
+        "position": { "x": 420, "y": 120 },
+        "scale": 0.9,
+        "rotation": 5
+      },
+      {
+        "sprite": "decorations/butterfly_group",
+        "position": { "x": -150, "y": 200 },
+        "scale": 0.7,
+        "rotation": 0
+      },
+      {
+        "sprite": "decorations/welcome_sign",
+        "position": { "x": -350, "y": -120 },
+        "scale": 1.1,
+        "rotation": -3
+      }
+    ]
+  },
+
+  "objectives": {
+    "primary": [
+      {
+        "type": "survive_waves",
+        "description": "抵御所有僵尸攻击",
+        "target": 2,
+        "current": 0,
+        "completed": false
+      },
+      {
+        "type": "learn_basics",
+        "description": "学会种植向日葵和豌豆射手",
+        "target": 1,
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "secondary": [
+      {
+        "type": "collect_sun",
+        "description": "收集300点阳光",
+        "target": 300,
+        "current": 0,
+        "completed": false,
+        "reward": {
+          "type": "bonus_points",
+          "value": 500
+        }
+      },
+      {
+        "type": "perfect_defense",
+        "description": "不让任何僵尸进入房子",
+        "target": 1,
+        "current": 0,
+        "completed": false,
+        "reward": {
+          "type": "unlock_plant",
+          "value": "snow_pea"
+        }
+      }
+    ],
+    "timeLimit": 240,
+    "scoreTarget": 3000
+  },
+
+  "enemies": {
+    "waves": [
+      {
+        "waveNumber": 1,
+        "delay": 20,
+        "enemies": [
+          {
+            "type": "basic_zombie",
+            "count": 2,
+            "spawnRow": 2,
+            "spawnDelay": 5,
+            "health": 80,
+            "speed": 35,
+            "damage": 8,
+            "specialAbilities": []
+          }
+        ]
+      },
+      {
+        "waveNumber": 2,
+        "delay": 60,
+        "enemies": [
+          {
+            "type": "basic_zombie",
+            "count": 1,
+            "spawnRow": 1,
+            "spawnDelay": 0,
+            "health": 80,
+            "speed": 35,
+            "damage": 8,
+            "specialAbilities": []
+          },
+          {
+            "type": "basic_zombie",
+            "count": 1,
+            "spawnRow": 3,
+            "spawnDelay": 8,
+            "health": 80,
+            "speed": 35,
+            "damage": 8,
+            "specialAbilities": []
+          },
+          {
+            "type": "cone_zombie",
+            "count": 1,
+            "spawnRow": 2,
+            "spawnDelay": 15,
+            "health": 150,
+            "speed": 30,
+            "damage": 12,
+            "specialAbilities": ["light_armor"]
+          }
+        ]
+      }
+    ],
+    "bossEnemies": []
+  },
+
+  "resources": {
+    "startingSun": 200,
+    "sunGenerationRate": 30,
+    "availablePlants": [
+      "sunflower",
+      "peashooter",
+      "wallnut"
+    ],
+    "plantCosts": {
+      "sunflower": 50,
+      "peashooter": 100,
+      "wallnut": 50
+    },
+    "specialItems": [
+      {
+        "type": "shovel",
+        "count": 1,
+        "cost": 0
+      },
+      {
+        "type": "plant_food",
+        "count": 1,
+        "cost": 0
+      }
+    ]
+  },
+
+  "specialCells": [
+    {
+      "row": 0,
+      "col": 8,
+      "type": "spawn",
+      "properties": {
+        "spawnType": "zombie",
+        "spawnRate": 0.8,
+        "tutorialMode": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 8,
+      "type": "spawn",
+      "properties": {
+        "spawnType": "zombie",
+        "spawnRate": 0.8,
+        "tutorialMode": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 8,
+      "type": "spawn",
+      "properties": {
+        "spawnType": "zombie",
+        "spawnRate": 1.0,
+        "tutorialMode": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 8,
+      "type": "spawn",
+      "properties": {
+        "spawnType": "zombie",
+        "spawnRate": 0.8,
+        "tutorialMode": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 8,
+      "type": "spawn",
+      "properties": {
+        "spawnType": "zombie",
+        "spawnRate": 0.8,
+        "tutorialMode": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "type": "special",
+      "properties": {
+        "specialType": "tutorial_highlight",
+        "message": "在这里种植你的第一个向日葵！"
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "type": "special",
+      "properties": {
+        "specialType": "tutorial_highlight",
+        "message": "在这里种植豌豆射手来攻击僵尸！"
+      }
+    }
+  ],
+
+  "presetObjects": [
+    {
+      "type": "tutorial_pointer",
+      "position": { "row": 2, "col": 1 },
+      "properties": {
+        "message": "点击向日葵卡片，然后点击这里种植！",
+        "duration": 8000,
+        "autoHide": false,
+        "highlight": true
+      }
+    },
+    {
+      "type": "sun_drop",
+      "position": { "row": 1, "col": 2 },
+      "properties": {
+        "value": 25,
+        "autoCollect": false,
+        "tutorialItem": true
+      }
+    }
+  ],
+
+  "customData": {
+    "tutorialEnabled": true,
+    "isFirstLevel": true,
+    "tutorialSteps": [
+      {
+        "step": 1,
+        "trigger": "level_start",
+        "message": "欢迎来到植物大战僵尸！让我们开始学习如何保护你的房子。",
+        "highlight": "none",
+        "duration": 4000
+      },
+      {
+        "step": 2,
+        "trigger": "auto_delay",
+        "delay": 5000,
+        "message": "首先，点击向日葵卡片来选择它。向日葵会产生阳光，这是种植其他植物的货币。",
+        "highlight": "sunflower_card",
+        "duration": 6000
+      },
+      {
+        "step": 3,
+        "trigger": "plant_selected",
+        "plantType": "sunflower",
+        "message": "很好！现在点击网格上的高亮位置来种植向日葵。",
+        "highlight": "grid_cell_2_1",
+        "duration": 5000
+      },
+      {
+        "step": 4,
+        "trigger": "plant_placed",
+        "plantType": "sunflower",
+        "message": "太棒了！向日葵会定期产生阳光。点击掉落的阳光来收集它们。",
+        "highlight": "sun_counter",
+        "duration": 5000
+      },
+      {
+        "step": 5,
+        "trigger": "sun_collected",
+        "amount": 50,
+        "message": "现在你有足够的阳光了！选择豌豆射手来攻击即将到来的僵尸。",
+        "highlight": "peashooter_card",
+        "duration": 5000
+      },
+      {
+        "step": 6,
+        "trigger": "plant_selected",
+        "plantType": "peashooter",
+        "message": "在向日葵前面种植豌豆射手，它会射击豌豆来攻击僵尸。",
+        "highlight": "grid_cell_2_3",
+        "duration": 5000
+      },
+      {
+        "step": 7,
+        "trigger": "plant_placed",
+        "plantType": "peashooter",
+        "message": "完美！现在你已经建立了基本的防线。准备迎接第一波僵尸吧！",
+        "highlight": "none",
+        "duration": 4000
+      },
+      {
+        "step": 8,
+        "trigger": "wave_start",
+        "waveNumber": 1,
+        "message": "僵尸来了！观察你的植物如何保护房子。记住收集更多阳光！",
+        "highlight": "none",
+        "duration": 5000
+      }
+    ],
+    "achievements": [
+      {
+        "id": "first_sunflower",
+        "name": "阳光收集者",
+        "description": "种植你的第一个向日葵",
+        "unlocked": false,
+        "reward": {
+          "type": "experience",
+          "value": 100
+        }
+      },
+      {
+        "id": "first_peashooter",
+        "name": "植物战士",
+        "description": "种植你的第一个豌豆射手",
+        "unlocked": false,
+        "reward": {
+          "type": "experience",
+          "value": 150
+        }
+      },
+      {
+        "id": "tutorial_master",
+        "name": "新手毕业",
+        "description": "完成所有教程步骤",
+        "unlocked": false,
+        "reward": {
+          "type": "unlock_plant",
+          "value": "cherry_bomb"
+        }
+      }
+    ],
+    "unlockConditions": {
+      "nextLevel": "level2",
+      "requirements": [
+        {
+          "type": "complete_objectives",
+          "value": "primary"
+        },
+        {
+          "type": "tutorial_completed",
+          "value": true
+        }
+      ]
+    },
+    "hints": [
+      {
+        "trigger": "sun_low",
+        "condition": "sun < 100 && time > 30",
+        "message": "阳光不足！种植更多向日葵来获得阳光。",
+        "priority": "high"
+      },
+      {
+        "trigger": "zombie_close",
+        "condition": "zombie_distance < 3",
+        "message": "僵尸很接近了！确保你有足够的攻击植物。",
+        "priority": "urgent"
+      },
+      {
+        "trigger": "no_defense",
+        "condition": "no_attacking_plants && zombie_spawned",
+        "message": "你需要种植豌豆射手来攻击僵尸！",
+        "priority": "critical"
+      }
+    ],
+    "rewards": {
+      "completion": {
+        "coins": 100,
+        "experience": 500,
+        "unlocks": ["level2", "plant_almanac"]
+      },
+      "perfect": {
+        "coins": 200,
+        "experience": 750,
+        "unlocks": ["snow_pea", "bonus_level_1"]
+      }
+    }
+  }
+}
