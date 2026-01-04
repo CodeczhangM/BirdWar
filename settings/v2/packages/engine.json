@@ -218,6 +218,9 @@
         "flags": {}
       }
     },
-    "globalConfigKey": "defaultConfig"
+    "globalConfigKey": "defaultConfig",
+    "graphics": {
+      "custom-pipeline-post-process": false
+    }
   }
 }

@@ -26,6 +26,21 @@
     }
   ],
   "_props": [
-    {}
+    {
+      "u_ambientLight": {
+        "__type__": "cc.Color",
+        "r": 15,
+        "g": 15,
+        "b": 15,
+        "a": 255
+      },
+      "u_fogColor": {
+        "__type__": "cc.Color",
+        "r": 233,
+        "g": 3,
+        "b": 3,
+        "a": 255
+      }
+    }
   ]
 }
