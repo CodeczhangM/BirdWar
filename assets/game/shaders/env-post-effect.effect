@@ -1,6 +1,7 @@
 CCEffect %{
   techniques:
-  - passes:
+  - name: post
+    passes:
     - vert: env-post-effect-vs
       frag: env-post-effect-fs
       blendState:

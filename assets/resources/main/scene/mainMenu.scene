@@ -211,7 +211,7 @@
     "_visibility": 1108344832,
     "_targetTexture": null,
     "_postProcess": null,
-    "_usePostProcess": false,
+    "_usePostProcess": true,
     "_cameraType": -1,
     "_trackingType": 0,
     "_id": "63WIch3o5BEYRlXzTT0oWc"
@@ -1277,8 +1277,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 785.7791481270696,
-      "height": 251.99999999999997
+      "width": 785.7845011796102,
+      "height": 252
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1310,7 +1310,7 @@
     "_string": "C H I C K e N",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 125.83333333333333,
+    "_actualFontSize": 112.22222222222223,
     "_fontSize": 100,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -1412,8 +1412,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 361.1863294184603,
-      "height": 251.99999999999997
+      "width": 361.1974281839805,
+      "height": 252
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1445,7 +1445,7 @@
     "_string": "War",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 176.16666666666666,
+    "_actualFontSize": 157.11111111111111,
     "_fontSize": 140,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -3143,7 +3143,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 247.7599609375,
+      "width": 247.73849034073328,
       "height": 100.8
     },
     "_anchorPoint": {
@@ -3176,7 +3176,7 @@
     "_string": "label",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 100,
+    "_actualFontSize": 89.77777777777777,
     "_fontSize": 80,
     "_fontFamily": "Arial",
     "_lineHeight": 80,
@@ -3613,7 +3613,7 @@
     "_string": "start",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25.166666666666664,
+    "_actualFontSize": 22.444444444444443,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,

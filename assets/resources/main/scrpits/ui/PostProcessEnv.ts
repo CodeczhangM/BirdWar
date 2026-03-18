@@ -204,6 +204,7 @@ export class PostProcessEnv extends Component {
             return;
         }
 
+        Log.log(this.MODULE_NAME, 'postProcessComponent:',postProcessComponent);
         try {
             // 如果有自定义材质，使用自定义材质
             if (this.postProcessMaterial) {
@@ -225,6 +226,7 @@ export class PostProcessEnv extends Component {
     private tryApplyToDefaultMaterial(postProcessComponent: any) {
         // 注意：这里的实现可能需要根据具体的Cocos Creator版本调整
         if (postProcessComponent.material) {
+            Log.log(this.MODULE_NAME, 'postProcessComponent:',postProcessComponent);
             this.updateMaterialProperties(postProcessComponent.material);
             Log.log(this.MODULE_NAME, '使用默认后处理材质');
         } else {
@@ -240,6 +242,8 @@ export class PostProcessEnv extends Component {
 
         try {
             // 设置环境参数
+            Log.log(this.MODULE_NAME, 'material:',material);
+        
             material.setProperty('u_sunWarmth', this.sunWarmth);
             material.setProperty('u_fogDensity', this.fogDensity);
             material.setProperty('u_sunIntensity', this.sunIntensity);
