@@ -1,6 +1,6 @@
 import { Log } from './Logger';
 import { ProceduralDungeonGenerator, Dungeon,TileType } from './ProceduralDungeonGenerator';
-import { _decorator, Component, Node, Prefab, instantiate, Vec3, Sprite, Color, UITransform, Label } from 'cc';
+import { _decorator, Component, Node, Prefab, instantiate, Vec3, Sprite, Color, UITransform, Label, BoxCollider2D, RigidBody2D, ERigidBody2DType } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('DungeonController')
@@ -37,6 +37,9 @@ export class DungeonController extends Component {
 
     @property({ tooltip: '显示房间标记' })
     showRoomMarkers: boolean = false;
+
+    @property({ tooltip: '为 EMPTY/WALL 添加物理碰撞体' })
+    addPhysicsWalls: boolean = true;
     
     protected onLoad(): void {
         if (!this.dungeonGenerator) {
@@ -105,9 +108,28 @@ export class DungeonController extends Component {
                         y * this.tileSize,
                         0
                     );
+
+                    // 为 EMPTY 和 WALL 添加物理碰撞体
+                    if (this.addPhysicsWalls && (tile === TileType.EMPTY || tile === TileType.WALL)) {
+                        this._addWallCollider(tileNode);
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * 为墙壁/空白 tile 添加碰撞体
+     */
+    private _addWallCollider(tileNode: Node) {
+        // 添加静态刚体
+        const rigidBody = tileNode.addComponent(RigidBody2D);
+        rigidBody.type = ERigidBody2DType.Static;
+
+        // 添加碰撞体
+        const collider = tileNode.addComponent(BoxCollider2D);
+        collider.size.set(this.tileSize, this.tileSize);
+        collider.sensor = false; // 实体碰撞
     }
 
     /**
@@ -179,6 +201,11 @@ export class DungeonController extends Component {
                 const sprite = tileNode.addComponent(Sprite);
                 sprite.color = new Color(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
                 sprite.type = Sprite.Type.FILLED;
+
+                // 为 EMPTY 和 WALL 添加物理碰撞体
+                if (this.addPhysicsWalls && (tile === TileType.EMPTY || tile === TileType.WALL)) {
+                    this._addWallCollider(tileNode);
+                }
             }
         }
     }

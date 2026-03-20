@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, UITransform, Vec3 } from 'cc';
+import { _decorator, Component, Node, UITransform, Vec3, BoxCollider2D, RigidBody2D, ERigidBody2DType } from 'cc';
 import { DungeonController } from './DungeonController';
 import { Log } from './Logger';
 
@@ -29,10 +29,18 @@ export class ActorAutoResize extends Component {
     @property({ tooltip: '是否在 start 时自动调整' })
     autoResizeOnStart: boolean = true;
 
+    @property({ tooltip: '是否添加物理碰撞体' })
+    addPhysicsCollider: boolean = true;
+
+    @property({ tooltip: '碰撞体偏移比例（相对于缩放后尺寸）' })
+    colliderSizeRatio: number = 0.9;
+
     private readonly MODULE_NAME = 'ActorAutoResize';
     private _dungeonController: DungeonController = null;
     private _uiTransform: UITransform = null;
     private _originalSize: Vec3 = new Vec3();
+    private _collider: BoxCollider2D = null;
+    private _rigidBody: RigidBody2D = null;
 
     onLoad() {
         Log.log(this.MODULE_NAME, '=== ActorAutoResize onLoad ===');
@@ -64,6 +72,11 @@ export class ActorAutoResize extends Component {
             this.resizeToTileSize();
         } else {
             Log.log(this.MODULE_NAME, '自动调整已禁用');
+        }
+
+        // 添加物理碰撞体
+        if (this.addPhysicsCollider) {
+            this._setupPhysicsCollider();
         }
     }
 
@@ -231,6 +244,54 @@ export class ActorAutoResize extends Component {
         } else {
             Log.log(this.MODULE_NAME, '地牢控制器: 未找到');
         }
+    }
+
+    /**
+     * 设置物理碰撞体
+     */
+    private _setupPhysicsCollider() {
+        Log.log(this.MODULE_NAME, '=== 设置物理碰撞体 ===');
+
+        // 添加或获取 RigidBody2D
+        this._rigidBody = this.getComponent(RigidBody2D);
+        if (!this._rigidBody) {
+            this._rigidBody = this.node.addComponent(RigidBody2D);
+            Log.log(this.MODULE_NAME, '添加 RigidBody2D 组件');
+        }
+
+        // 设置为动态刚体
+        this._rigidBody.type = ERigidBody2DType.Dynamic;
+        this._rigidBody.linearDamping = 5; // 线性阻尼，防止滑动
+        this._rigidBody.angularDamping = 5; // 角度阻尼
+        this._rigidBody.fixedRotation = true; // 固定旋转，防止角色旋转
+        this._rigidBody.gravityScale = 0; // 关闭重力影响，防止下坠
+
+        // 添加或获取 BoxCollider2D
+        this._collider = this.getComponent(BoxCollider2D);
+        if (!this._collider) {
+            this._collider = this.node.addComponent(BoxCollider2D);
+            Log.log(this.MODULE_NAME, '添加 BoxCollider2D 组件');
+        }
+
+        // 更新碰撞体尺寸
+        this._updateColliderSize();
+
+        Log.log(this.MODULE_NAME, '物理碰撞体设置完成');
+    }
+
+    /**
+     * 更新碰撞体尺寸
+     */
+    private _updateColliderSize() {
+        if (!this._collider || !this._uiTransform) return;
+
+        const width = this._uiTransform.width * this.node.scale.x * this.colliderSizeRatio;
+        const height = this._uiTransform.height * this.node.scale.y * this.colliderSizeRatio;
+
+        this._collider.size.set(width, height);
+        this._collider.sensor = false; // 实体碰撞
+
+        Log.log(this.MODULE_NAME, `碰撞体尺寸: ${width}x${height}`);
     }
 }
 
