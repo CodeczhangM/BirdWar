@@ -32,10 +32,13 @@
       },
       {
         "__id__": 12
+      },
+      {
+        "__id__": 14
       }
     ],
     "_prefab": {
-      "__id__": 14
+      "__id__": 16
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -223,8 +226,8 @@
     "moveSpeed": 200,
     "autoFacing": true,
     "facingLerpSpeed": 0,
-    "skill1Animation": "attack",
-    "skill2Animation": "dash",
+    "skill1Animation": "Attack",
+    "skill2Animation": "Walk",
     "skill3Animation": "defend",
     "skill4Animation": "ultimate",
     "skill5Animation": "skill5",
@@ -309,6 +312,30 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "1dHtc1IiJDTpcLiptGEyHH"
+  },
+  {
+    "__type__": "a72154CuAFAY51qhGZkDQBu",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 15
+    },
+    "dungeonControllerNode": null,
+    "scaleRatio": 0.8,
+    "keepAspectRatio": true,
+    "minSize": 16,
+    "maxSize": 128,
+    "autoResizeOnStart": true,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "561EG3UDdOSYIlMeMMWPOK"
   },
   {
     "__type__": "cc.PrefabInfo",

@@ -1,0 +1,138 @@
+[
+  {
+    "__type__": "cc.Prefab",
+    "_name": "MapDungeon",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_native": "",
+    "data": {
+      "__id__": 1
+    },
+    "optimizationPolicy": 0,
+    "persistent": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "MapDungeon",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": null,
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 2
+      },
+      {
+        "__id__": 4
+      }
+    ],
+    "_prefab": {
+      "__id__": 6
+    },
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 1073741824,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "6fdcc1I9A1DzZiZZbxb1CHn",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 3
+    },
+    "dungeonWidth": 50,
+    "dungeonHeight": 50,
+    "minRooms": 4,
+    "maxRooms": 6,
+    "minRoomSize": 2,
+    "maxRoomSize": 6,
+    "seed": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "20Qd1GIlpJopCx1Brltd/4"
+  },
+  {
+    "__type__": "e48d4+run1JMZx7+QYkBKm5",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 5
+    },
+    "dungeonGenerator": {
+      "__id__": 2
+    },
+    "dungeonContainer": null,
+    "floorTilePrefab": {
+      "__uuid__": "7cde1e37-8fb7-4930-bbb3-92cd93e1c928",
+      "__expectedType__": "cc.Prefab"
+    },
+    "wallTilePrefab": {
+      "__uuid__": "a1f36f2b-346b-4e51-a6bb-77c616e64310",
+      "__expectedType__": "cc.Prefab"
+    },
+    "corridorTilePrefab": {
+      "__uuid__": "98529e27-88f3-417a-9540-98f002e411e9",
+      "__expectedType__": "cc.Prefab"
+    },
+    "doorTilePrefab": null,
+    "emptyTilePrefab": null,
+    "tileSize": 50,
+    "useDebugColors": false,
+    "showDebugGrid": false,
+    "showRoomMarkers": false,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "c3czLeDKdORJqDK2NZ4oDn"
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "5aSx212opPjJdeIEfK6U8m",
+    "targetOverrides": null
+  }
+]
