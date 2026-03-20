@@ -25,10 +25,13 @@
       },
       {
         "__id__": 4
+      },
+      {
+        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 6
+      "__id__": 8
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -71,12 +74,12 @@
     "__prefab": {
       "__id__": 3
     },
-    "dungeonWidth": 50,
-    "dungeonHeight": 50,
-    "minRooms": 4,
-    "maxRooms": 6,
-    "minRoomSize": 2,
-    "maxRoomSize": 6,
+    "dungeonWidth": 100,
+    "dungeonHeight": 100,
+    "minRooms": 10,
+    "maxRooms": 20,
+    "minRoomSize": 6,
+    "maxRoomSize": 16,
     "seed": 0,
     "_id": ""
   },
@@ -118,11 +121,47 @@
     "useDebugColors": false,
     "showDebugGrid": false,
     "showRoomMarkers": false,
+    "addPhysicsWalls": true,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "c3czLeDKdORJqDK2NZ4oDn"
+  },
+  {
+    "__type__": "fc895KcxzJGLLXe+2w8xrw3",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 7
+    },
+    "dungeonControllerNode": {
+      "__id__": 1
+    },
+    "fogMaskNode": null,
+    "playerNode": null,
+    "visionRadius": 5,
+    "fogColor": {
+      "__type__": "cc.Color",
+      "r": 248,
+      "g": 111,
+      "b": 111,
+      "a": 200
+    },
+    "enableFog": true,
+    "showExploredAreas": true,
+    "exploredAlpha": 100,
+    "chunkSize": 16,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "cdfp7eAxhFU4jkrj3zu+9N"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -133,6 +172,6 @@
       "__id__": 0
     },
     "fileId": "5aSx212opPjJdeIEfK6U8m",
-    "targetOverrides": null
+    "targetOverrides": []
   }
 ]
