@@ -1,123 +1,112 @@
 {
   "id": "level1",
-  "name": "第一关：新手村",
-  "description": "欢迎来到植物大战僵尸的世界！这是你的第一次冒险，学习基础的种植和防御技巧。",
+  "name": "第一层：遗忘地牢",
+  "description": "深入地下城的第一层，这里充满了危险的怪物和未知的宝藏。每次进入都会有不同的布局和敌人。",
   "difficulty": 1,
   "version": "1.0.0",
   "author": "GameDeveloper",
-  "tags": ["tutorial", "beginner", "easy", "grassland"],
+  "tags": ["roguelike", "dungeon", "procedural", "beginner"],
 
   "grid": {
-    "rows": 5,
-    "cols": 9,
-    "cellWidth": 100,
-    "cellHeight": 120,
+    "rows": 8,
+    "cols": 12,
+    "cellWidth": 80,
+    "cellHeight": 80,
     "startPosition": {
-      "x": -400,
-      "y": 240,
+      "x": -480,
+      "y": 280,
       "z": 0
     },
-    "showGrid": true,
+    "showGrid": false,
     "gridColor": {
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 120
+      "r": 100,
+      "g": 100,
+      "b": 100,
+      "a": 80
     },
     "highlightColor": {
       "r": 255,
-      "g": 255,
-      "b": 0,
-      "a": 180
+      "g": 200,
+      "b": 50,
+      "a": 150
     }
   },
 
   "environment": {
-    "weather": "sunny",
-    "timeOfDay": "morning",
-    "temperature": 22,
-    "windSpeed": 3,
-    "visibility": 100,
+    "weather": "none",
+    "timeOfDay": "underground",
+    "temperature": 15,
+    "windSpeed": 0,
+    "visibility": 70,
     "ambientLight": {
-      "r": 255,
-      "g": 248,
-      "b": 220,
+      "r": 180,
+      "g": 160,
+      "b": 140,
       "a": 255
     },
     "fogColor": {
-      "r": 220,
-      "g": 230,
-      "b": 255,
-      "a": 30
+      "r": 50,
+      "g": 50,
+      "b": 60,
+      "a": 100
     },
-    "fogDensity": 0.05,
-    "soundscape": "peaceful_meadow",
-    "particles": ["pollen", "gentle_breeze", "sunlight_rays"],
+    "fogDensity": 0.15,
+    "soundscape": "dungeon_ambient",
+    "particles": ["dust", "torch_smoke", "dripping_water"],
     "customEffects": [
       {
-        "type": "gentle_wind",
-        "strength": 0.2,
-        "direction": "right_to_left"
+        "type": "flickering_torches",
+        "strength": 0.6,
+        "frequency": 2.5
       },
       {
-        "type": "sunlight_filter",
-        "intensity": 0.8,
-        "warmth": 0.9
+        "type": "shadow_movement",
+        "intensity": 0.4,
+        "speed": 0.3
       }
     ]
   },
 
   "background": {
-    "backgroundImage": "backgrounds/grassland_morning",
-    "backgroundMusic": "music/peaceful_tutorial",
+    "backgroundImage": "backgrounds/dungeon_floor1",
+    "backgroundMusic": "music/dungeon_exploration",
     "parallaxLayers": [
       {
-        "image": "backgrounds/sky_clear",
-        "speed": 0.1,
+        "image": "backgrounds/dungeon_back_wall",
+        "speed": 0.2,
         "depth": 0
       },
       {
-        "image": "backgrounds/clouds_white",
-        "speed": 0.25,
+        "image": "backgrounds/dungeon_pillars",
+        "speed": 0.4,
         "depth": 1
       },
       {
-        "image": "backgrounds/hills_distant",
-        "speed": 0.4,
-        "depth": 2
-      },
-      {
-        "image": "backgrounds/trees_background",
+        "image": "backgrounds/dungeon_chains",
         "speed": 0.6,
-        "depth": 3
+        "depth": 2
       }
     ],
-    "skybox": "skyboxes/morning_clear",
-    "groundTexture": "textures/grass_fresh",
+    "skybox": null,
+    "groundTexture": "textures/stone_floor_cracked",
     "decorations": [
       {
-        "sprite": "decorations/flower_patch",
-        "position": { "x": -480, "y": 80 },
+        "sprite": "decorations/torch_wall",
+        "position": { "x": -400, "y": 200 },
         "scale": 1.0,
         "rotation": 0
       },
       {
-        "sprite": "decorations/small_tree",
-        "position": { "x": 420, "y": 120 },
+        "sprite": "decorations/skeleton_pile",
+        "position": { "x": 300, "y": -150 },
+        "scale": 0.8,
+        "rotation": 15
+      },
+      {
+        "sprite": "decorations/broken_barrel",
+        "position": { "x": -200, "y": 100 },
         "scale": 0.9,
-        "rotation": 5
-      },
-      {
-        "sprite": "decorations/butterfly_group",
-        "position": { "x": -150, "y": 200 },
-        "scale": 0.7,
-        "rotation": 0
-      },
-      {
-        "sprite": "decorations/welcome_sign",
-        "position": { "x": -350, "y": -120 },
-        "scale": 1.1,
-        "rotation": -3
+        "rotation": -10
       }
     ]
   },
@@ -125,370 +114,409 @@
   "objectives": {
     "primary": [
       {
-        "type": "survive_waves",
-        "description": "抵御所有僵尸攻击",
-        "target": 2,
+        "type": "reach_exit",
+        "description": "找到通往下一层的楼梯",
+        "target": 1,
         "current": 0,
         "completed": false
       },
       {
-        "type": "learn_basics",
-        "description": "学会种植向日葵和豌豆射手",
-        "target": 1,
+        "type": "defeat_enemies",
+        "description": "击败至少10个敌人",
+        "target": 10,
         "current": 0,
         "completed": false
       }
     ],
     "secondary": [
       {
-        "type": "collect_sun",
-        "description": "收集300点阳光",
-        "target": 300,
+        "type": "collect_treasure",
+        "description": "收集3个宝箱",
+        "target": 3,
         "current": 0,
         "completed": false,
         "reward": {
-          "type": "bonus_points",
-          "value": 500
+          "type": "bonus_gold",
+          "value": 200
         }
       },
       {
-        "type": "perfect_defense",
-        "description": "不让任何僵尸进入房子",
+        "type": "no_damage_taken",
+        "description": "不受伤害通过本层",
         "target": 1,
         "current": 0,
         "completed": false,
         "reward": {
-          "type": "unlock_plant",
-          "value": "snow_pea"
+          "type": "unlock_item",
+          "value": "health_potion_large"
         }
       }
     ],
-    "timeLimit": 240,
-    "scoreTarget": 3000
+    "timeLimit": 0,
+    "scoreTarget": 5000
   },
 
   "enemies": {
-    "waves": [
+    "spawnRules": {
+      "mode": "procedural",
+      "minEnemies": 15,
+      "maxEnemies": 25,
+      "spawnInterval": 3,
+      "maxActiveEnemies": 8,
+      "difficultyScaling": 1.0
+    },
+    "enemyPool": [
       {
-        "waveNumber": 1,
-        "delay": 20,
-        "enemies": [
-          {
-            "type": "basic_zombie",
-            "count": 2,
-            "spawnRow": 2,
-            "spawnDelay": 5,
-            "health": 80,
-            "speed": 35,
-            "damage": 8,
-            "specialAbilities": []
-          }
-        ]
+        "type": "skeleton_warrior",
+        "weight": 40,
+        "minLevel": 1,
+        "maxLevel": 2,
+        "baseHealth": 50,
+        "baseSpeed": 40,
+        "baseDamage": 10,
+        "specialAbilities": [],
+        "dropTable": {
+          "gold": { "min": 5, "max": 15 },
+          "items": [
+            { "id": "health_potion_small", "chance": 0.3 },
+            { "id": "rusty_sword", "chance": 0.1 }
+          ]
+        }
       },
       {
-        "waveNumber": 2,
-        "delay": 60,
-        "enemies": [
-          {
-            "type": "basic_zombie",
-            "count": 1,
-            "spawnRow": 1,
-            "spawnDelay": 0,
-            "health": 80,
-            "speed": 35,
-            "damage": 8,
-            "specialAbilities": []
-          },
-          {
-            "type": "basic_zombie",
-            "count": 1,
-            "spawnRow": 3,
-            "spawnDelay": 8,
-            "health": 80,
-            "speed": 35,
-            "damage": 8,
-            "specialAbilities": []
-          },
-          {
-            "type": "cone_zombie",
-            "count": 1,
-            "spawnRow": 2,
-            "spawnDelay": 15,
-            "health": 150,
-            "speed": 30,
-            "damage": 12,
-            "specialAbilities": ["light_armor"]
-          }
-        ]
+        "type": "goblin_scout",
+        "weight": 35,
+        "minLevel": 1,
+        "maxLevel": 2,
+        "baseHealth": 30,
+        "baseSpeed": 60,
+        "baseDamage": 8,
+        "specialAbilities": ["quick_dodge"],
+        "dropTable": {
+          "gold": { "min": 8, "max": 20 },
+          "items": [
+            { "id": "health_potion_small", "chance": 0.25 },
+            { "id": "dagger", "chance": 0.15 }
+          ]
+        }
+      },
+      {
+        "type": "slime",
+        "weight": 20,
+        "minLevel": 1,
+        "maxLevel": 1,
+        "baseHealth": 40,
+        "baseSpeed": 25,
+        "baseDamage": 5,
+        "specialAbilities": ["split_on_death"],
+        "dropTable": {
+          "gold": { "min": 3, "max": 8 },
+          "items": [
+            { "id": "slime_gel", "chance": 0.5 }
+          ]
+        }
+      },
+      {
+        "type": "dungeon_rat",
+        "weight": 5,
+        "minLevel": 1,
+        "maxLevel": 1,
+        "baseHealth": 20,
+        "baseSpeed": 80,
+        "baseDamage": 3,
+        "specialAbilities": ["poison_bite"],
+        "dropTable": {
+          "gold": { "min": 1, "max": 5 },
+          "items": []
+        }
+      }
+    ],
+    "eliteEnemies": [
+      {
+        "type": "skeleton_captain",
+        "spawnChance": 0.15,
+        "health": 150,
+        "speed": 35,
+        "damage": 20,
+        "specialAbilities": ["shield_bash", "rally_nearby"],
+        "dropTable": {
+          "gold": { "min": 50, "max": 100 },
+          "items": [
+            { "id": "iron_sword", "chance": 0.4 },
+            { "id": "health_potion_medium", "chance": 0.6 }
+          ]
+        }
       }
     ],
     "bossEnemies": []
   },
 
   "resources": {
-    "startingSun": 200,
-    "sunGenerationRate": 30,
-    "availablePlants": [
-      "sunflower",
-      "peashooter",
-      "wallnut"
-    ],
-    "plantCosts": {
-      "sunflower": 50,
-      "peashooter": 100,
-      "wallnut": 50
-    },
-    "specialItems": [
+    "startingGold": 50,
+    "startingHealth": 100,
+    "startingMana": 50,
+    "startingInventory": [
       {
-        "type": "shovel",
-        "count": 1,
-        "cost": 0
+        "id": "rusty_sword",
+        "quantity": 1
       },
       {
-        "type": "plant_food",
-        "count": 1,
-        "cost": 0
+        "id": "health_potion_small",
+        "quantity": 2
+      }
+    ],
+    "availableItems": [
+      {
+        "id": "health_potion_small",
+        "name": "小型生命药水",
+        "type": "consumable",
+        "effect": "heal",
+        "value": 30,
+        "cost": 20
+      },
+      {
+        "id": "health_potion_medium",
+        "name": "中型生命药水",
+        "type": "consumable",
+        "effect": "heal",
+        "value": 60,
+        "cost": 40
+      },
+      {
+        "id": "mana_potion_small",
+        "name": "小型魔力药水",
+        "type": "consumable",
+        "effect": "restore_mana",
+        "value": 25,
+        "cost": 25
+      }
+    ],
+    "shopItems": [
+      {
+        "id": "iron_sword",
+        "name": "铁剑",
+        "type": "weapon",
+        "damage": 15,
+        "cost": 100
+      },
+      {
+        "id": "leather_armor",
+        "name": "皮甲",
+        "type": "armor",
+        "defense": 5,
+        "cost": 80
       }
     ]
+  },
+
+  "proceduralGeneration": {
+    "enabled": true,
+    "seed": "random",
+    "roomTypes": [
+      {
+        "type": "combat",
+        "weight": 50,
+        "minEnemies": 3,
+        "maxEnemies": 6,
+        "treasureChance": 0.3
+      },
+      {
+        "type": "treasure",
+        "weight": 15,
+        "minEnemies": 0,
+        "maxEnemies": 2,
+        "treasureChance": 1.0
+      },
+      {
+        "type": "shop",
+        "weight": 10,
+        "minEnemies": 0,
+        "maxEnemies": 0,
+        "treasureChance": 0
+      },
+      {
+        "type": "rest",
+        "weight": 10,
+        "minEnemies": 0,
+        "maxEnemies": 0,
+        "treasureChance": 0,
+        "healAmount": 50
+      },
+      {
+        "type": "elite",
+        "weight": 10,
+        "minEnemies": 1,
+        "maxEnemies": 1,
+        "treasureChance": 0.8
+      },
+      {
+        "type": "trap",
+        "weight": 5,
+        "minEnemies": 2,
+        "maxEnemies": 4,
+        "treasureChance": 0.4
+      }
+    ],
+    "corridorLength": {
+      "min": 2,
+      "max": 5
+    },
+    "roomSize": {
+      "min": 3,
+      "max": 6
+    },
+    "branchingFactor": 0.3
   },
 
   "specialCells": [
     {
       "row": 0,
-      "col": 8,
+      "col": 0,
       "type": "spawn",
       "properties": {
-        "spawnType": "zombie",
-        "spawnRate": 0.8,
-        "tutorialMode": true
+        "spawnType": "player",
+        "isStartPoint": true
       }
     },
     {
-      "row": 1,
-      "col": 8,
-      "type": "spawn",
+      "row": 7,
+      "col": 11,
+      "type": "exit",
       "properties": {
-        "spawnType": "zombie",
-        "spawnRate": 0.8,
-        "tutorialMode": true
-      }
-    },
-    {
-      "row": 2,
-      "col": 8,
-      "type": "spawn",
-      "properties": {
-        "spawnType": "zombie",
-        "spawnRate": 1.0,
-        "tutorialMode": true
-      }
-    },
-    {
-      "row": 3,
-      "col": 8,
-      "type": "spawn",
-      "properties": {
-        "spawnType": "zombie",
-        "spawnRate": 0.8,
-        "tutorialMode": true
-      }
-    },
-    {
-      "row": 4,
-      "col": 8,
-      "type": "spawn",
-      "properties": {
-        "spawnType": "zombie",
-        "spawnRate": 0.8,
-        "tutorialMode": true
-      }
-    },
-    {
-      "row": 2,
-      "col": 1,
-      "type": "special",
-      "properties": {
-        "specialType": "tutorial_highlight",
-        "message": "在这里种植你的第一个向日葵！"
-      }
-    },
-    {
-      "row": 2,
-      "col": 3,
-      "type": "special",
-      "properties": {
-        "specialType": "tutorial_highlight",
-        "message": "在这里种植豌豆射手来攻击僵尸！"
+        "exitType": "stairs_down",
+        "nextLevel": "level2",
+        "requiresKey": false
       }
     }
   ],
 
   "presetObjects": [
     {
-      "type": "tutorial_pointer",
-      "position": { "row": 2, "col": 1 },
+      "type": "treasure_chest",
+      "position": { "row": 3, "col": 5 },
       "properties": {
-        "message": "点击向日葵卡片，然后点击这里种植！",
-        "duration": 8000,
-        "autoHide": false,
-        "highlight": true
+        "rarity": "common",
+        "locked": false,
+        "contents": {
+          "gold": { "min": 30, "max": 60 },
+          "items": [
+            { "id": "health_potion_small", "chance": 0.5 }
+          ]
+        }
       }
     },
     {
-      "type": "sun_drop",
-      "position": { "row": 1, "col": 2 },
+      "type": "trap",
+      "position": { "row": 4, "col": 7 },
       "properties": {
-        "value": 25,
-        "autoCollect": false,
-        "tutorialItem": true
+        "trapType": "spike",
+        "damage": 15,
+        "visible": false,
+        "disarmable": true
       }
     }
   ],
 
   "customData": {
-    "tutorialEnabled": true,
-    "isFirstLevel": true,
-    "tutorialSteps": [
+    "roguelikeFeatures": {
+      "permadeath": false,
+      "proceduralGeneration": true,
+      "randomizedLoot": true,
+      "difficultyScaling": true,
+      "metaProgression": true
+    },
+    "playerProgression": {
+      "experienceGain": true,
+      "levelUpSystem": true,
+      "skillTree": false,
+      "equipmentUpgrades": true
+    },
+    "gameplayModifiers": [
       {
-        "step": 1,
-        "trigger": "level_start",
-        "message": "欢迎来到植物大战僵尸！让我们开始学习如何保护你的房子。",
-        "highlight": "none",
-        "duration": 4000
-      },
-      {
-        "step": 2,
-        "trigger": "auto_delay",
-        "delay": 5000,
-        "message": "首先，点击向日葵卡片来选择它。向日葵会产生阳光，这是种植其他植物的货币。",
-        "highlight": "sunflower_card",
-        "duration": 6000
-      },
-      {
-        "step": 3,
-        "trigger": "plant_selected",
-        "plantType": "sunflower",
-        "message": "很好！现在点击网格上的高亮位置来种植向日葵。",
-        "highlight": "grid_cell_2_1",
-        "duration": 5000
-      },
-      {
-        "step": 4,
-        "trigger": "plant_placed",
-        "plantType": "sunflower",
-        "message": "太棒了！向日葵会定期产生阳光。点击掉落的阳光来收集它们。",
-        "highlight": "sun_counter",
-        "duration": 5000
-      },
-      {
-        "step": 5,
-        "trigger": "sun_collected",
-        "amount": 50,
-        "message": "现在你有足够的阳光了！选择豌豆射手来攻击即将到来的僵尸。",
-        "highlight": "peashooter_card",
-        "duration": 5000
-      },
-      {
-        "step": 6,
-        "trigger": "plant_selected",
-        "plantType": "peashooter",
-        "message": "在向日葵前面种植豌豆射手，它会射击豌豆来攻击僵尸。",
-        "highlight": "grid_cell_2_3",
-        "duration": 5000
-      },
-      {
-        "step": 7,
-        "trigger": "plant_placed",
-        "plantType": "peashooter",
-        "message": "完美！现在你已经建立了基本的防线。准备迎接第一波僵尸吧！",
-        "highlight": "none",
-        "duration": 4000
-      },
-      {
-        "step": 8,
-        "trigger": "wave_start",
-        "waveNumber": 1,
-        "message": "僵尸来了！观察你的植物如何保护房子。记住收集更多阳光！",
-        "highlight": "none",
-        "duration": 5000
-      }
-    ],
-    "achievements": [
-      {
-        "id": "first_sunflower",
-        "name": "阳光收集者",
-        "description": "种植你的第一个向日葵",
-        "unlocked": false,
-        "reward": {
-          "type": "experience",
-          "value": 100
-        }
-      },
-      {
-        "id": "first_peashooter",
-        "name": "植物战士",
-        "description": "种植你的第一个豌豆射手",
-        "unlocked": false,
-        "reward": {
-          "type": "experience",
-          "value": 150
-        }
-      },
-      {
-        "id": "tutorial_master",
-        "name": "新手毕业",
-        "description": "完成所有教程步骤",
-        "unlocked": false,
-        "reward": {
-          "type": "unlock_plant",
-          "value": "cherry_bomb"
-        }
+        "id": "first_floor_bonus",
+        "name": "新手保护",
+        "description": "第一层敌人伤害降低20%",
+        "effect": "enemy_damage_multiplier",
+        "value": 0.8
       }
     ],
     "unlockConditions": {
       "nextLevel": "level2",
       "requirements": [
         {
-          "type": "complete_objectives",
-          "value": "primary"
+          "type": "reach_exit",
+          "required": true
         },
         {
-          "type": "tutorial_completed",
-          "value": true
+          "type": "min_enemies_defeated",
+          "value": 5,
+          "required": true
         }
       ]
     },
+    "metaProgressionRewards": {
+      "firstClear": {
+        "gold": 100,
+        "experience": 500,
+        "unlocks": ["level2", "weapon_shop"]
+      },
+      "perfectClear": {
+        "gold": 200,
+        "experience": 750,
+        "unlocks": ["elite_weapon", "bonus_dungeon_1"]
+      }
+    },
     "hints": [
       {
-        "trigger": "sun_low",
-        "condition": "sun < 100 && time > 30",
-        "message": "阳光不足！种植更多向日葵来获得阳光。",
+        "trigger": "low_health",
+        "condition": "health < 30",
+        "message": "生命值过低！寻找生命药水或休息点。",
         "priority": "high"
       },
       {
-        "trigger": "zombie_close",
-        "condition": "zombie_distance < 3",
-        "message": "僵尸很接近了！确保你有足够的攻击植物。",
+        "trigger": "elite_nearby",
+        "condition": "elite_enemy_in_range",
+        "message": "附近有精英敌人！小心应对。",
         "priority": "urgent"
       },
       {
-        "trigger": "no_defense",
-        "condition": "no_attacking_plants && zombie_spawned",
-        "message": "你需要种植豌豆射手来攻击僵尸！",
-        "priority": "critical"
+        "trigger": "treasure_found",
+        "condition": "treasure_chest_visible",
+        "message": "发现宝箱！但要小心陷阱。",
+        "priority": "medium"
       }
     ],
-    "rewards": {
-      "completion": {
-        "coins": 100,
-        "experience": 500,
-        "unlocks": ["level2", "plant_almanac"]
+    "achievements": [
+      {
+        "id": "first_dungeon_clear",
+        "name": "地牢探索者",
+        "description": "首次通过第一层地牢",
+        "unlocked": false,
+        "reward": {
+          "type": "experience",
+          "value": 200
+        }
       },
-      "perfect": {
-        "coins": 200,
-        "experience": 750,
-        "unlocks": ["snow_pea", "bonus_level_1"]
+      {
+        "id": "treasure_hunter",
+        "name": "寻宝专家",
+        "description": "在一次探索中收集所有宝箱",
+        "unlocked": false,
+        "reward": {
+          "type": "unlock_item",
+          "value": "treasure_map"
+        }
+      },
+      {
+        "id": "flawless_victory",
+        "name": "完美胜利",
+        "description": "不受伤害通过第一层",
+        "unlocked": false,
+        "reward": {
+          "type": "permanent_buff",
+          "value": "health_boost_5"
+        }
       }
-    }
+    ]
   }
 }

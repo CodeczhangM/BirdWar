@@ -1,26 +1,26 @@
 {
   "levelMetadata": {
     "id": "level1",
-    "internalName": "tutorial_grassland",
-    "displayName": "第一关：新手村",
-    "shortDescription": "学习基础操作",
-    "longDescription": "欢迎来到植物大战僵尸的世界！在这个美丽的草地上，你将学习如何种植向日葵收集阳光，使用豌豆射手攻击僵尸，以及建立基本的防御策略。",
+    "internalName": "dungeon_floor1",
+    "displayName": "第一层：遗忘地牢",
+    "shortDescription": "地牢探索的开始",
+    "longDescription": "深入地下城的第一层，这里充满了危险的怪物和未知的宝藏。每次进入都会有不同的布局和敌人，考验你的适应能力和战斗技巧。",
     
     "version": "1.0.0",
-    "createdDate": "2026-01-04",
-    "lastModified": "2026-01-04",
+    "createdDate": "2026-03-19",
+    "lastModified": "2026-03-19",
     "author": "GameDeveloper",
-    "category": "tutorial",
-    "subcategory": "beginner",
+    "category": "roguelike",
+    "subcategory": "dungeon_crawler",
     
     "gameplayInfo": {
       "difficulty": 1,
-      "estimatedPlayTime": 300,
-      "minPlayTime": 180,
-      "maxPlayTime": 600,
-      "replayValue": "high",
+      "estimatedPlayTime": 600,
+      "minPlayTime": 300,
+      "maxPlayTime": 1200,
+      "replayValue": "very_high",
       "skillLevel": "beginner",
-      "ageRating": "E",
+      "ageRating": "T",
       "playerCount": 1
     },
     
@@ -28,134 +28,152 @@
       "engineVersion": "3.8.0",
       "formatVersion": "2.1",
       "compressionEnabled": true,
-      "totalFileSize": "2.5MB",
-      "estimatedMemoryUsage": "45MB",
-      "loadingTime": "3-5s",
+      "totalFileSize": "3.2MB",
+      "estimatedMemoryUsage": "60MB",
+      "loadingTime": "4-6s",
       "supportedPlatforms": ["web", "mobile", "desktop"]
     },
     
     "localization": {
       "defaultLanguage": "zh-CN",
       "supportedLanguages": ["zh-CN", "en-US", "ja-JP"],
-      "textKeys": 47,
-      "audioKeys": 23,
-      "imageKeys": 8
+      "textKeys": 65,
+      "audioKeys": 30,
+      "imageKeys": 15
     }
   },
 
   "gameplayFeatures": {
     "mechanics": [
-      "plant_placement",
-      "sun_collection",
-      "zombie_waves",
+      "procedural_generation",
+      "permadeath",
+      "random_loot",
+      "turn_based_combat",
       "resource_management",
-      "tower_defense"
+      "exploration",
+      "character_progression"
     ],
-    "plantTypes": [
+    "enemyTypes": [
       {
-        "id": "sunflower",
-        "name": "向日葵",
-        "type": "resource_generator",
-        "cost": 50,
-        "cooldown": 7.5,
-        "description": "产生阳光的基础植物"
+        "id": "skeleton_warrior",
+        "name": "骷髅战士",
+        "type": "melee",
+        "health": 50,
+        "speed": 40,
+        "damage": 10,
+        "description": "地牢中最常见的不死生物"
       },
       {
-        "id": "peashooter",
-        "name": "豌豆射手",
-        "type": "projectile_attacker",
-        "cost": 100,
-        "cooldown": 7.5,
+        "id": "goblin_scout",
+        "name": "哥布林侦察兵",
+        "type": "fast_melee",
+        "health": 30,
+        "speed": 60,
+        "damage": 8,
+        "abilities": ["quick_dodge"],
+        "description": "敏捷的小型敌人"
+      },
+      {
+        "id": "slime",
+        "name": "史莱姆",
+        "type": "tank",
+        "health": 40,
+        "speed": 25,
+        "damage": 5,
+        "abilities": ["split_on_death"],
+        "description": "分裂型敌人"
+      },
+      {
+        "id": "dungeon_rat",
+        "name": "地牢老鼠",
+        "type": "swarm",
+        "health": 20,
+        "speed": 80,
+        "damage": 3,
+        "abilities": ["poison_bite"],
+        "description": "快速的群体敌人"
+      },
+      {
+        "id": "skeleton_captain",
+        "name": "骷髅队长",
+        "type": "elite",
+        "health": 150,
+        "speed": 35,
         "damage": 20,
-        "range": 9,
-        "description": "射击豌豆攻击僵尸"
-      },
-      {
-        "id": "wallnut",
-        "name": "坚果墙",
-        "type": "defensive",
-        "cost": 50,
-        "cooldown": 30,
-        "health": 4000,
-        "description": "阻挡僵尸前进的防御植物"
+        "abilities": ["shield_bash", "rally_nearby"],
+        "description": "精英级不死生物"
       }
     ],
-    "zombieTypes": [
+    "itemTypes": [
       {
-        "id": "basic_zombie",
-        "name": "普通僵尸",
-        "health": 80,
-        "speed": 35,
-        "damage": 8,
-        "description": "最基础的僵尸类型"
+        "category": "weapons",
+        "items": ["rusty_sword", "iron_sword", "dagger", "mace"]
       },
       {
-        "id": "cone_zombie",
-        "name": "路锥僵尸",
-        "health": 150,
-        "speed": 30,
-        "damage": 12,
-        "armor": "light",
-        "description": "戴着路锥的强化僵尸"
+        "category": "armor",
+        "items": ["leather_armor", "chain_mail", "shield"]
+      },
+      {
+        "category": "consumables",
+        "items": ["health_potion_small", "health_potion_medium", "mana_potion_small"]
+      },
+      {
+        "category": "special",
+        "items": ["treasure_map", "dungeon_key", "scroll_of_teleport"]
       }
     ],
     "specialFeatures": [
-      "interactive_tutorial",
-      "guided_learning",
-      "contextual_hints",
-      "progressive_difficulty",
-      "achievement_system"
+      "procedural_dungeon_generation",
+      "random_enemy_placement",
+      "dynamic_loot_system",
+      "permadeath_mode",
+      "meta_progression",
+      "achievement_system",
+      "multiple_room_types"
     ]
   },
 
-  "educationalContent": {
-    "learningObjectives": [
+  "roguelikeFeatures": {
+    "coreElements": [
       {
-        "id": "sun_management",
-        "title": "阳光管理",
-        "description": "学会收集和合理使用阳光资源",
-        "category": "resource_management",
-        "difficulty": "basic"
+        "feature": "procedural_generation",
+        "description": "每次游戏都会生成不同的地牢布局",
+        "implementation": "room_based_generation"
       },
       {
-        "id": "plant_placement",
-        "title": "植物布局",
-        "description": "理解不同植物的最佳放置位置",
-        "category": "strategy",
-        "difficulty": "basic"
+        "feature": "permadeath",
+        "description": "角色死亡后需要重新开始",
+        "implementation": "optional_hardcore_mode"
       },
       {
-        "id": "timing_skills",
-        "title": "时机把握",
-        "description": "学会在正确的时间种植植物",
-        "category": "timing",
-        "difficulty": "basic"
+        "feature": "random_encounters",
+        "description": "敌人和宝藏位置随机生成",
+        "implementation": "weighted_spawn_system"
       },
       {
-        "id": "threat_assessment",
-        "title": "威胁评估",
-        "description": "识别不同类型的僵尸威胁",
-        "category": "analysis",
-        "difficulty": "intermediate"
+        "feature": "resource_scarcity",
+        "description": "资源有限，需要谨慎管理",
+        "implementation": "limited_inventory_healing"
       }
     ],
-    "skillProgression": {
-      "beginner": ["sun_collection", "basic_planting"],
-      "intermediate": ["strategic_placement", "resource_optimization"],
-      "advanced": ["multi_lane_defense", "timing_mastery"]
+    "metaProgression": {
+      "enabled": true,
+      "systems": [
+        "permanent_unlocks",
+        "character_upgrades",
+        "starting_bonuses",
+        "achievement_rewards"
+      ]
     },
-    "assessmentCriteria": [
-      {
-        "skill": "sun_management",
-        "metrics": ["sun_collected", "sun_efficiency", "resource_waste"],
-        "passingScore": 70
-      },
-      {
-        "skill": "plant_placement",
-        "metrics": ["placement_accuracy", "strategic_positioning"],
-        "passingScore": 80
-      }
-    ]
+    "difficultyScaling": {
+      "enabled": true,
+      "factors": [
+        "player_level",
+        "floor_depth",
+        "time_elapsed",
+        "enemies_defeated"
+      ]
+    }
   },
 
   "progressionSystem": {
@@ -164,98 +182,94 @@
         "levelId": "level2",
         "conditions": [
           {
-            "type": "objectives_completed",
-            "target": "primary",
+            "type": "reach_exit",
             "required": true
           },
           {
-            "type": "tutorial_completed",
+            "type": "min_enemies_defeated",
+            "value": 5,
             "required": true
           },
           {
-            "type": "min_score",
-            "value": 2000,
+            "type": "min_gold_collected",
+            "value": 50,
             "required": false
           }
         ]
       },
       "bonusContent": {
-        "plantAlmanac": {
-          "condition": "tutorial_completed",
-          "description": "解锁植物图鉴"
+        "eliteWeapon": {
+          "condition": "perfect_clear_achieved",
+          "description": "解锁精英武器"
         },
-        "snowPea": {
-          "condition": "perfect_defense_achieved",
-          "description": "解锁寒冰射手"
+        "bonusDungeon": {
+          "condition": "all_treasures_collected",
+          "description": "解锁奖励地牢"
         }
       }
     },
     "achievements": [
       {
-        "id": "first_sunflower",
-        "name": "阳光收集者",
-        "description": "种植你的第一个向日葵",
+        "id": "first_dungeon_clear",
+        "name": "地牢探索者",
+        "description": "首次通过第一层地牢",
         "type": "milestone",
-        "points": 100,
+        "points": 200,
         "rarity": "common"
       },
       {
-        "id": "first_peashooter",
-        "name": "植物战士",
-        "description": "种植你的第一个豌豆射手",
-        "type": "milestone",
-        "points": 150,
-        "rarity": "common"
+        "id": "treasure_hunter",
+        "name": "寻宝专家",
+        "description": "在一次探索中收集所有宝箱",
+        "type": "collection",
+        "points": 300,
+        "rarity": "uncommon"
       },
       {
-        "id": "tutorial_master",
-        "name": "新手毕业",
-        "description": "完成所有教程步骤",
-        "type": "completion",
-        "points": 500,
-        "rarity": "uncommon",
-        "reward": {
-          "type": "plant_unlock",
-          "value": "cherry_bomb"
-        }
-      },
-      {
-        "id": "perfect_defense",
-        "name": "完美防御",
-        "description": "不让任何僵尸进入房子",
+        "id": "flawless_victory",
+        "name": "完美胜利",
+        "description": "不受伤害通过第一层",
         "type": "performance",
-        "points": 750,
+        "points": 500,
         "rarity": "rare",
         "reward": {
-          "type": "plant_unlock",
-          "value": "snow_pea"
+          "type": "permanent_buff",
+          "value": "health_boost_5"
         }
       },
       {
-        "id": "sun_collector",
-        "name": "阳光大师",
-        "description": "在一关中收集300点阳光",
-        "type": "accumulation",
-        "points": 300,
-        "rarity": "common"
+        "id": "speed_runner",
+        "name": "速通大师",
+        "description": "5分钟内通过第一层",
+        "type": "time_challenge",
+        "points": 400,
+        "rarity": "rare"
+      },
+      {
+        "id": "elite_slayer",
+        "name": "精英猎手",
+        "description": "击败骷髅队长",
+        "type": "combat",
+        "points": 350,
+        "rarity": "uncommon"
       }
     ],
     "rewards": {
       "completion": {
         "experience": 500,
-        "coins": 100,
-        "unlocks": ["level2", "plant_almanac"]
+        "gold": 100,
+        "unlocks": ["level2", "weapon_shop"]
       },
       "perfect": {
         "experience": 750,
-        "coins": 200,
-        "unlocks": ["snow_pea", "bonus_level_1"]
+        "gold": 200,
+        "unlocks": ["elite_weapon", "bonus_dungeon_1"]
       },
       "speedRun": {
-        "condition": "completion_time < 180",
-        "experience": 250,
-        "coins": 50,
-        "title": "速度之王"
+        "condition": "completion_time < 300",
+        "experience": 300,
+        "gold": 75,
+        "title": "速通之王"
       }
     }
   },
@@ -265,26 +279,28 @@
       "level_start",
       "level_complete",
       "level_failed",
-      "plant_placed",
-      "sun_collected",
-      "zombie_defeated",
-      "tutorial_step_complete",
+      "player_death",
+      "enemy_defeated",
+      "treasure_collected",
+      "item_equipped",
+      "room_entered",
       "achievement_unlocked"
     ],
     "performanceMetrics": [
       "completion_time",
-      "sun_efficiency",
-      "plant_survival_rate",
-      "zombie_kill_count",
-      "perfect_waves",
-      "tutorial_completion_rate"
+      "enemies_defeated",
+      "damage_taken",
+      "gold_collected",
+      "rooms_explored",
+      "deaths_count",
+      "items_found"
     ],
     "playerBehavior": [
-      "plant_placement_patterns",
+      "combat_strategy",
       "resource_usage_patterns",
-      "error_frequency",
-      "hint_usage",
-      "replay_frequency"
+      "exploration_thoroughness",
+      "risk_taking_level",
+      "item_preference"
     ]
   },
 
@@ -293,25 +309,29 @@
       "colorBlindSupport": true,
       "highContrastMode": true,
       "fontSizeOptions": ["small", "normal", "large"],
-      "visualIndicators": true
+      "visualIndicators": true,
+      "enemyHealthBars": true
     },
     "audioAccessibility": {
       "subtitles": true,
       "audioDescriptions": true,
       "soundVisualization": true,
-      "volumeControls": true
+      "volumeControls": true,
+      "spatialAudioCues": true
     },
     "motorAccessibility": {
       "alternativeInputs": true,
       "adjustableTimings": true,
       "pauseAnywhere": true,
-      "simplifiedControls": true
+      "simplifiedControls": true,
+      "autoAim": true
     },
     "cognitiveAccessibility": {
       "difficultyAdjustment": true,
-      "extendedTutorials": true,
+      "tutorialMode": true,
       "contextualHelp": true,
-      "progressSaving": true
+      "progressSaving": true,
+      "minimapSupport": true
     }
   },
 
@@ -321,20 +341,21 @@
       "performanceTesting": "passed",
       "accessibilityTesting": "passed",
       "localizationTesting": "pending",
-      "userAcceptanceTesting": "passed"
+      "userAcceptanceTesting": "passed",
+      "balanceTesting": "passed"
     },
     "knownIssues": [],
     "performanceBenchmarks": {
-      "averageLoadTime": "3.2s",
-      "memoryUsage": "42MB",
+      "averageLoadTime": "4.5s",
+      "memoryUsage": "58MB",
       "frameRate": "60fps",
-      "batteryImpact": "low"
+      "batteryImpact": "medium"
     },
     "compatibility": {
       "minSystemRequirements": {
-        "ram": "2GB",
-        "storage": "50MB",
-        "processor": "1GHz",
+        "ram": "4GB",
+        "storage": "100MB",
+        "processor": "1.5GHz",
         "graphics": "integrated"
       },
       "testedDevices": [
@@ -348,43 +369,45 @@
   },
 
   "contentRating": {
-    "esrbRating": "E",
-    "pegiRating": "3",
+    "esrbRating": "T",
+    "pegiRating": "12",
     "contentDescriptors": [
-      "Mild Cartoon Violence",
-      "Simulated Gambling"
+      "Fantasy Violence",
+      "Mild Blood",
+      "In-Game Purchases"
     ],
     "parentalGuidance": {
-      "recommendedAge": "6+",
-      "educationalValue": "high",
-      "violenceLevel": "minimal",
+      "recommendedAge": "12+",
+      "educationalValue": "medium",
+      "violenceLevel": "mild",
       "socialInteraction": "none"
     }
   },
 
   "marketingInfo": {
     "tags": [
-      "tutorial",
-      "beginner-friendly",
-      "educational",
-      "strategy",
-      "tower-defense",
-      "plants-vs-zombies",
-      "family-friendly"
+      "roguelike",
+      "dungeon-crawler",
+      "procedural-generation",
+      "permadeath",
+      "action-rpg",
+      "indie",
+      "replayable"
     ],
     "screenshots": [
-      "screenshots/level1_start.png",
-      "screenshots/level1_tutorial.png",
+      "screenshots/level1_dungeon.png",
       "screenshots/level1_combat.png",
-      "screenshots/level1_victory.png"
+      "screenshots/level1_treasure.png",
+      "screenshots/level1_boss.png"
     ],
-    "trailer": "videos/level1_trailer.mp4",
+    "trailer": "videos/level1_gameplay.mp4",
     "keyFeatures": [
-      "Interactive tutorial system",
-      "Guided learning experience",
-      "Beautiful grassland environment",
-      "Progressive difficulty curve",
-      "Achievement system"
+      "Procedurally generated dungeons",
+      "Challenging roguelike gameplay",
+      "Multiple enemy types and strategies",
+      "Random loot and equipment system",
+      "Meta-progression system",
+      "High replayability"
     ]
   }
 }

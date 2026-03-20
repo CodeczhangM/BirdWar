@@ -23,14 +23,24 @@
       }
     ],
     "_active": true,
-    "_components": [],
+    "_components": [
+      {
+        "__id__": 8
+      },
+      {
+        "__id__": 10
+      },
+      {
+        "__id__": 12
+      }
+    ],
     "_prefab": {
-      "__id__": 8
+      "__id__": 14
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -1.075,
-      "y": 25.594,
+      "x": 5.587,
+      "y": -66.061,
       "z": 0
     },
     "_lrot": {
@@ -161,7 +171,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "defaultSkin": "default",
-    "defaultAnimation": "Dead",
+    "defaultAnimation": "<None>",
     "_premultipliedAlpha": true,
     "_timeScale": 1,
     "_preCacheMode": 0,
@@ -193,6 +203,114 @@
     "nestedPrefabInstanceRoots": null
   },
   {
+    "__type__": "52627jukppBZ7KohynVxVoQ",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 9
+    },
+    "dirLabel": null,
+    "skillLabel": null,
+    "platformLabel": null,
+    "skeleton": {
+      "__id__": 5
+    },
+    "moveSpeed": 200,
+    "autoFacing": true,
+    "facingLerpSpeed": 0,
+    "skill1Animation": "attack",
+    "skill2Animation": "dash",
+    "skill3Animation": "defend",
+    "skill4Animation": "ultimate",
+    "skill5Animation": "skill5",
+    "skill6Animation": "skill6",
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "82R7sIGzZGWq4WSDciqVOH"
+  },
+  {
+    "__type__": "43a97U9AMxJxKZ/ETZho8Oj",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 11
+    },
+    "entityType": 0,
+    "faction": 3,
+    "maxHealth": 100,
+    "currentHealth": 0,
+    "attackPower": 10,
+    "defense": 0,
+    "criticalRate": 0,
+    "criticalMultiplier": 2,
+    "invincible": false,
+    "useCustomRule": false,
+    "customCanCollideWith": 0,
+    "customCanDamage": 0,
+    "customCanBeDamagedBy": 0,
+    "enableDebugLog": true,
+    "enableDebugDraw": true,
+    "debugDrawColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 85,
+      "b": 236,
+      "a": 128
+    },
+    "debugDrawLineWidth": 5,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "23pdQ0sKlC/oFALfMb10Jk"
+  },
+  {
+    "__type__": "cc.BoxCollider2D",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 13
+    },
+    "tag": 0,
+    "_group": 1,
+    "_density": 1,
+    "_sensor": false,
+    "_friction": 0.2,
+    "_restitution": 0,
+    "_offset": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_size": {
+      "__type__": "cc.Size",
+      "width": 1,
+      "height": 1
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "1dHtc1IiJDTpcLiptGEyHH"
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -201,6 +319,6 @@
       "__id__": 0
     },
     "fileId": "cdzutmvuBFh426wPTeJ62g",
-    "targetOverrides": null
+    "targetOverrides": []
   }
 ]

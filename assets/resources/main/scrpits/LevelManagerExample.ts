@@ -1,561 +1,261 @@
-import { _decorator, Component, Node, Button, Label } from 'cc';
-import { LevelManager, LevelData } from './LevelManager';
-import { GridManager } from './GridManager';
-import { EventManagerInstance, EventData } from './EventManager';
+import { _decorator, Component, Label, resources, JsonAsset } from 'cc';
+import { ProceduralDungeonGenerator, Dungeon, RoomType } from './ProceduralDungeonGenerator';
+import { EnemySpawner, SpawnMode } from './EnemySpawner';
 import { Log } from './Logger';
 
 const { ccclass, property } = _decorator;
 
 /**
- * LevelManager使用示例
- * 演示如何使用LevelManager加载和管理关卡
+ * 关卡管理器示例
+ * 演示如何加载关卡配置并生成地牢
  */
 @ccclass('LevelManagerExample')
 export class LevelManagerExample extends Component {
-    
-    @property({ type: LevelManager, tooltip: '关卡管理器' })
-    public levelManager: LevelManager = null;
 
-    @property({ type: GridManager, tooltip: '网格管理器' })
-    public gridManager: GridManager = null;
+    @property({ type: ProceduralDungeonGenerator, tooltip: '地牢生成器' })
+    public dungeonGenerator: ProceduralDungeonGenerator = null;
 
-    @property({ type: [Button], tooltip: '测试按钮列表' })
-    public testButtons: Button[] = [];
+    @property({ type: EnemySpawner, tooltip: '敌人生成器' })
+    public enemySpawner: EnemySpawner = null;
 
-    @property({ type: Label, tooltip: '关卡信息显示标签' })
-    public levelInfoLabel: Label = null;
-
-    @property({ type: Label, tooltip: '状态信息显示标签' })
+    @property({ type: Label, tooltip: '状态显示标签' })
     public statusLabel: Label = null;
 
-    @property({ type: Node, tooltip: '关卡UI容器' })
-    public levelUIContainer: Node = null;
+    @property({ tooltip: '关卡ID' })
+    public levelId: string = 'level1';
 
     private readonly MODULE_NAME = 'LevelManagerExample';
-    private _availableLevels: string[] = ['level_1_1', 'level_1_2'];
-    private _currentLevelIndex: number = 0;
+    private _levelConfig: any = null;
+    private _currentDungeon: Dungeon = null;
 
-    start() {
-        this.setupEventListeners();
-        this.setupButtons();
-        this.runExamples();
-    }
+    // ========== 生命周期 ==========
 
-    onDestroy() {
-        EventManagerInstance.clearTargetListeners(this);
-    }
+    async start() {
+        Log.log(this.MODULE_NAME, '开始加载关卡...');
 
-    /**
-     * 设置事件监听器
-     */
-    private setupEventListeners() {
-        // 监听关卡加载事件
-        EventManagerInstance.on('level-load-start', (data: EventData) => {
-            this.onLevelLoadStart(data);
-        }, this);
+        // 1. 加载关卡配置
+        await this.loadLevel(this.levelId);
 
-        EventManagerInstance.on('level-load-complete', (data: EventData) => {
-            this.onLevelLoadComplete(data);
-        }, this);
-
-        EventManagerInstance.on('level-load-failed', (data: EventData) => {
-            this.onLevelLoadFailed(data);
-        }, this);
-
-        EventManagerInstance.on('level-reset', (data: EventData) => {
-            this.onLevelReset(data);
-        }, this);
-
-        // 监听网格事件
-        EventManagerInstance.on('grid-cell-selected', (data: EventData) => {
-            this.onGridCellSelected(data);
-        }, this);
-    }
-
-    /**
-     * 设置按钮事件
-     */
-    private setupButtons() {
-        if (this.testButtons.length >= 8) {
-            // 加载关卡1-1按钮
-            this.testButtons[0].node.on(Button.EventType.CLICK, () => {
-                this.loadLevel('level_1_1');
-            });
-
-            // 加载关卡1-2按钮
-            this.testButtons[1].node.on(Button.EventType.CLICK, () => {
-                this.loadLevel('level_1_2');
-            });
-
-            // 下一关按钮
-            this.testButtons[2].node.on(Button.EventType.CLICK, () => {
-                this.loadNextLevel();
-            });
-
-            // 上一关按钮
-            this.testButtons[3].node.on(Button.EventType.CLICK, () => {
-                this.loadPreviousLevel();
-            });
-
-            // 重新加载关卡按钮
-            this.testButtons[4].node.on(Button.EventType.CLICK, () => {
-                this.reloadCurrentLevel();
-            });
-
-            // 重置关卡按钮
-            this.testButtons[5].node.on(Button.EventType.CLICK, () => {
-                this.resetLevel();
-            });
-
-            // 显示关卡信息按钮
-            this.testButtons[6].node.on(Button.EventType.CLICK, () => {
-                this.showLevelInfo();
-            });
-
-            // 调试信息按钮
-            this.testButtons[7].node.on(Button.EventType.CLICK, () => {
-                this.showDebugInfo();
-            });
-        }
-    }
-
-    /**
-     * 运行示例
-     */
-    private async runExamples() {
-        Log.log(this.MODULE_NAME, '=== LevelManager 使用示例开始 ===');
-
-        if (!this.levelManager) {
-            Log.error(this.MODULE_NAME, 'LevelManager未设置');
-            return;
+        // 2. 生成地牢
+        if (this._levelConfig) {
+            this.generateDungeon();
         }
 
-        // 等待初始化完成
-        await this.delay(1000);
-
-        // 示例1: 预加载关卡
-        await this.example1_PreloadLevels();
-
-        await this.delay(1000);
-
-        // 示例2: 加载关卡
-        await this.example2_LoadLevel();
-
-        await this.delay(1000);
-
-        // 示例3: 关卡信息获取
-        this.example3_LevelInfo();
-
-        await this.delay(1000);
-
-        // 示例4: 缓存管理
-        this.example4_CacheManagement();
-
-        this.updateStatusLabel('示例演示完成，可以手动测试各种功能');
-    }
-
-    /**
-     * 示例1: 预加载关卡
-     */
-    private async example1_PreloadLevels() {
-        Log.log(this.MODULE_NAME, '--- 示例1: 预加载关卡 ---');
-
-        for (const levelId of this._availableLevels) {
-            const success = await this.levelManager.preloadLevel(levelId);
-            Log.log(this.MODULE_NAME, `预加载关卡 ${levelId}: ${success ? '成功' : '失败'}`);
+        // 3. 配置敌人生成器
+        if (this.enemySpawner && this._levelConfig) {
+            this.setupEnemySpawner();
         }
 
-        const cacheStatus = this.levelManager.getCacheStatus();
-        Log.log(this.MODULE_NAME, '缓存状态:', cacheStatus);
+        Log.log(this.MODULE_NAME, '关卡加载完成');
     }
 
-    /**
-     * 示例2: 加载关卡
-     */
-    private async example2_LoadLevel() {
-        Log.log(this.MODULE_NAME, '--- 示例2: 加载关卡 ---');
-
-        const levelId = 'level_1_1';
-        const success = await this.levelManager.loadLevel(levelId);
-        
-        if (success) {
-            Log.log(this.MODULE_NAME, `关卡 ${levelId} 加载成功`);
-            this.displayLevelData();
-        } else {
-            Log.error(this.MODULE_NAME, `关卡 ${levelId} 加载失败`);
-        }
+    update(_dt: number) {
+        this._updateUI();
     }
 
-    /**
-     * 示例3: 关卡信息获取
-     */
-    private example3_LevelInfo() {
-        Log.log(this.MODULE_NAME, '--- 示例3: 关卡信息获取 ---');
+    // ========== 关卡加载 ==========
 
-        const levelInfo = this.levelManager.getLevelInfo();
-        if (levelInfo) {
-            Log.log(this.MODULE_NAME, '当前关卡信息:', levelInfo);
-        }
+    /** 加载关卡配置 */
+    public async loadLevel(levelId: string): Promise<boolean> {
+        try {
+            const configPath = `gameleveldata/${levelId}/${levelId}_config`;
+            
+            Log.log(this.MODULE_NAME, `加载关卡配置: ${configPath}`);
 
-        // 获取其他关卡信息
-        for (const levelId of this._availableLevels) {
-            const info = this.levelManager.getLevelInfo(levelId);
-            if (info) {
-                Log.log(this.MODULE_NAME, `关卡 ${levelId} 信息:`, info);
+            // 加载配置文件
+            const configAsset = await this._loadJsonAsset(configPath);
+            if (!configAsset) {
+                Log.error(this.MODULE_NAME, `加载关卡配置失败: ${configPath}`);
+                return false;
             }
+
+            this._levelConfig = configAsset.json;
+            
+            Log.log(this.MODULE_NAME, `关卡配置加载成功: ${this._levelConfig.name}`);
+            Log.log(this.MODULE_NAME, `难度: ${this._levelConfig.difficulty}, 标签: ${this._levelConfig.tags.join(', ')}`);
+
+            return true;
+        } catch (error) {
+            Log.error(this.MODULE_NAME, '加载关卡失败', error);
+            return false;
         }
     }
 
-    /**
-     * 示例4: 缓存管理
-     */
-    private example4_CacheManagement() {
-        Log.log(this.MODULE_NAME, '--- 示例4: 缓存管理 ---');
-
-        const cacheStatus = this.levelManager.getCacheStatus();
-        Log.log(this.MODULE_NAME, '当前缓存状态:', cacheStatus);
-
-        // 清除特定关卡缓存
-        this.levelManager.clearLevelCache('level_1_2');
-        Log.log(this.MODULE_NAME, '清除level_1_2缓存后的状态:', this.levelManager.getCacheStatus());
+    private _loadJsonAsset(path: string): Promise<JsonAsset> {
+        return new Promise((resolve, reject) => {
+            resources.load(path, JsonAsset, (err, asset) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(asset);
+            });
+        });
     }
 
-    // ========== 事件处理方法 ==========
+    // ========== 地牢生成 ==========
 
-    /**
-     * 关卡加载开始
-     */
-    private onLevelLoadStart(data: EventData) {
-        const levelId = data.levelId as string;
-        Log.log(this.MODULE_NAME, `关卡加载开始: ${levelId}`);
-        this.updateStatusLabel(`正在加载关卡: ${levelId}...`);
-    }
-
-    /**
-     * 关卡加载完成
-     */
-    private onLevelLoadComplete(data: EventData) {
-        const levelId = data.levelId as string;
-        const levelData = data.levelData as LevelData;
-        
-        Log.log(this.MODULE_NAME, `关卡加载完成: ${levelId}`);
-        this.updateStatusLabel(`关卡加载完成: ${levelData.name}`);
-        
-        // 更新UI显示
-        this.displayLevelData();
-        this.updateLevelUI(levelData);
-    }
-
-    /**
-     * 关卡加载失败
-     */
-    private onLevelLoadFailed(data: EventData) {
-        const levelId = data.levelId as string;
-        const error = data.error as string;
-        
-        Log.error(this.MODULE_NAME, `关卡加载失败: ${levelId}, 错误: ${error}`);
-        this.updateStatusLabel(`关卡加载失败: ${levelId} - ${error}`);
-    }
-
-    /**
-     * 关卡重置
-     */
-    private onLevelReset(data: EventData) {
-        const levelId = data.levelId as string;
-        Log.log(this.MODULE_NAME, `关卡重置: ${levelId}`);
-        this.updateStatusLabel(`关卡已重置: ${levelId}`);
-    }
-
-    /**
-     * 网格单元格选择
-     */
-    private onGridCellSelected(data: EventData) {
-        const coord = data.coordinate;
-        const cell = data.cell;
-        
-        if (cell && cell.data) {
-            Log.debug(this.MODULE_NAME, `选择了特殊单元格 (${coord.row}, ${coord.col}):`, cell.data);
-        }
-    }
-
-    // ========== UI更新方法 ==========
-
-    /**
-     * 显示关卡数据
-     */
-    private displayLevelData() {
-        const levelData = this.levelManager.getCurrentLevelData();
-        if (!levelData) {
-            this.updateLevelInfoLabel('没有加载的关卡');
+    /** 生成地牢 */
+    public generateDungeon() {
+        if (!this.dungeonGenerator) {
+            Log.error(this.MODULE_NAME, '地牢生成器未设置');
             return;
         }
 
-        const info = [
-            `关卡: ${levelData.name}`,
-            `ID: ${levelData.id}`,
-            `难度: ${levelData.difficulty}/10`,
-            `描述: ${levelData.description}`,
-            `网格: ${levelData.grid.rows}x${levelData.grid.cols}`,
-            `环境: ${levelData.environment?.timeOfDay || '未知'} - ${levelData.environment?.weather || '未知'}`,
-            `敌人波次: ${levelData.enemies?.waves?.length || 0}`,
-            `可用植物: ${levelData.resources?.availablePlants?.length || 0}种`,
-            `特殊单元格: ${levelData.specialCells?.length || 0}个`,
-            `预设对象: ${levelData.presetObjects?.length || 0}个`
-        ].join('\n');
+        if (!this._levelConfig) {
+            Log.error(this.MODULE_NAME, '关卡配置未加载');
+            return;
+        }
 
-        this.updateLevelInfoLabel(info);
+        // 从配置中读取程序生成参数
+        const procGen = this._levelConfig.proceduralGeneration;
+        if (!procGen || !procGen.enabled) {
+            Log.warn(this.MODULE_NAME, '程序生成未启用');
+            return;
+        }
+
+        // 配置生成器
+        this.dungeonGenerator.minRooms = procGen.roomSize?.min || 8;
+        this.dungeonGenerator.maxRooms = procGen.roomSize?.max || 15;
+        this.dungeonGenerator.minRoomSize = procGen.roomSize?.min || 4;
+        this.dungeonGenerator.maxRoomSize = procGen.roomSize?.max || 10;
+
+        // 生成地牢
+        this._currentDungeon = this.dungeonGenerator.generateDungeon({
+            roomTypes: procGen.roomTypes
+        });
+
+        Log.log(this.MODULE_NAME, `地牢生成完成:`);
+        Log.log(this.MODULE_NAME, `  - 房间数: ${this._currentDungeon.rooms.length}`);
+        Log.log(this.MODULE_NAME, `  - 起点: 房间 ${this._currentDungeon.startRoom.id}`);
+        Log.log(this.MODULE_NAME, `  - 终点: 房间 ${this._currentDungeon.exitRoom.id}`);
+
+        // 打印房间类型统计
+        this._printRoomStats();
     }
 
-    /**
-     * 更新关卡UI
-     */
-    private updateLevelUI(levelData: LevelData) {
-        // 这里可以根据关卡数据更新UI元素
-        // 比如显示可用植物、目标、资源等
+    private _printRoomStats() {
+        const stats = new Map<RoomType, number>();
         
-        if (this.levelUIContainer) {
-            // 清除旧的UI元素
-            this.levelUIContainer.removeAllChildren();
-            
-            // 创建新的UI元素
-            this.createObjectivesUI(levelData.objectives);
-            this.createResourcesUI(levelData.resources);
-            this.createAvailablePlantsUI(levelData.resources?.availablePlants || []);
+        for (const room of this._currentDungeon.rooms) {
+            const count = stats.get(room.type) || 0;
+            stats.set(room.type, count + 1);
+        }
+
+        Log.log(this.MODULE_NAME, '房间类型统计:');
+        for (const [type, count] of stats) {
+            Log.log(this.MODULE_NAME, `  - ${type}: ${count}`);
         }
     }
 
-    /**
-     * 创建目标UI
-     */
-    private createObjectivesUI(objectives: any) {
-        if (!objectives) return;
+    // ========== 敌人生成配置 ==========
 
-        Log.debug(this.MODULE_NAME, '创建目标UI:', objectives);
-        // 实际实现中应该创建UI节点显示目标信息
-    }
+    /** 配置敌人生成器 */
+    public setupEnemySpawner() {
+        if (!this.enemySpawner || !this._levelConfig) return;
 
-    /**
-     * 创建资源UI
-     */
-    private createResourcesUI(resources: any) {
-        if (!resources) return;
-
-        Log.debug(this.MODULE_NAME, '创建资源UI:', resources);
-        // 实际实现中应该创建UI节点显示资源信息
-    }
-
-    /**
-     * 创建可用植物UI
-     */
-    private createAvailablePlantsUI(plants: string[]) {
-        Log.debug(this.MODULE_NAME, '创建植物选择UI:', plants);
-        // 实际实现中应该创建植物选择卡片
-    }
-
-    /**
-     * 更新关卡信息标签
-     */
-    private updateLevelInfoLabel(text: string) {
-        if (this.levelInfoLabel) {
-            this.levelInfoLabel.string = text;
+        const enemyConfig = this._levelConfig.enemies;
+        if (!enemyConfig || !enemyConfig.spawnRules) {
+            Log.warn(this.MODULE_NAME, '敌人配置未找到');
+            return;
         }
-        Log.debug(this.MODULE_NAME, '关卡信息:', text);
-    }
 
-    /**
-     * 更新状态标签
-     */
-    private updateStatusLabel(text: string) {
-        if (this.statusLabel) {
-            this.statusLabel.string = text;
+        const rules = enemyConfig.spawnRules;
+
+        // 配置生成模式
+        if (rules.mode === 'procedural') {
+            this.enemySpawner.spawnMode = SpawnMode.AUTO_COUNT;
+            this.enemySpawner.maintainEnemyCount = rules.maxActiveEnemies || 8;
         }
-        Log.log(this.MODULE_NAME, text);
+
+        // 配置对象池
+        this.enemySpawner.useObjectPool = true;
+        this.enemySpawner.poolInitialCapacity = rules.maxActiveEnemies || 10;
+        this.enemySpawner.poolMaxCapacity = rules.maxEnemies || 50;
+
+        Log.log(this.MODULE_NAME, '敌人生成器配置完成');
+        Log.log(this.MODULE_NAME, `  - 模式: ${SpawnMode[this.enemySpawner.spawnMode]}`);
+        Log.log(this.MODULE_NAME, `  - 最大敌人数: ${rules.maxEnemies}`);
+        Log.log(this.MODULE_NAME, `  - 同时存在: ${rules.maxActiveEnemies}`);
     }
 
-    // ========== 关卡操作方法 ==========
+    // ========== UI 更新 ==========
 
-    /**
-     * 加载指定关卡
-     */
-    private async loadLevel(levelId: string) {
-        const success = await this.levelManager.loadLevel(levelId);
-        if (success) {
-            this._currentLevelIndex = this._availableLevels.indexOf(levelId);
+    private _updateUI() {
+        if (!this.statusLabel) return;
+
+        let status = `关卡: ${this._levelConfig?.name || '未加载'}\n`;
+
+        if (this._currentDungeon) {
+            status += `地牢: ${this._currentDungeon.rooms.length} 个房间\n`;
+            status += `尺寸: ${this._currentDungeon.width}x${this._currentDungeon.height}\n`;
         }
-    }
 
-    /**
-     * 加载下一关
-     */
-    private async loadNextLevel() {
-        const nextIndex = (this._currentLevelIndex + 1) % this._availableLevels.length;
-        const nextLevelId = this._availableLevels[nextIndex];
-        await this.loadLevel(nextLevelId);
-    }
-
-    /**
-     * 加载上一关
-     */
-    private async loadPreviousLevel() {
-        const prevIndex = (this._currentLevelIndex - 1 + this._availableLevels.length) % this._availableLevels.length;
-        const prevLevelId = this._availableLevels[prevIndex];
-        await this.loadLevel(prevLevelId);
-    }
-
-    /**
-     * 重新加载当前关卡
-     */
-    private async reloadCurrentLevel() {
-        const success = await this.levelManager.reloadCurrentLevel();
-        if (success) {
-            this.updateStatusLabel('关卡重新加载完成');
-        } else {
-            this.updateStatusLabel('关卡重新加载失败');
+        if (this.enemySpawner) {
+            status += `敌人: ${this.enemySpawner.getAliveEnemyCount()}`;
         }
+
+        this.statusLabel.string = status;
     }
 
-    /**
-     * 重置关卡
-     */
-    private resetLevel() {
-        this.levelManager.resetLevel();
+    // ========== 公共接口 ==========
+
+    /** 获取当前地牢 */
+    public getCurrentDungeon(): Dungeon {
+        return this._currentDungeon;
     }
 
-    /**
-     * 显示关卡信息
-     */
-    private showLevelInfo() {
-        const levelData = this.levelManager.getCurrentLevelData();
-        if (levelData) {
-            Log.log(this.MODULE_NAME, '=== 详细关卡信息 ===');
-            Log.log(this.MODULE_NAME, '基础信息:', {
-                id: levelData.id,
-                name: levelData.name,
-                description: levelData.description,
-                difficulty: levelData.difficulty,
-                author: levelData.author,
-                tags: levelData.tags
-            });
-            
-            Log.log(this.MODULE_NAME, '网格配置:', levelData.grid);
-            Log.log(this.MODULE_NAME, '环境配置:', levelData.environment);
-            Log.log(this.MODULE_NAME, '背景配置:', levelData.background);
-            Log.log(this.MODULE_NAME, '目标配置:', levelData.objectives);
-            Log.log(this.MODULE_NAME, '敌人配置:', levelData.enemies);
-            Log.log(this.MODULE_NAME, '资源配置:', levelData.resources);
-            Log.log(this.MODULE_NAME, '自定义数据:', levelData.customData);
-        } else {
-            Log.warn(this.MODULE_NAME, '没有当前关卡数据');
-        }
+    /** 获取关卡配置 */
+    public getLevelConfig(): any {
+        return this._levelConfig;
     }
 
-    /**
-     * 显示调试信息
-     */
-    private showDebugInfo() {
-        this.levelManager.debugInfo();
+    /** 重新生成地牢 */
+    public regenerateDungeon() {
+        if (!this.dungeonGenerator) return;
         
-        if (this.gridManager) {
-            this.gridManager.debugInfo();
+        this._currentDungeon = this.dungeonGenerator.regenerate();
+        Log.log(this.MODULE_NAME, '地牢已重新生成');
+    }
+
+    /** 开始游戏 */
+    public startGame() {
+        if (!this._currentDungeon) {
+            Log.error(this.MODULE_NAME, '地牢未生成');
+            return;
+        }
+
+        // 开始敌人生成
+        if (this.enemySpawner) {
+            this.enemySpawner.startAutoSpawn();
+            Log.log(this.MODULE_NAME, '游戏开始');
         }
     }
 
-    /**
-     * 延迟函数
-     */
-    private delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    /** 停止游戏 */
+    public stopGame() {
+        if (this.enemySpawner) {
+            this.enemySpawner.stopAutoSpawn();
+            this.enemySpawner.clearAllEnemies();
+            Log.log(this.MODULE_NAME, '游戏停止');
+        }
     }
 
-    // ========== 公共接口方法 ==========
-
-    /**
-     * 手动加载关卡1-1
-     */
-    public manualLoadLevel1_1() {
-        this.loadLevel('level_1_1');
-    }
-
-    /**
-     * 手动加载关卡1-2
-     */
-    public manualLoadLevel1_2() {
-        this.loadLevel('level_1_2');
-    }
-
-    /**
-     * 手动加载下一关
-     */
-    public manualLoadNext() {
-        this.loadNextLevel();
-    }
-
-    /**
-     * 手动加载上一关
-     */
-    public manualLoadPrevious() {
-        this.loadPreviousLevel();
-    }
-
-    /**
-     * 手动重新加载
-     */
-    public manualReload() {
-        this.reloadCurrentLevel();
-    }
-
-    /**
-     * 手动重置
-     */
-    public manualReset() {
-        this.resetLevel();
-    }
-
-    /**
-     * 手动显示信息
-     */
-    public manualShowInfo() {
-        this.showLevelInfo();
-    }
-
-    /**
-     * 手动显示调试信息
-     */
-    public manualShowDebug() {
-        this.showDebugInfo();
-    }
-
-    /**
-     * 获取当前关卡的自定义数据
-     */
-    public getCurrentLevelCustomData(): any {
-        const levelData = this.levelManager.getCurrentLevelData();
-        return levelData ? levelData.customData : null;
-    }
-
-    /**
-     * 检查关卡解锁条件
-     */
-    public checkUnlockConditions(): boolean {
-        const customData = this.getCurrentLevelCustomData();
-        if (!customData || !customData.unlockConditions) {
-            return true;
+    /** 打印地牢信息 */
+    public debugDungeon() {
+        if (!this._currentDungeon) {
+            Log.log(this.MODULE_NAME, '地牢未生成');
+            return;
         }
 
-        const conditions = customData.unlockConditions.requirements;
-        for (const condition of conditions) {
-            // 这里应该检查具体的解锁条件
-            Log.debug(this.MODULE_NAME, '检查解锁条件:', condition);
+        Log.log(this.MODULE_NAME, '=== 地牢信息 ===');
+        Log.log(this.MODULE_NAME, `尺寸: ${this._currentDungeon.width}x${this._currentDungeon.height}`);
+        Log.log(this.MODULE_NAME, `房间数: ${this._currentDungeon.rooms.length}`);
+        
+        for (const room of this._currentDungeon.rooms) {
+            Log.log(this.MODULE_NAME, 
+                `房间 ${room.id}: ${room.type} at (${room.x},${room.y}) ${room.width}x${room.height}, 连接: ${room.connections.length}`
+            );
         }
-
-        return true; // 简化实现，总是返回true
-    }
-
-    /**
-     * 获取关卡成就列表
-     */
-    public getLevelAchievements(): any[] {
-        const customData = this.getCurrentLevelCustomData();
-        return customData ? (customData.achievements || []) : [];
     }
 }

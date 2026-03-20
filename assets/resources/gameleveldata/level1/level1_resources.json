@@ -2,94 +2,50 @@
   "levelId": "level1",
   "resourceManifest": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-04",
-    "totalSize": "2.5MB",
+    "lastUpdated": "2026-03-19",
+    "totalSize": "3.2MB",
     "compressionEnabled": true
   },
 
   "textures": {
     "backgrounds": [
       {
-        "id": "grassland_morning",
-        "path": "textures/backgrounds/grassland_morning",
+        "id": "dungeon_floor1",
+        "path": "textures/backgrounds/dungeon_floor1",
         "format": "png",
         "size": "1920x1080",
         "compressed": true,
         "preload": true
       },
       {
-        "id": "sky_clear",
-        "path": "textures/backgrounds/sky_clear",
+        "id": "dungeon_back_wall",
+        "path": "textures/backgrounds/dungeon_back_wall",
         "format": "png",
         "size": "1920x1080",
         "compressed": true,
         "preload": true
       },
       {
-        "id": "clouds_white",
-        "path": "textures/backgrounds/clouds_white",
+        "id": "dungeon_pillars",
+        "path": "textures/backgrounds/dungeon_pillars",
         "format": "png",
         "size": "1920x1080",
         "compressed": true,
         "preload": false
       },
       {
-        "id": "hills_distant",
-        "path": "textures/backgrounds/hills_distant",
-        "format": "png",
-        "size": "1920x1080",
-        "compressed": true,
-        "preload": false
-      },
-      {
-        "id": "trees_background",
-        "path": "textures/backgrounds/trees_background",
+        "id": "dungeon_chains",
+        "path": "textures/backgrounds/dungeon_chains",
         "format": "png",
         "size": "1920x1080",
         "compressed": true,
         "preload": false
       }
     ],
-    "plants": [
+    "characters": [
       {
-        "id": "sunflower_idle",
-        "path": "textures/plants/sunflower/idle",
-        "format": "png",
-        "frames": 8,
-        "frameRate": 12,
-        "looping": true,
-        "preload": true
-      },
-      {
-        "id": "sunflower_produce",
-        "path": "textures/plants/sunflower/produce",
-        "format": "png",
-        "frames": 12,
-        "frameRate": 15,
-        "looping": false,
-        "preload": true
-      },
-      {
-        "id": "peashooter_idle",
-        "path": "textures/plants/peashooter/idle",
-        "format": "png",
-        "frames": 6,
-        "frameRate": 10,
-        "looping": true,
-        "preload": true
-      },
-      {
-        "id": "peashooter_shoot",
-        "path": "textures/plants/peashooter/shoot",
-        "format": "png",
-        "frames": 8,
-        "frameRate": 20,
-        "looping": false,
-        "preload": true
-      },
-      {
-        "id": "wallnut_idle",
-        "path": "textures/plants/wallnut/idle",
+        "id": "player_idle",
+        "path": "textures/characters/player/idle",
         "format": "png",
         "frames": 4,
         "frameRate": 8,
@@ -97,147 +53,270 @@
         "preload": true
       },
       {
-        "id": "wallnut_damaged",
-        "path": "textures/plants/wallnut/damaged",
+        "id": "player_walk",
+        "path": "textures/characters/player/walk",
         "format": "png",
         "frames": 6,
         "frameRate": 12,
         "looping": true,
         "preload": true
-      }
-    ],
-    "zombies": [
-      {
-        "id": "basic_zombie_walk",
-        "path": "textures/zombies/basic/walk",
-        "format": "png",
-        "frames": 10,
-        "frameRate": 12,
-        "looping": true,
-        "preload": true
       },
       {
-        "id": "basic_zombie_eat",
-        "path": "textures/zombies/basic/eat",
+        "id": "player_attack",
+        "path": "textures/characters/player/attack",
         "format": "png",
         "frames": 8,
         "frameRate": 15,
-        "looping": true,
-        "preload": true
-      },
-      {
-        "id": "basic_zombie_death",
-        "path": "textures/zombies/basic/death",
-        "format": "png",
-        "frames": 12,
-        "frameRate": 18,
         "looping": false,
         "preload": true
       },
       {
-        "id": "cone_zombie_walk",
-        "path": "textures/zombies/cone/walk",
+        "id": "player_hurt",
+        "path": "textures/characters/player/hurt",
         "format": "png",
-        "frames": 10,
+        "frames": 4,
+        "frameRate": 10,
+        "looping": false,
+        "preload": true
+      }
+    ],
+    "enemies": [
+      {
+        "id": "skeleton_warrior_idle",
+        "path": "textures/enemies/skeleton_warrior/idle",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 8,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "skeleton_warrior_walk",
+        "path": "textures/enemies/skeleton_warrior/walk",
+        "format": "png",
+        "frames": 6,
         "frameRate": 10,
         "looping": true,
         "preload": true
       },
       {
-        "id": "cone_zombie_eat",
-        "path": "textures/zombies/cone/eat",
+        "id": "skeleton_warrior_attack",
+        "path": "textures/enemies/skeleton_warrior/attack",
         "format": "png",
         "frames": 8,
-        "frameRate": 15,
-        "looping": true,
+        "frameRate": 12,
+        "looping": false,
         "preload": true
-      }
-    ],
-    "projectiles": [
+      },
       {
-        "id": "pea_normal",
-        "path": "textures/projectiles/pea_normal",
+        "id": "goblin_scout_idle",
+        "path": "textures/enemies/goblin_scout/idle",
         "format": "png",
         "frames": 4,
-        "frameRate": 20,
+        "frameRate": 10,
         "looping": true,
         "preload": true
       },
       {
-        "id": "pea_impact",
-        "path": "textures/projectiles/pea_impact",
+        "id": "goblin_scout_walk",
+        "path": "textures/enemies/goblin_scout/walk",
         "format": "png",
         "frames": 6,
-        "frameRate": 30,
+        "frameRate": 15,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "slime_idle",
+        "path": "textures/enemies/slime/idle",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 6,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "slime_move",
+        "path": "textures/enemies/slime/move",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 8,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "dungeon_rat_walk",
+        "path": "textures/enemies/dungeon_rat/walk",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 12,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "skeleton_captain_idle",
+        "path": "textures/enemies/skeleton_captain/idle",
+        "format": "png",
+        "frames": 4,
+        "frameRate": 6,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "skeleton_captain_attack",
+        "path": "textures/enemies/skeleton_captain/attack",
+        "format": "png",
+        "frames": 10,
+        "frameRate": 12,
         "looping": false,
         "preload": true
+      }
+    ],
+    "items": [
+      {
+        "id": "health_potion_small",
+        "path": "textures/items/health_potion_small",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "health_potion_medium",
+        "path": "textures/items/health_potion_medium",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "mana_potion_small",
+        "path": "textures/items/mana_potion_small",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "rusty_sword",
+        "path": "textures/items/rusty_sword",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "iron_sword",
+        "path": "textures/items/iron_sword",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "dagger",
+        "path": "textures/items/dagger",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "leather_armor",
+        "path": "textures/items/leather_armor",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "treasure_chest_closed",
+        "path": "textures/items/treasure_chest_closed",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "treasure_chest_open",
+        "path": "textures/items/treasure_chest_open",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "gold_coin",
+        "path": "textures/items/gold_coin",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 10,
+        "looping": true,
+        "preload": true
+      }
+    ],
+    "environment": [
+      {
+        "id": "torch_wall",
+        "path": "textures/environment/torch_wall",
+        "format": "png",
+        "frames": 6,
+        "frameRate": 8,
+        "looping": true,
+        "preload": true
+      },
+      {
+        "id": "stone_floor_cracked",
+        "path": "textures/environment/stone_floor_cracked",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "trap_spike",
+        "path": "textures/environment/trap_spike",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "stairs_down",
+        "path": "textures/environment/stairs_down",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "skeleton_pile",
+        "path": "textures/environment/skeleton_pile",
+        "format": "png",
+        "preload": false
+      },
+      {
+        "id": "broken_barrel",
+        "path": "textures/environment/broken_barrel",
+        "format": "png",
+        "preload": false
       }
     ],
     "ui": [
       {
-        "id": "plant_card_sunflower",
-        "path": "textures/ui/cards/sunflower",
+        "id": "health_bar",
+        "path": "textures/ui/health_bar",
         "format": "png",
         "preload": true
       },
       {
-        "id": "plant_card_peashooter",
-        "path": "textures/ui/cards/peashooter",
+        "id": "mana_bar",
+        "path": "textures/ui/mana_bar",
         "format": "png",
         "preload": true
       },
       {
-        "id": "plant_card_wallnut",
-        "path": "textures/ui/cards/wallnut",
+        "id": "gold_icon",
+        "path": "textures/ui/gold_icon",
         "format": "png",
         "preload": true
       },
       {
-        "id": "sun_icon",
-        "path": "textures/ui/sun_icon",
+        "id": "inventory_slot",
+        "path": "textures/ui/inventory_slot",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "minimap_frame",
+        "path": "textures/ui/minimap_frame",
+        "format": "png",
+        "preload": true
+      },
+      {
+        "id": "compass",
+        "path": "textures/ui/compass",
         "format": "png",
         "frames": 8,
-        "frameRate": 12,
+        "frameRate": 4,
         "looping": true,
         "preload": true
-      },
-      {
-        "id": "tutorial_arrow",
-        "path": "textures/ui/tutorial_arrow",
-        "format": "png",
-        "frames": 6,
-        "frameRate": 8,
-        "looping": true,
-        "preload": true
-      }
-    ],
-    "decorations": [
-      {
-        "id": "flower_patch",
-        "path": "textures/decorations/flower_patch",
-        "format": "png",
-        "preload": false
-      },
-      {
-        "id": "small_tree",
-        "path": "textures/decorations/small_tree",
-        "format": "png",
-        "preload": false
-      },
-      {
-        "id": "butterfly_group",
-        "path": "textures/decorations/butterfly_group",
-        "format": "png",
-        "frames": 12,
-        "frameRate": 8,
-        "looping": true,
-        "preload": false
-      },
-      {
-        "id": "welcome_sign",
-        "path": "textures/decorations/welcome_sign",
-        "format": "png",
-        "preload": false
       }
     ]
   },
@@ -245,69 +324,135 @@
   "audio": {
     "music": [
       {
-        "id": "peaceful_tutorial",
-        "path": "audio/music/peaceful_tutorial",
+        "id": "dungeon_exploration",
+        "path": "audio/music/dungeon_exploration",
         "format": "ogg",
         "duration": 180,
         "looping": true,
+        "volume": 0.6,
+        "preload": true
+      },
+      {
+        "id": "dungeon_combat",
+        "path": "audio/music/dungeon_combat",
+        "format": "ogg",
+        "duration": 120,
+        "looping": true,
         "volume": 0.7,
+        "preload": true
+      },
+      {
+        "id": "treasure_found",
+        "path": "audio/music/treasure_found",
+        "format": "ogg",
+        "duration": 30,
+        "looping": false,
+        "volume": 0.8,
         "preload": true
       }
     ],
     "sfx": [
       {
-        "id": "plant_place",
-        "path": "audio/sfx/plant_place",
+        "id": "player_attack",
+        "path": "audio/sfx/player_attack",
         "format": "ogg",
-        "duration": 0.5,
+        "duration": 0.3,
         "volume": 0.8,
         "preload": true
       },
       {
-        "id": "sun_collect",
-        "path": "audio/sfx/sun_collect",
+        "id": "player_hit",
+        "path": "audio/sfx/player_hit",
         "format": "ogg",
-        "duration": 0.3,
+        "duration": 0.2,
         "volume": 0.9,
         "preload": true
       },
       {
-        "id": "pea_shoot",
-        "path": "audio/sfx/pea_shoot",
+        "id": "enemy_death",
+        "path": "audio/sfx/enemy_death",
         "format": "ogg",
-        "duration": 0.2,
-        "volume": 0.6,
-        "preload": true
-      },
-      {
-        "id": "zombie_groan",
-        "path": "audio/sfx/zombie_groan",
-        "format": "ogg",
-        "duration": 1.0,
+        "duration": 0.8,
         "volume": 0.7,
         "preload": true
       },
       {
-        "id": "zombie_death",
-        "path": "audio/sfx/zombie_death",
+        "id": "skeleton_groan",
+        "path": "audio/sfx/skeleton_groan",
         "format": "ogg",
-        "duration": 1.5,
+        "duration": 1.0,
+        "volume": 0.6,
+        "preload": true
+      },
+      {
+        "id": "goblin_squeak",
+        "path": "audio/sfx/goblin_squeak",
+        "format": "ogg",
+        "duration": 0.5,
+        "volume": 0.7,
+        "preload": true
+      },
+      {
+        "id": "slime_squish",
+        "path": "audio/sfx/slime_squish",
+        "format": "ogg",
+        "duration": 0.4,
+        "volume": 0.6,
+        "preload": true
+      },
+      {
+        "id": "item_pickup",
+        "path": "audio/sfx/item_pickup",
+        "format": "ogg",
+        "duration": 0.3,
         "volume": 0.8,
         "preload": true
       },
       {
-        "id": "tutorial_ding",
-        "path": "audio/sfx/tutorial_ding",
+        "id": "chest_open",
+        "path": "audio/sfx/chest_open",
         "format": "ogg",
-        "duration": 0.4,
+        "duration": 0.6,
+        "volume": 0.7,
+        "preload": true
+      },
+      {
+        "id": "gold_collect",
+        "path": "audio/sfx/gold_collect",
+        "format": "ogg",
+        "duration": 0.2,
+        "volume": 0.8,
+        "preload": true
+      },
+      {
+        "id": "potion_drink",
+        "path": "audio/sfx/potion_drink",
+        "format": "ogg",
+        "duration": 0.5,
+        "volume": 0.7,
+        "preload": true
+      },
+      {
+        "id": "door_open",
+        "path": "audio/sfx/door_open",
+        "format": "ogg",
+        "duration": 0.8,
+        "volume": 0.6,
+        "preload": true
+      },
+      {
+        "id": "trap_trigger",
+        "path": "audio/sfx/trap_trigger",
+        "format": "ogg",
+        "duration": 0.3,
         "volume": 0.9,
         "preload": true
       }
     ],
     "ambient": [
       {
-        "id": "peaceful_meadow",
-        "path": "audio/ambient/peaceful_meadow",
+        "id": "dungeon_ambient",
+        "path": "audio/ambient/dungeon_ambient",
         "format": "ogg",
         "duration": 120,
         "looping": true,
@@ -315,12 +460,21 @@
         "preload": false
       },
       {
-        "id": "gentle_breeze",
-        "path": "audio/ambient/gentle_breeze",
+        "id": "dripping_water",
+        "path": "audio/ambient/dripping_water",
         "format": "ogg",
         "duration": 60,
         "looping": true,
         "volume": 0.3,
+        "preload": false
+      },
+      {
+        "id": "torch_fire",
+        "path": "audio/ambient/torch_fire",
+        "format": "ogg",
+        "duration": 30,
+        "looping": true,
+        "volume": 0.5,
         "preload": false
       }
     ]
@@ -329,35 +483,51 @@
   "particles": {
     "effects": [
       {
-        "id": "pollen",
-        "path": "particles/pollen",
-        "format": "json",
-        "maxParticles": 50,
-        "duration": -1,
-        "preload": false
-      },
-      {
-        "id": "gentle_breeze",
-        "path": "particles/gentle_breeze",
+        "id": "dust",
+        "path": "particles/dust",
         "format": "json",
         "maxParticles": 30,
         "duration": -1,
         "preload": false
       },
       {
-        "id": "sunlight_rays",
-        "path": "particles/sunlight_rays",
+        "id": "torch_smoke",
+        "path": "particles/torch_smoke",
         "format": "json",
         "maxParticles": 20,
         "duration": -1,
         "preload": false
       },
       {
-        "id": "sun_sparkle",
-        "path": "particles/sun_sparkle",
+        "id": "dripping_water",
+        "path": "particles/dripping_water",
+        "format": "json",
+        "maxParticles": 15,
+        "duration": -1,
+        "preload": false
+      },
+      {
+        "id": "hit_spark",
+        "path": "particles/hit_spark",
         "format": "json",
         "maxParticles": 10,
-        "duration": 2.0,
+        "duration": 0.5,
+        "preload": true
+      },
+      {
+        "id": "gold_sparkle",
+        "path": "particles/gold_sparkle",
+        "format": "json",
+        "maxParticles": 15,
+        "duration": 1.0,
+        "preload": true
+      },
+      {
+        "id": "blood_splatter",
+        "path": "particles/blood_splatter",
+        "format": "json",
+        "maxParticles": 20,
+        "duration": 0.8,
         "preload": true
       }
     ]
@@ -365,68 +535,89 @@
 
   "fonts": [
     {
-      "id": "tutorial_text",
-      "path": "fonts/comic_sans_bold",
+      "id": "dungeon_text",
+      "path": "fonts/medieval_style",
+      "format": "ttf",
+      "size": 20,
+      "preload": true
+    },
+    {
+      "id": "ui_numbers",
+      "path": "fonts/pixel_numbers",
       "format": "ttf",
       "size": 24,
       "preload": true
     },
     {
-      "id": "ui_numbers",
-      "path": "fonts/digital_display",
+      "id": "title_font",
+      "path": "fonts/gothic_title",
       "format": "ttf",
-      "size": 32,
+      "size": 36,
       "preload": true
     }
   ],
 
   "preloadGroups": {
     "essential": [
-      "grassland_morning",
-      "sky_clear",
-      "sunflower_idle",
-      "peashooter_idle",
-      "wallnut_idle",
-      "basic_zombie_walk",
-      "pea_normal",
-      "plant_card_sunflower",
-      "plant_card_peashooter",
-      "plant_card_wallnut",
-      "sun_icon",
-      "peaceful_tutorial",
-      "plant_place",
-      "sun_collect",
-      "tutorial_text",
+      "dungeon_floor1",
+      "player_idle",
+      "player_walk",
+      "player_attack",
+      "skeleton_warrior_idle",
+      "goblin_scout_idle",
+      "slime_idle",
+      "health_potion_small",
+      "gold_coin",
+      "health_bar",
+      "dungeon_exploration",
+      "player_attack",
+      "player_hit",
+      "dungeon_text",
       "ui_numbers"
     ],
     "gameplay": [
-      "sunflower_produce",
-      "peashooter_shoot",
-      "basic_zombie_eat",
-      "basic_zombie_death",
-      "cone_zombie_walk",
-      "pea_impact",
-      "pea_shoot",
-      "zombie_groan",
-      "zombie_death"
+      "player_hurt",
+      "skeleton_warrior_walk",
+      "skeleton_warrior_attack",
+      "goblin_scout_walk",
+      "slime_move",
+      "dungeon_rat_walk",
+      "skeleton_captain_idle",
+      "skeleton_captain_attack",
+      "iron_sword",
+      "dagger",
+      "leather_armor",
+      "health_potion_medium",
+      "mana_potion_small",
+      "dungeon_combat",
+      "enemy_death",
+      "item_pickup",
+      "chest_open"
     ],
-    "tutorial": [
-      "tutorial_arrow",
-      "tutorial_ding",
-      "sun_sparkle"
+    "environment": [
+      "torch_wall",
+      "stone_floor_cracked",
+      "trap_spike",
+      "stairs_down",
+      "treasure_chest_closed",
+      "treasure_chest_open",
+      "dungeon_ambient",
+      "door_open"
     ],
     "optional": [
-      "clouds_white",
-      "hills_distant",
-      "trees_background",
-      "flower_patch",
-      "small_tree",
-      "butterfly_group",
-      "welcome_sign",
-      "peaceful_meadow",
-      "gentle_breeze",
-      "pollen",
-      "sunlight_rays"
+      "dungeon_back_wall",
+      "dungeon_pillars",
+      "dungeon_chains",
+      "skeleton_pile",
+      "broken_barrel",
+      "gold_icon",
+      "inventory_slot",
+      "minimap_frame",
+      "compass",
+      "dripping_water",
+      "torch_fire",
+      "dust",
+      "torch_smoke"
     ]
   },
 
@@ -436,21 +627,28 @@
       "description": "加载核心游戏资源",
       "groups": ["essential"],
       "showProgress": true,
-      "progressWeight": 0.6
+      "progressWeight": 0.5
     },
     "phase2": {
       "name": "gameplay",
       "description": "加载游戏玩法资源",
-      "groups": ["gameplay", "tutorial"],
+      "groups": ["gameplay"],
       "showProgress": true,
-      "progressWeight": 0.3
+      "progressWeight": 0.35
     },
     "phase3": {
+      "name": "environment",
+      "description": "加载环境和装饰资源",
+      "groups": ["environment"],
+      "showProgress": true,
+      "progressWeight": 0.1
+    },
+    "phase4": {
       "name": "optional",
-      "description": "加载装饰性资源",
+      "description": "加载可选装饰性资源",
       "groups": ["optional"],
       "showProgress": false,
-      "progressWeight": 0.1,
+      "progressWeight": 0.05,
       "async": true
     }
   },
@@ -472,14 +670,23 @@
       "padding": 2,
       "groups": [
         {
-          "name": "ui_atlas",
-          "textures": ["plant_card_sunflower", "plant_card_peashooter", "plant_card_wallnut", "sun_icon", "tutorial_arrow"]
+          "name": "items_atlas",
+          "textures": ["health_potion_small", "health_potion_medium", "mana_potion_small", "gold_coin"]
         },
         {
-          "name": "projectiles_atlas",
-          "textures": ["pea_normal", "pea_impact"]
+          "name": "ui_atlas",
+          "textures": ["health_bar", "mana_bar", "gold_icon", "inventory_slot"]
+        },
+        {
+          "name": "environment_atlas",
+          "textures": ["stone_floor_cracked", "trap_spike", "stairs_down"]
         }
       ]
+    },
+    "spriteManagement": {
+      "enabled": true,
+      "maxSpriteCache": 100,
+      "autoCleanup": true
     }
   }
 }

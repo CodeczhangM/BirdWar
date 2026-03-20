@@ -80,7 +80,9 @@ export class PostProcessEnv extends Component {
             }
 
             // 应用材质和参数
-            this.applyPostProcessSettings();
+            if (this.postProcessMaterial || !this.autoLoadMaterial) {
+                this.applyPostProcessSettings();
+            }
 
         } catch (error) {
             Log.error(this.MODULE_NAME, '初始化后处理失败:', error);
