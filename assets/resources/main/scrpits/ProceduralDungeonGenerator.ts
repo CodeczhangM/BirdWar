@@ -361,4 +361,27 @@ export class ProceduralDungeonGenerator extends Component {
         this._initRandom();
         return this.generateDungeon();
     }
+
+    /**
+     * 获取地牢的实际像素尺寸
+     * @param tileSize 每个格子的像素大小
+     * @returns 地牢的宽度和高度（像素）
+     */
+    public getDungeonPixelSize(tileSize: number): { width: number, height: number } {
+        return {
+            width: this.dungeonWidth * tileSize,
+            height: this.dungeonHeight * tileSize
+        };
+    }
+
+    /**
+     * 获取地牢的格子尺寸
+     * @returns 地牢的宽度和高度（格子数）
+     */
+    public getDungeonGridSize(): { width: number, height: number } {
+        return {
+            width: this.dungeonWidth,
+            height: this.dungeonHeight
+        };
+    }
 }

@@ -82,11 +82,20 @@ export class CameraMotion extends Component {
         // 计算地图边界
         this._calculateMapBounds();
 
-        // 如果有目标，立即移动到目标位置
+        // 如果有目标，立即移动到目标位置（应用边界限制）
         if (this.target) {
-            this.node.setPosition(this.target.position);
+            this._targetPosition.set(this.target.position);
+            
+            // if (this.enableBoundary && this._mapBounds) {
+            //     this._applyBoundaryConstraints();
+            // }
+            
+            this.node.setPosition(this._targetPosition);
+            
             if (this.debugMode) {
-                Log.log(this.MODULE_NAME, `相机初始位置设置为目标位置: ${this.target.position}`);
+                Log.log(this.MODULE_NAME, `目标位置: ${this.target.position}`);
+                Log.log(this.MODULE_NAME, `应用边界后位置: ${this._targetPosition}`);
+                Log.log(this.MODULE_NAME, `相机初始位置已设置`);
             }
         }
 
@@ -158,19 +167,33 @@ export class CameraMotion extends Component {
         }
 
         const tileSize = this._dungeonController.tileSize;
-        const width = dungeonGenerator.dungeonWidth;
-        const height = dungeonGenerator.dungeonHeight;
+        const pixelSize = dungeonGenerator.getDungeonPixelSize(tileSize);
+
+        // 计算边界，考虑相机尺寸
+        const halfWidth = this._cameraHalfWidth;
+        const halfHeight = this._cameraHalfHeight;
 
         this._mapBounds = {
-            minX: this.boundaryPadding,
-            maxX: width * tileSize - this.boundaryPadding,
-            minY: this.boundaryPadding,
-            maxY: height * tileSize - this.boundaryPadding
+            minX: halfWidth + this.boundaryPadding,
+            maxX: pixelSize.width - halfWidth - this.boundaryPadding,
+            minY: halfHeight + this.boundaryPadding,
+            maxY: pixelSize.height - halfHeight - this.boundaryPadding
         };
 
+        // 确保边界有效（地图不能小于相机视野）
+        if (this._mapBounds.minX >= this._mapBounds.maxX) {
+            this._mapBounds.minX = pixelSize.width / 2;
+            this._mapBounds.maxX = pixelSize.width / 2;
+        }
+        if (this._mapBounds.minY >= this._mapBounds.maxY) {
+            this._mapBounds.minY = pixelSize.height / 2;
+            this._mapBounds.maxY = pixelSize.height / 2;
+        }
+
         if (this.debugMode) {
+            Log.log(this.MODULE_NAME, '地图像素尺寸:', pixelSize);
+            Log.log(this.MODULE_NAME, '相机半尺寸:', { halfWidth, halfHeight });
             Log.log(this.MODULE_NAME, '地图边界:', this._mapBounds);
-            Log.log(this.MODULE_NAME, `地图尺寸: ${width}x${height} 格子, 每格 ${tileSize} 像素`);
         }
     }
 
