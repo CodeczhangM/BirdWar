@@ -1,4 +1,4 @@
-import { _decorator, Component, Label, Vec2, sp } from 'cc';
+import { _decorator, Component, Label, Vec2, sp, RigidBody2D } from 'cc';
 import { InputManager, InputPlatform, SkillSlot, SkillTouchState, DirectionInput } from './InputManager';
 import { Log } from './Logger';
 
@@ -66,6 +66,7 @@ export class InputManagerExample extends Component {
     private _inputManager: InputManager = null;
     private _currentFacingAngle: number = 0;
     private _skillConfigs: Map<SkillSlot, SkillConfig> = new Map();
+    private _rigidBody: RigidBody2D = null;
 
     start() {
         this._inputManager = InputManager.instance;
@@ -83,6 +84,13 @@ export class InputManagerExample extends Component {
         }
 
         this.skeleton = this.getComponent(sp.Skeleton);
+        
+        // 获取刚体组件（如果存在）
+        this._rigidBody = this.getComponent(RigidBody2D);
+        if (this._rigidBody) {
+            Log.log(this.MODULE_NAME, '检测到 RigidBody2D，将使用物理移动');
+        }
+        
         // 订阅技能事件
         this._inputManager.onSkillDown(this._onSkillDown.bind(this));
         this._inputManager.onSkillUp(this._onSkillUp.bind(this));
@@ -154,15 +162,30 @@ export class InputManagerExample extends Component {
     // ========== 角色移动示例 ==========
 
     private _moveCharacter(dir: Vec2, dt: number) {
-        if (dir.lengthSqr() < 0.01) return;
+        if (dir.lengthSqr() < 0.01) {
+            // 停止移动时，清除速度
+            if (this._rigidBody) {
+                this._rigidBody.linearVelocity = Vec2.ZERO;
+            }
+            return;
+        }
 
-        // 使用自定义速度移动
-        const pos = this.node.position;
-        this.node.setPosition(
-            pos.x + dir.x * this.moveSpeed * dt,
-            pos.y + dir.y * this.moveSpeed * dt,
-            pos.z
-        );
+        // 如果有刚体组件，使用物理移动（支持碰撞检测）
+        if (this._rigidBody) {
+            // 设置线性速度，让物理引擎处理碰撞
+            this._rigidBody.linearVelocity = new Vec2(
+                dir.x * this.moveSpeed,
+                dir.y * this.moveSpeed
+            );
+        } else {
+            // 没有刚体时，使用直接位置移动
+            const pos = this.node.position;
+            this.node.setPosition(
+                pos.x + dir.x * this.moveSpeed * dt,
+                pos.y + dir.y * this.moveSpeed * dt,
+                pos.z
+            );
+        }
 
         // 自动调整朝向
         if (this.autoFacing) {

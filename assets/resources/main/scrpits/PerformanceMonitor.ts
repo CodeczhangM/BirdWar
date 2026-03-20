@@ -106,7 +106,7 @@ export class PerformanceMonitor extends Component {
             info += `\nGame Delta: ${(game.deltaTime * 1000).toFixed(2)} ms`;
         }
 
-        info += `\nDrawCall / Triangles 请看 Cocos 内置 profiler`;
+        // info += `\nDrawCall / Triangles 请看 Cocos 内置 profiler`;
         return info;
     }
 

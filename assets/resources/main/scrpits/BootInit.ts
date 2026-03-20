@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Label, ProgressBar, Node } from 'cc';
+import { _decorator, Component, director, Label, ProgressBar, Node, PhysicsSystem2D } from 'cc';
 import { BundleLoader } from './BundleLoader';
 import { Log } from './Logger';
 import { EventManagerInstance, EventData } from './EventManager';
@@ -38,8 +38,21 @@ export class BootInit extends Component {
             Log.setLevel(1); // 只显示LOG级别以上的日志
         }
         
+        // 启用 2D 物理系统
+        this._enablePhysics2D();
+        
         Log.log(this.MODULE_NAME, '游戏启动初始化开始');
         this.initializeBootSequence();
+    }
+
+    /**
+     * 启用 2D 物理系统
+     */
+    private _enablePhysics2D() {
+        const physics = PhysicsSystem2D.instance;
+        physics.enable = true;
+        physics.gravity.set(0, 0); // 顶视角游戏不需要重力
+        Log.log(this.MODULE_NAME, '2D 物理系统已启用');
     }
 
 
