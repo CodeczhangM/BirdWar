@@ -3,5 +3,18 @@
   "uuid": "6e3d795c-4ef0-4301-8ba8-19677f61c82c",
   "creator": {
     "version": "3.8.6"
+  },
+  "scripts": {
+    "build:ui-bundle": "node scripts/build-ui-bundle.js",
+    "extract:bundle": "node scripts/extract-bundle.js",
+    "prepare:bundles": "npm run build:ui-bundle && npm run extract:bundle",
+    "serve:bundles": "node scripts/bundle-server.js",
+    "dev": "npm run prepare:bundles && npm run serve:bundles"
+  },
+  "devDependencies": {
+    "archiver": "^5.3.2"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
   }
 }

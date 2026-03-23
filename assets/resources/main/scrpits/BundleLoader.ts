@@ -67,7 +67,46 @@ export class BundleLoader extends Component {
     }
 
     /**
-     * 批量加载bundle
+     * 从远程URL加载bundle
+     * @param bundleName bundle名称
+     * @param remoteUrl 远程服务器地址（Bundle的父目录）
+     * @param onProgress 进度回调
+     * @returns Promise
+     */
+    public loadBundleFromUrl(bundleName: string, remoteUrl: string, onProgress?: (progress: number) => void): Promise<void> {
+        if (this._loadingPromises.has(bundleName)) {
+            return this._loadingPromises.get(bundleName);
+        }
+
+        if (this._loadedBundles.has(bundleName)) {
+            return Promise.resolve();
+        }
+
+        const loadPromise = new Promise<void>((resolve, reject) => {
+            Log.log(this.MODULE_NAME, `从远程加载bundle: ${bundleName}, URL: ${remoteUrl}/${bundleName}`);
+
+            // assetManager.loadBundle 第一个参数是Bundle的父目录
+            // 第二个参数是Bundle的名称
+            assetManager.loadBundle(`${remoteUrl}/${bundleName}`, (err, bundle) => {
+                if (err) {
+                    Log.error(this.MODULE_NAME, `从远程加载bundle ${bundleName} 失败:`, err);
+                    this._loadingPromises.delete(bundleName);
+                    reject(err);
+                    return;
+                }
+
+                Log.log(this.MODULE_NAME, `远程Bundle ${bundleName} 加载成功`);
+                this._loadedBundles.add(bundleName);
+                this._loadingPromises.delete(bundleName);
+                resolve();
+            });
+        });
+
+        this._loadingPromises.set(bundleName, loadPromise);
+        return loadPromise;
+    }
+
+    /**
      * @param bundleNames bundle名称数组
      * @param onProgress 总体进度回调
      * @returns Promise

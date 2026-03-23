@@ -1,0 +1,24 @@
+{
+  "bundleServer": {
+    "host": "localhost",
+    "port": 8080,
+    "path": "/bundles"
+  },
+  "bundles": {
+    "ui": {
+      "name": "ui",
+      "path": "dist/ui-bundle.zip",
+      "enabled": true
+    },
+    "resources": {
+      "name": "resources",
+      "path": "dist/resources-bundle.zip",
+      "enabled": false
+    }
+  },
+  "debug": {
+    "enableRemoteLoad": false,
+    "remoteUrl": "http://localhost:8080/bundles",
+    "logLevel": "debug"
+  }
+}

@@ -10,7 +10,7 @@ const { ccclass, property } = _decorator;
  */
 @ccclass('BootInit')
 export class BootInit extends Component {
-    
+
     @property({ type: Label, tooltip: '启动状态显示文本' })
     public statusLabel: Label = null;
 
@@ -19,6 +19,9 @@ export class BootInit extends Component {
 
     @property({ type: [CCString], tooltip: '需要预加载的Bundle列表' })
     public preloadBundles: string[] = ['ui'];
+
+    @property({ type: String, tooltip: '远程Bundle服务器地址' })
+    public remoteBundleUrl: string = 'http://localhost:8080';
 
     @property({ type: String, tooltip: '主场景名称' })
     public mainSceneName: string = 'mainMenu';
@@ -127,18 +130,47 @@ export class BootInit extends Component {
         Log.log(this.MODULE_NAME, `开始预加载Bundle: ${this.preloadBundles.join(', ')}`);
 
         try {
-            await this._bundleLoader.loadBundles(this.preloadBundles, (progress) => {
-                // 将bundle加载进度映射到总进度的20%-80%区间
-                const mappedProgress = 0.2 + (progress * 0.6);
-                this.updateProgress(mappedProgress);
-                this.updateStatus(`加载资源中... ${Math.floor(progress * 100)}%`);
-            });
+            // 如果配置了远程URL，使用远程加载
+            if (this.remoteBundleUrl) {
+                await this.loadRemoteBundles();
+            } else {
+                await this._bundleLoader.loadBundles(this.preloadBundles, (progress) => {
+                    const mappedProgress = 0.2 + (progress * 0.6);
+                    this.updateProgress(mappedProgress);
+                    this.updateStatus(`加载资源中... ${Math.floor(progress * 100)}%`);
+                });
+            }
 
             Log.log(this.MODULE_NAME, '所有Bundle预加载完成');
             this.updateProgress(1.0);
-            
+
         } catch (error) {
             throw new Error(`Bundle预加载失败: ${error.message}`);
+        }
+    }
+
+    /**
+     * 从远程服务器加载Bundle
+     */
+    private async loadRemoteBundles(): Promise<void> {
+        const totalBundles = this.preloadBundles.length;
+        let loadedCount = 0;
+
+        for (const bundleName of this.preloadBundles) {
+            // assetManager.loadBundle 需要Bundle的父目录路径
+            // 它会自动查找该目录下的bundleName/config.json
+            const bundleUrl = this.remoteBundleUrl;
+
+            try {
+                await this._bundleLoader.loadBundleFromUrl(bundleName, bundleUrl);
+                loadedCount++;
+                const progress = 0.2 + (loadedCount / totalBundles * 0.6);
+                this.updateProgress(progress);
+                this.updateStatus(`加载资源中... ${Math.floor((loadedCount / totalBundles) * 100)}%`);
+            } catch (error) {
+                Log.error(this.MODULE_NAME, `加载远程Bundle ${bundleName} 失败:`, error);
+                throw error;
+            }
         }
     }
 
