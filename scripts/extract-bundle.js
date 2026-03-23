@@ -30,10 +30,14 @@ function extractBundle() {
     const zip = new AdmZip(zipFile);
     zip.extractAllTo(extractDir, true);
 
+    // 添加空的index.js文件
+    const uiDir = path.join(extractDir, 'ui');
+    const indexPath = path.join(uiDir, 'index.js');
+    fs.writeFileSync(indexPath, '');
+
     console.log(`✓ 解压完成: ${extractDir}\n`);
 
     // 显示目录结构
-    const uiDir = path.join(extractDir, 'ui');
     if (fs.existsSync(uiDir)) {
       const files = fs.readdirSync(uiDir);
       console.log('📁 UI Bundle文件:');
@@ -52,3 +56,4 @@ function extractBundle() {
 }
 
 extractBundle();
+

@@ -18,7 +18,7 @@ export class BootInit extends Component {
     public progressBar: ProgressBar = null;
 
     @property({ type: [CCString], tooltip: '需要预加载的Bundle列表' })
-    public preloadBundles: string[] = ['ui'];
+    public preloadBundles: string[] = ['game', 'ui'];
 
     @property({ type: String, tooltip: '远程Bundle服务器地址' })
     public remoteBundleUrl: string = 'http://localhost:8080';
