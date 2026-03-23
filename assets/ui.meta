@@ -7,6 +7,9 @@
   "subMetas": {},
   "userData": {
     "isBundle": true,
+    "bundleConfigID": "default",
+    "bundleName": "ui",
+    "priority": 10,
     "bundleFilterConfig": []
   }
 }

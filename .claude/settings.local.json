@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /d/cocos-proj/BirdsWar/BirdsWar/assets/resources/main/scrpits/core/*.ts /d/cocos-proj/BirdsWar/BirdsWar/assets/game/scripts/)",
+      "Bash(cp /d/cocos-proj/BirdsWar/BirdsWar/assets/resources/main/scrpits/player/*.ts /d/cocos-proj/BirdsWar/BirdsWar/assets/game/scripts/)"
+    ]
+  }
+}

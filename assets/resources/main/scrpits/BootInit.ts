@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Label, ProgressBar, Node, PhysicsSystem2D } from 'cc';
+import { _decorator, Component, director, Label, ProgressBar, Node, PhysicsSystem2D, CCString } from 'cc';
 import { BundleLoader } from './BundleLoader';
 import { Log } from './Logger';
 import { EventManagerInstance, EventData } from './EventManager';
@@ -17,8 +17,8 @@ export class BootInit extends Component {
     @property({ type: ProgressBar, tooltip: '启动进度条' })
     public progressBar: ProgressBar = null;
 
-    @property({ type: [String], tooltip: '需要预加载的Bundle列表' })
-    public preloadBundles: string[] = ['ui', 'game'];
+    @property({ type: [CCString], tooltip: '需要预加载的Bundle列表' })
+    public preloadBundles: string[] = ['ui'];
 
     @property({ type: String, tooltip: '主场景名称' })
     public mainSceneName: string = 'mainMenu';
