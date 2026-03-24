@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, BoxCollider2D, Contact2DType, Collider2D, Animation, AnimationClip } from 'cc';
+import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Contact2DType, Collider2D, Animation, AnimationClip, Vec2, Vec3 } from 'cc';
 import { CombatEntity, EntityType, Faction } from '../CombatSystem';
 import { Log } from '../Logger';
 import { InputManager, SkillSlot } from '../InputManager';
@@ -13,6 +13,15 @@ export class Actor extends Component {
     private animComp: Animation = null!;
     private _skillDownHandler: ((slot: SkillSlot) => void) | null = null;
     private _skillUpHandler: ((slot: SkillSlot) => void) | null = null;
+    private _inputManager: InputManager = null;
+    private _rigidBody: RigidBody2D = null;
+    private _currentFacingAngle: number = 0;
+
+    @property({ tooltip: '是否根据移动方向自动调整朝向' })
+    public autoFacing: boolean = true;
+
+    @property({ tooltip: '移动速度（像素/秒）' })
+    public moveSpeed: number = 10;
 
     // 缓存当前角色的所有动画剪辑（自动对应 Skill 0~6）
     private animationClips: AnimationClip[] = [];
@@ -23,6 +32,8 @@ export class Actor extends Component {
     private readonly MODULE_NAME = 'Actor';
     // 最大支持技能数量 0~6
     private readonly MAX_SKILL_COUNT = 7;
+
+    private _scale: Vec3 = Vec3.ZERO;
 
     protected onLoad(): void {
         // 初始化碰撞体
@@ -38,10 +49,17 @@ export class Actor extends Component {
     protected start(): void {
         Log.debug(this.MODULE_NAME, "Actor onLoad completed, registering input events");
         this.registerInputEvents();
+        this._scale = this.node.getScale();
     }
 
-    protected update(): void {
+    protected update(dt: number): void {
         this.setAnimationSpeed(this.animationSpeed);
+
+        if (!this._inputManager) return;
+
+        // 每帧读取移动方向，驱动角色移动
+        const dir = this._inputManager.getMoveDirection();
+        this._moveCharacter(dir, dt);
     }
 
     protected onDestroy(): void {
@@ -67,6 +85,11 @@ export class Actor extends Component {
             this.mcollider.sensor = true;
         }
         this.mcollider.enabled = false;
+
+        this._rigidBody = this.getComponent(RigidBody2D);
+        if (this._rigidBody) {
+            Log.log(this.MODULE_NAME, '检测到 RigidBody2D，将使用物理移动');
+        }
     }
 
     private initCombatEntity() {
@@ -97,6 +120,7 @@ export class Actor extends Component {
     // ========================== 输入事件 ==========================
     private registerInputEvents(): void {
         const inputMgr = InputManager.instance;
+        this._inputManager = inputMgr;
         if (!inputMgr) {
             Log.error(this.MODULE_NAME, 'InputManager not found');
             return;
@@ -116,6 +140,51 @@ export class Actor extends Component {
 
         if (this._skillDownHandler) inputMgr.offSkillDown(this._skillDownHandler);
         if (this._skillUpHandler) inputMgr.offSkillUp(this._skillUpHandler);
+    }
+
+    private _moveCharacter(dir: Vec2, dt: number) {
+        if (dir.lengthSqr() < 0.01) {
+            // 停止移动时，清除速度
+            if (this._rigidBody) {
+                this._rigidBody.linearVelocity = Vec2.ZERO;
+            }
+            return;
+        }
+
+        // 如果有刚体组件，使用物理移动（支持碰撞检测）
+        if (this._rigidBody) {
+            // 设置线性速度，让物理引擎处理碰撞
+            this._rigidBody.linearVelocity = new Vec2(
+                dir.x * this.moveSpeed,
+                dir.y * this.moveSpeed
+            );
+        } else {
+            // 没有刚体时，使用直接位置移动
+            const pos = this.node.position;
+            this.node.setPosition(
+                pos.x + dir.x * this.moveSpeed * dt,
+                pos.y + dir.y * this.moveSpeed * dt,
+                pos.z
+            );
+        }
+
+        // 自动调整朝向
+        if (this.autoFacing) {
+            this._updateFacing(dir, dt);
+        }
+    }
+
+    /** 根据移动方向更新角色朝向 */
+    private _updateFacing(dir: Vec2, dt: number) {
+        // 计算目标角度（弧度）
+        
+        if (dir.x > 0.01) {
+            // 朝右
+            this.node.setScale(Math.abs(this._scale.x), this._scale.y, this._scale.z);
+        } else if (dir.x < -0.01) {
+            // 朝左
+            this.node.setScale(Math.abs(this._scale.x) * -1, this._scale.y, this._scale.z);
+        }
     }
 
     /**
@@ -157,9 +226,9 @@ export class Actor extends Component {
         Log.debug(this.MODULE_NAME, `▶️ 播放动画 [索引:${index}] → ${clipName}`);
 
         // 攻击动画统一开启碰撞（你可以根据索引自定义规则，比如仅 index>0 开启）
-        if (index > 0) {
-            this.onAttackStart();
-        }
+        // if (index > 0) {
+        //     this.onAttackStart();
+        // }
 
         this.animComp.crossFade(clipName);
     }
@@ -169,7 +238,7 @@ export class Actor extends Component {
      */
     private onAnimationFinished() {
         Log.debug(this.MODULE_NAME, "✅ 动画播放完成");
-        this.onAttackEnd();
+        // this.onAttackEnd();
         // 动画结束后默认回到第一个动画（待机）
         this.playAnimationByIndex(0);
     }

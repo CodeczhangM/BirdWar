@@ -175,11 +175,23 @@
     "playOnLoad": true,
     "_clips": [
       {
-        "__uuid__": "5e40cde6-ed25-41a5-9b56-6251d2e4dd75",
+        "__uuid__": "3d929141-05c7-4193-b829-a270e47d7c92",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "2de31852-cb96-4278-8390-7d1d363828bb",
         "__expectedType__": "cc.AnimationClip"
       },
       {
         "__uuid__": "f0ebbd93-d8d5-4ec9-85c0-1e98da2d232c",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "289755ba-5fd8-41cd-9cf4-60575ef5f09b",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "5e40cde6-ed25-41a5-9b56-6251d2e4dd75",
         "__expectedType__": "cc.AnimationClip"
       },
       {
@@ -189,22 +201,10 @@
       {
         "__uuid__": "626acecb-1fd9-42d5-b929-371ffeaf28b5",
         "__expectedType__": "cc.AnimationClip"
-      },
-      {
-        "__uuid__": "289755ba-5fd8-41cd-9cf4-60575ef5f09b",
-        "__expectedType__": "cc.AnimationClip"
-      },
-      {
-        "__uuid__": "3d929141-05c7-4193-b829-a270e47d7c92",
-        "__expectedType__": "cc.AnimationClip"
-      },
-      {
-        "__uuid__": "2de31852-cb96-4278-8390-7d1d363828bb",
-        "__expectedType__": "cc.AnimationClip"
       }
     ],
     "_defaultClip": {
-      "__uuid__": "2de31852-cb96-4278-8390-7d1d363828bb",
+      "__uuid__": "3d929141-05c7-4193-b829-a270e47d7c92",
       "__expectedType__": "cc.AnimationClip"
     },
     "_id": ""
@@ -227,8 +227,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
+      "width": 418,
+      "height": 552
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -263,7 +263,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "68978ef4-b913-41b2-a616-f23263d5c662@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 0,
     "_fillType": 0,
     "_sizeMode": 1,
@@ -295,6 +298,7 @@
     "__prefab": {
       "__id__": 13
     },
+    "animationSpeed": 5,
     "_id": ""
   },
   {
