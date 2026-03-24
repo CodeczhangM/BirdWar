@@ -6,6 +6,7 @@
   "files": [],
   "subMetas": {},
   "userData": {
-    "priority": 11
+    "priority": 11,
+    "isBundle": true
   }
 }

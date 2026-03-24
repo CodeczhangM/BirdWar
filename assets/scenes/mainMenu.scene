@@ -1277,8 +1277,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 785.7999877929688,
-      "height": 252
+      "width": 785.7783797359358,
+      "height": 252.00000000000003
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1310,7 +1310,7 @@
     "_string": "C H I C K e N",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 100,
+    "_actualFontSize": 136.09375,
     "_fontSize": 100,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -1412,8 +1412,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 361.20001220703125,
-      "height": 252
+      "width": 361.1976176808267,
+      "height": 252.00000000000003
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1445,7 +1445,7 @@
     "_string": "War",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 140,
+    "_actualFontSize": 190.53125,
     "_fontSize": 140,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -3143,7 +3143,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 247.75997924804688,
+      "width": 247.7599609375,
       "height": 100.8
     },
     "_anchorPoint": {
@@ -3176,7 +3176,7 @@
     "_string": "label",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 80,
+    "_actualFontSize": 100,
     "_fontSize": 80,
     "_fontFamily": "Arial",
     "_lineHeight": 80,
@@ -3613,7 +3613,7 @@
     "_string": "start",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 27.21875,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
