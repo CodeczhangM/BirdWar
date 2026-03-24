@@ -10,10 +10,13 @@ export class Actor extends Component {
     private mcollider : BoxCollider2D = null;
     private mcombatEntity : CombatEntity = null;
     private mKickNode: Node = null;
-    private _isAttacking: boolean = false;
+    // private _isAttacking: boolean = false;
     private animComp : Animation = null!;
     private _skillDownHandler: ((slot: SkillSlot) => void) | null = null;
     private _skillUpHandler: ((slot: SkillSlot) => void) | null = null;
+
+    @property({ tooltip: '动画播放速度倍数', range: [0.1, 3, 0.1] })
+    public animationSpeed: number = 5.0;
 
     private readonly MODULE_NAME = 'Actor';
 
@@ -63,6 +66,8 @@ export class Actor extends Component {
 
         this.logAllAnimationClips();
         this.animComp.playOnLoad = false;
+        this.setAnimationSpeed(this.animationSpeed);
+        this.animComp.on(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
         // this.animComp.start();
         this.playIdle();
 
@@ -71,6 +76,11 @@ export class Actor extends Component {
     protected start(): void {
         Log.debug(this.MODULE_NAME, "Actor onLoad completed, registering input events");
         this.registerInputEvents();
+    }
+
+    protected update(): void {
+        // 每帧更新动画速度，支持动态调整
+        this.setAnimationSpeed(this.animationSpeed);
     }
 
     protected onDestroy(): void {
@@ -107,7 +117,7 @@ export class Actor extends Component {
         }
 
         Log.debug(this.MODULE_NAME, `✅ 播放动画：${name}`);
-        this.animComp.play(name);
+        this.animComp.crossFade(name);
     }
 
     /**
@@ -164,22 +174,28 @@ export class Actor extends Component {
      * 技能按下
      */
     private onSkillDown(slot: SkillSlot): void {
-        Log.debug(this.MODULE_NAME, `🎮 onSkillDown called with slot: ${slot}, isAttacking: ${this._isAttacking}`);
+        // Log.debug(this.MODULE_NAME, `🎮 onSkillDown called with slot: ${slot}, isAttacking: ${this._isAttacking}`);
 
-        if (this._isAttacking) {
-            Log.debug(this.MODULE_NAME, `⏸️  Already attacking, ignoring skill`);
-            return;
-        }
+        // if (this._isAttacking) {
+        //     Log.debug(this.MODULE_NAME, `⏸️  Already attacking, ignoring skill`);
+        //     return;
+        // }
 
         Log.debug(this.MODULE_NAME, `⚔️  Starting attack for skill ${slot}`);
-        this._isAttacking = true;
+        // this._isAttacking = true;
 
         if(slot === SkillSlot.SKILL_1)
         {
             Log.debug(this.MODULE_NAME, `🎬 Playing kick animation`);
-            this.onAttackStart();
-            this.animComp.play("kick");
-            this.animComp.once(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
+            // this.onAttackStart();
+            this.playKick();
+           
+        }else if(slot == SkillSlot.SKILL_2) {
+            this.playJump();
+            // this.animComp.once(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
+        }else if(slot == SkillSlot.SKILL_3) {
+            this.playHurt();
+            // this.animComp.once(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
         }
     }
 
@@ -224,8 +240,44 @@ export class Actor extends Component {
     onKickAnimFinish() {
         Log.debug(this.MODULE_NAME, "踢击动画播放完成，切回待机");
         // this.onAttackEnd();
-        this.playIdle();
-        this._isAttacking = false;
+        // this._isAttacking = false;
+        this.playIdle();    
+    }
+
+    /**
+     * 设置动画播放速度
+     */
+    public setAnimationSpeed(speed: number): void {
+        if (!this.animComp) return;
+
+        // 遍历所有动画剪辑并设置速度
+        const clips = this.animComp.clips;
+        for (const clip of clips) {
+            const state = this.animComp.getState(clip.name);
+            if (state) {
+                state.speed = speed;
+            }
+        }
+    }
+
+    /**
+     * 根据属性计算动画速度加成
+     * @param baseSpeed 基础速度
+     * @param speedBonus 速度加成百分比 (0-100)
+     * @returns 计算后的速度
+     */
+    public calculateAnimationSpeed(baseSpeed: number = 1.0, speedBonus: number = 0): number {
+        return baseSpeed * (1 + speedBonus / 100);
+    }
+
+    /**
+     * 应用速度加成
+     * @param speedBonus 速度加成百分比
+     */
+    public applySpeedBonus(speedBonus: number): void {
+        const newSpeed = this.calculateAnimationSpeed(this.animationSpeed, speedBonus);
+        this.setAnimationSpeed(newSpeed);
+        Log.debug(this.MODULE_NAME, `Speed bonus applied: ${speedBonus}% -> speed: ${newSpeed}`);
     }
 
     // ================== 封装常用动画控制方法 ==================
@@ -237,24 +289,24 @@ export class Actor extends Component {
 
     /** 播放 kick 踢击动画 */
     playKick() {
-        this.animComp.play("kick");
+        this.animComp.crossFade("kick");
         // 【可选】监听动画播放完成事件
-        this.animComp.once(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
+        // this.animComp.once(Animation.EventType.FINISHED, this.onKickAnimFinish, this);
     }
 
     /** 播放 jump 跳跃动画 */
     playJump() {
-        this.animComp.play("doublejump");
+        this.animComp.crossFade("doublejump");
     }
 
     /** 播放受伤动画 */
     playHurt() {
-        this.animComp.play("hurt");
+        this.animComp.crossFade("hurt");
     }
 
     /** 播放死亡动画 */
     playDying() {
-        this.animComp.play("dying");
+        this.animComp.crossFade("dying");
     }
 
 
