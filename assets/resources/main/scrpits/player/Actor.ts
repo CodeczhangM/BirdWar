@@ -2,9 +2,10 @@ import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Contact2DType,
 import { CombatEntity, EntityType, Faction } from '../CombatSystem';
 import { Log } from '../Logger';
 import { InputManager, SkillSlot } from '../InputManager';
-const { ccclass, property } = _decorator;
+const { ccclass, property, executionOrder } = _decorator;
 
 @ccclass('Actor')
+@executionOrder(10)
 export class Actor extends Component {
 
     private mcollider: BoxCollider2D = null;

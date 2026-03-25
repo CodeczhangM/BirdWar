@@ -2,13 +2,14 @@ import { _decorator, Component, Node, UITransform, Vec3, BoxCollider2D, RigidBod
 import { DungeonController } from './DungeonController';
 import { Log } from './Logger';
 
-const { ccclass, property } = _decorator;
+const { ccclass, property, executionOrder } = _decorator;
 
 /**
  * 角色自动调整大小组件
  * 根据地牢生成器的格子大小自动调整角色的尺寸，确保角色与地图分辨率匹配
  */
 @ccclass('ActorAutoResize')
+@executionOrder(-10)
 export class ActorAutoResize extends Component {
     
     @property({ type: Node, tooltip: '地牢控制器节点' })
