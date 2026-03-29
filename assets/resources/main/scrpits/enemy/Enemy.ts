@@ -143,7 +143,7 @@ export class Enemy extends Component {
         this.mcombatEntity.useCustomRule = true;
         this.mcombatEntity.customCanCollideWith = EntityType.PLAYER;
         this.mcombatEntity.customCanDamage = EntityType.PLAYER;
-        this.mcombatEntity.customCanBeDamagedBy = EntityType.PLAYER;
+        this.mcombatEntity.customCanBeDamagedBy = EntityType.PLAYER | EntityType.WEAPON;
 
         this.mcombatEntity._initCollisionRule();
         // 监听死亡事件，由 CombatEntity 统一管理生命值

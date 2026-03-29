@@ -106,7 +106,7 @@ export class Actor extends Component {
             this.mhitcombatEntity.customCanDamage = EntityType.ENEMY;
             this.mhitcombatEntity.customCanBeDamagedBy = EntityType.ENEMY;
             this.mhitcombatEntity._initCollisionRule();
-            this.mhitcombatEntity.onContact(this.onWeaponContact);
+            // this.mhitcombatEntity.onContact(this.onWeaponContact);
         }
 
         if(!this.mcombatEntity) {
@@ -119,16 +119,17 @@ export class Actor extends Component {
             this.mcombatEntity.customCanDamage = EntityType.ENEMY;
             this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY | EntityType.WEAPON;
             this.mcombatEntity._initCollisionRule();
+            this.mcombatEntity.onHit((target : CombatEntity) => {
+                this.onHit(target);
+            });
         }
 
     }
 
-    private onWeaponContact(weapon : CombatEntity) {
-        Log.log(this.MODULE_NAME, 'onWeaponContact');
-        if(weapon)
-        {
-            // this.mcombatEntity.takeDamage(weapon)
-        }
+    private onHit(target : CombatEntity) {
+        Log.log(this.MODULE_NAME, `onHit : ${target}`);
+        this.playAnimationByIndex(3);
+      
     }
 
     private initAnimation() {
