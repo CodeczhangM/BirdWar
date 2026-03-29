@@ -10,6 +10,7 @@ export class Actor extends Component {
 
     private mcollider: BoxCollider2D = null;
     private mcombatEntity: CombatEntity = null;
+    private mhitcombatEntity: CombatEntity = null;
     private mKickNode: Node = null;
     private animComp: Animation = null!;
     private _skillDownHandler: ((slot: SkillSlot) => void) | null = null;
@@ -22,7 +23,7 @@ export class Actor extends Component {
     public autoFacing: boolean = true;
 
     @property({ tooltip: '移动速度（像素/秒）' })
-    public moveSpeed: number = 10;
+    public moveSpeed: number = 1000;
 
     // 缓存当前角色的所有动画剪辑（自动对应 Skill 0~6）
     private animationClips: AnimationClip[] = [];
@@ -95,16 +96,38 @@ export class Actor extends Component {
     }
 
     private initCombatEntity() {
-        if (!this.mcombatEntity) {
-            this.mcombatEntity = this.mKickNode.addComponent(CombatEntity);
+        if (!this.mhitcombatEntity) {
+            this.mhitcombatEntity = this.mKickNode.addComponent(CombatEntity);
+            this.mhitcombatEntity.entityType = EntityType.PLAYER;
+            this.mhitcombatEntity.faction = Faction.PLAYER;
+            this.mhitcombatEntity.attackPower = 20;
+            this.mhitcombatEntity.useCustomRule = true;
+            this.mhitcombatEntity.customCanCollideWith =  EntityType.ENEMY;
+            this.mhitcombatEntity.customCanDamage = EntityType.ENEMY;
+            this.mhitcombatEntity.customCanBeDamagedBy = EntityType.ENEMY;
+            this.mhitcombatEntity._initCollisionRule();
+            this.mhitcombatEntity.onContact(this.onWeaponContact);
+        }
+
+        if(!this.mcombatEntity) {
+            this.mcombatEntity = this.node.addComponent(CombatEntity);
             this.mcombatEntity.entityType = EntityType.PLAYER;
             this.mcombatEntity.faction = Faction.PLAYER;
-            this.mcombatEntity.attackPower = 20;
+            this.mcombatEntity.attackPower = 0;
             this.mcombatEntity.useCustomRule = true;
-            this.mcombatEntity.customCanCollideWith = EntityType.PLAYER | EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF;
+            this.mcombatEntity.customCanCollideWith = EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF | EntityType.WEAPON;
             this.mcombatEntity.customCanDamage = EntityType.ENEMY;
-            this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY;
+            this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY | EntityType.WEAPON;
             this.mcombatEntity._initCollisionRule();
+        }
+
+    }
+
+    private onWeaponContact(weapon : CombatEntity) {
+        Log.log(this.MODULE_NAME, 'onWeaponContact');
+        if(weapon)
+        {
+            // this.mcombatEntity.takeDamage(weapon)
         }
     }
 
@@ -160,7 +183,7 @@ export class Actor extends Component {
 
         // 如果有刚体组件，使用物理移动（支持碰撞检测）
         if (this._rigidBody) {
-            // 设置线性速度，让物理引擎处理碰撞
+            //设置线性速度，让物理引擎处理碰撞
             this._rigidBody.linearVelocity = new Vec2(
                 dir.x * this.moveSpeed,
                 dir.y * this.moveSpeed

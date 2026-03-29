@@ -5,5 +5,32 @@
   },
   "script": {
     "preserveSymlinks": true
+  },
+  "physics": {
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "PlayerBody"
+      },
+      {
+        "index": 2,
+        "name": "EnemyBody"
+      },
+      {
+        "index": 3,
+        "name": "EnemyWeapon"
+      },
+      {
+        "index": 4,
+        "name": "PlayerWeapon"
+      }
+    ],
+    "collisionMatrix": {
+      "0": 0,
+      "1": 8,
+      "2": 16,
+      "3": 2,
+      "4": 4
+    }
   }
 }

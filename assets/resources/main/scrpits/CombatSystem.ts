@@ -31,7 +31,8 @@ export enum EntityType {
     BUFF = 1 << 4,
     DEBUFF = 1 << 5,
     NEUTRAL = 1 << 6,
-    OBSTACLE = 1 << 7
+    OBSTACLE = 1 << 7,
+    WEAPON = 1 << 8
 }
 
 /** 阵营 */
@@ -189,6 +190,8 @@ export type OnHealCallback = (requestedAmount: number, source: CombatEntity | nu
 export type OnShieldChangeCallback = (currentShield: number, delta: number) => void;
 export type OnStatusEffectCallback = (effect: ActiveStatusEffect, action: StatusEffectAction) => void;
 
+export type OnContactCallback = (weapon: CombatEntity) => void;
+
 function createDefaultStats(): CombatStats {
     return {
         hits: 0,
@@ -303,6 +306,13 @@ export class CollisionRules {
         canBeDamagedBy: 0
     };
 
+    /** 武器规则：可碰撞敌人/玩家，不能被攻击，不主动造成伤害（由持有者逻辑决定） */
+    static readonly WEAPON: CollisionRule = {
+        canCollideWith: EntityType.PLAYER | EntityType.ENEMY,
+        canDamage: 0,
+        canBeDamagedBy: 0
+    };
+
     /** 根据实体类型和阵营获取预设规则 */
     static getRule(entityType: EntityType, faction: Faction): CollisionRule {
         switch (entityType) {
@@ -322,6 +332,8 @@ export class CollisionRules {
                 return this.NEUTRAL;
             case EntityType.OBSTACLE:
                 return this.OBSTACLE;
+            case EntityType.WEAPON:
+                return this.WEAPON;
             default:
                 return { canCollideWith: 0, canDamage: 0, canBeDamagedBy: 0 };
         }
@@ -391,6 +403,9 @@ export class CombatEntity extends Component {
     @property({ tooltip: '是否无敌' })
     public invincible: boolean = false;
 
+    @property({ tooltip: '是否为武器（无法被攻击，碰撞时只触发对方的 onContact 事件）' })
+    public isWeapon: boolean = false;
+
     @property({ tooltip: '命中后自动销毁（适合子弹）' })
     public destroyOnHit: boolean = false;
 
@@ -425,7 +440,7 @@ export class CombatEntity extends Component {
     public debugDrawLineWidth: number = 2;
 
     // ---------- 私有状态 ----------
-
+    
     private readonly MODULE_NAME = 'CombatEntity';
     private _collider: BoxCollider2D = null;
     private _collisionRule: CollisionRule = null;
@@ -442,6 +457,7 @@ export class CombatEntity extends Component {
     private _onHeal: OnHealCallback[] = [];
     private _onShieldChange: OnShieldChangeCallback[] = [];
     private _onStatusEffect: OnStatusEffectCallback[] = [];
+    private _onContact: OnContactCallback[] = [];
 
     // ========== 生命周期 ==========
 
@@ -500,6 +516,7 @@ export class CombatEntity extends Component {
         this._onHeal.length = 0;
         this._onShieldChange.length = 0;
         this._onStatusEffect.length = 0;
+        this._onContact.length = 0;
     }
 
     update(dt: number) {
@@ -605,15 +622,22 @@ export class CombatEntity extends Component {
     // ========== 碰撞处理 ==========
 
     private _onCollisionEnter(_selfCollider: Collider2D, otherCollider: Collider2D, _contact: IPhysics2DContact) {
-          Log.warn("test", `_onCollisionEnter`);
         const otherEntity = otherCollider.getComponent(CombatEntity);
         if (!otherEntity) return;
 
-        //todo fix bug collider mask error.
-        if (!this._canCollideWith(otherEntity)) return;
-
         if (this.enableDebugLog) {
             Log.log(this.MODULE_NAME, `碰撞: ${this.node.name} <-> ${otherEntity.node.name}`);
+        }
+
+        if (!this._canCollideWith(otherEntity)) return;
+
+        // 武器：只触发对方的 onContact 事件，不造成伤害
+        if (this.isWeapon) {
+            otherEntity._fireContact(this);
+            if (this.destroyOnHit && this.node && this.node.isValid) {
+                this.node.destroy();
+            }
+            return;
         }
 
         const didDamage = this._handleDamage(otherEntity);
@@ -633,8 +657,8 @@ export class CombatEntity extends Component {
     }
 
     private _handleDamage(other: CombatEntity): boolean {
-        if (!this.canDamageTarget(other)) return false;
-        const result = this.attackTarget(other);
+        if (!other.canDamageTarget(this)) return false;
+        const result = other.attackTarget(this);
         return result !== null && (result.finalAmount > 0 || result.absorbedByShield > 0);
     }
 
@@ -1096,6 +1120,12 @@ export class CombatEntity extends Component {
         }
     }
 
+    public _fireContact(weapon: CombatEntity) {
+        for (const callback of this._onContact) {
+            callback(weapon);
+        }
+    }
+
     /** 订阅受伤事件 */
     public onDamage(callback: OnDamageCallback) {
         if (this._onDamage.indexOf(callback) < 0) this._onDamage.push(callback);
@@ -1164,6 +1194,16 @@ export class CombatEntity extends Component {
     /** 取消订阅状态效果事件 */
     public offStatusEffect(callback: OnStatusEffectCallback) {
         removeCallback(this._onStatusEffect, callback);
+    }
+
+    /** 订阅武器接触事件（仅当对方为武器时触发） */
+    public onContact(callback: OnContactCallback) {
+        if (this._onContact.indexOf(callback) < 0) this._onContact.push(callback);
+    }
+
+    /** 取消订阅武器接触事件 */
+    public offContact(callback: OnContactCallback) {
+        removeCallback(this._onContact, callback);
     }
 
     // ========== 公共 API ==========

@@ -275,7 +275,7 @@ export class ActorAutoResize extends Component {
         }
 
         // 更新碰撞体尺寸
-        this._updateColliderSize();
+        // this._updateColliderSize();
 
         Log.log(this.MODULE_NAME, '物理碰撞体设置完成');
     }

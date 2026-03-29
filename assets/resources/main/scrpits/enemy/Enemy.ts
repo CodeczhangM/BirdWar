@@ -18,6 +18,7 @@ export class Enemy extends Component {
 
     private mcollider: BoxCollider2D = null;
     private mcombatEntity: CombatEntity = null;
+    private mhitcombatEntity: CombatEntity = null;
     private animComp: Animation = null!;
     private _rigidBody: RigidBody2D = null;
 
@@ -60,6 +61,7 @@ export class Enemy extends Component {
     private _patrolOrigin: Vec2 = null;
     private _attackTimer: number = 0;
     private _scale: Vec3 = Vec3.ZERO;
+    private _hitNode : Node = null;
 
     private readonly MODULE_NAME = 'Enemy';
 
@@ -108,23 +110,42 @@ export class Enemy extends Component {
         this.mcollider = this.node.addComponent(BoxCollider2D);
         this.mcollider.sensor = true;
         this.mcollider.enabled = true;
-        this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
+        // this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
     }
 
     private initCombatEntity(): void {
+        //fix hit node name.
+        this._hitNode = this.node.getChildByName("hitNode");
+        if(this._hitNode)
+        {
+            this.mhitcombatEntity = this._hitNode.addComponent(CombatEntity);
+            this.mhitcombatEntity.entityType = EntityType.WEAPON;
+            this.mhitcombatEntity.faction = Faction.ENEMY;
+            this.mhitcombatEntity.attackPower = 10;
+            this.mhitcombatEntity.maxHealth = 100;
+            this.mhitcombatEntity.isWeapon = true;
+            this.mhitcombatEntity.enableDebugLog = true;
+
+            this.mhitcombatEntity.useCustomRule = true;
+            this.mhitcombatEntity.customCanCollideWith = EntityType.PLAYER;
+            this.mhitcombatEntity.customCanDamage = EntityType.PLAYER;
+            this.mhitcombatEntity.customCanBeDamagedBy = EntityType.PLAYER;
+            this.mhitcombatEntity._initCollisionRule();
+        }
+
         this.mcombatEntity = this.node.addComponent(CombatEntity);
         this.mcombatEntity.entityType = EntityType.ENEMY;
         this.mcombatEntity.faction = Faction.ENEMY;
-        this.mcombatEntity.attackPower = 10;
+        this.mcombatEntity.attackPower = 0;
         this.mcombatEntity.maxHealth = 100;
         this.mcombatEntity.enableDebugLog = true;
 
         this.mcombatEntity.useCustomRule = true;
-        this.mcombatEntity.customCanCollideWith = EntityType.PLAYER | EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF;
+        this.mcombatEntity.customCanCollideWith = EntityType.PLAYER;
         this.mcombatEntity.customCanDamage = EntityType.PLAYER;
         this.mcombatEntity.customCanBeDamagedBy = EntityType.PLAYER;
 
-         this.mcombatEntity._initCollisionRule();
+        this.mcombatEntity._initCollisionRule();
         // 监听死亡事件，由 CombatEntity 统一管理生命值
         this.mcombatEntity.onDeath(() => this.die());
     }
@@ -243,10 +264,10 @@ export class Enemy extends Component {
 
     private releaseSkill(): void {
         Log.debug(this.MODULE_NAME, '释放技能（攻击）');
-        this.onAttackStart();
+        // this.onAttackStart();
         if (this.animComp) {
             this.animComp.play(this.animAttack);
-            this.animComp.once(Animation.EventType.FINISHED, () => this.onAttackEnd(), this);
+            // this.animComp.once(Animation.EventType.FINISHED, () => this.onAttackEnd(), this);
         } else {
             this.scheduleOnce(() => this.onAttackEnd(), 0.3);
         }
@@ -257,12 +278,16 @@ export class Enemy extends Component {
         // CombatEntity 会自动处理伤害逻辑
     }
 
-    public onAttackStart(): void {
+    public onAttackBegin(): void {
+        Log.debug(this.MODULE_NAME, `攻击开始: onAttackBegin`);
         // if (this.mcollider) this.mcollider.enabled = true;
+        if(this._hitNode) this._hitNode.getComponent(BoxCollider2D).enabled = true;
     }
 
     public onAttackEnd(): void {
+        Log.debug(this.MODULE_NAME, `攻击结束: onAttackEnd`);
         // if (this.mcollider) this.mcollider.enabled = false;
+         if(this._hitNode) this._hitNode.getComponent(BoxCollider2D).enabled = false;
     }
 
     public setAnimationSpeed(speed: number): void {
