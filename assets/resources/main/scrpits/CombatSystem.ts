@@ -413,7 +413,7 @@ export class CombatEntity extends Component {
     public autoDestroyOnDeath: boolean = true;
 
     @property({ tooltip: '死亡销毁延迟（秒）' })
-    public destroyDelay: number = 0;
+    public destroyDelay: number = 2;
 
     @property({ tooltip: '使用自定义碰撞规则' })
     public useCustomRule: boolean = false;
@@ -1043,6 +1043,7 @@ export class CombatEntity extends Component {
     public die(killer: CombatEntity | null = null) {
         if (!this._isAlive) return;
 
+        if(!this._collider) this._collider.enabled = false;
         this._isAlive = false;
         this.currentHealth = 0;
         this._stats.deaths += 1;
@@ -1078,12 +1079,14 @@ export class CombatEntity extends Component {
     // ========== 事件系统 ==========
 
     private _fireDamage(damage: DamageInfo, target: CombatEntity, result: DamageResult) {
+        if (!this._isAlive) return;
         for (const callback of this._onDamage) {
             callback(damage, target, result);
         }
     }
 
     private _fireHit(target: CombatEntity) {
+        if (!this._isAlive) return;
         for (const callback of this._onHit) {
             callback(target);
         }
@@ -1096,24 +1099,28 @@ export class CombatEntity extends Component {
     }
 
     private _fireCollect(collector: CombatEntity) {
+        if (!this._isAlive) return;
         for (const callback of this._onCollect) {
             callback(collector);
         }
     }
 
     private _fireHeal(requestedAmount: number, source: CombatEntity | null, actualAmount: number) {
+        if (!this._isAlive) return;
         for (const callback of this._onHeal) {
             callback(requestedAmount, source, actualAmount);
         }
     }
 
     private _fireShieldChanged(currentShield: number, delta: number) {
+        if (!this._isAlive) return;
         for (const callback of this._onShieldChange) {
             callback(currentShield, delta);
         }
     }
 
     private _fireStatusEffect(effect: ActiveStatusEffect, action: StatusEffectAction) {
+        if (!this._isAlive) return;
         const snapshot = cloneActiveStatusEffect(effect);
         for (const callback of this._onStatusEffect) {
             callback(snapshot, action);
@@ -1121,6 +1128,7 @@ export class CombatEntity extends Component {
     }
 
     public _fireContact(weapon: CombatEntity) {
+        if (!this._isAlive) return;
         for (const callback of this._onContact) {
             callback(weapon);
         }

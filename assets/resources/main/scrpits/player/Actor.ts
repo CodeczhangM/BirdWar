@@ -118,12 +118,22 @@ export class Actor extends Component {
             this.mcombatEntity.customCanCollideWith = EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF | EntityType.WEAPON;
             this.mcombatEntity.customCanDamage = EntityType.ENEMY;
             this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY | EntityType.WEAPON;
+            this.mcombatEntity.destroyDelay = 2;
             this.mcombatEntity._initCollisionRule();
             this.mcombatEntity.onHit((target : CombatEntity) => {
                 this.onHit(target);
             });
+
+            this.mcombatEntity.onDeath((killer : CombatEntity) => {
+                this.onDeath(killer);
+            })
         }
 
+    }
+
+    private onDeath(killer : CombatEntity) {
+         Log.log(this.MODULE_NAME, `onDeath`);
+         this.playAnimationByIndex(5);
     }
 
     private onHit(target : CombatEntity) {
@@ -269,9 +279,12 @@ export class Actor extends Component {
      */
     private onAnimationFinished() {
         Log.debug(this.MODULE_NAME, "✅ 动画播放完成");
+        Log.debug(this.MODULE_NAME, `✅ this.mcombatEntity.isAlive : ${this.mcombatEntity.isAlive()}`);
         // this.onAttackEnd();
         // 动画结束后默认回到第一个动画（待机）
-        this.playAnimationByIndex(0);
+        if(this.mcombatEntity.isAlive()) {
+            this.playAnimationByIndex(0);
+        }
     }
 
     // ========================== 攻击碰撞 ==========================
