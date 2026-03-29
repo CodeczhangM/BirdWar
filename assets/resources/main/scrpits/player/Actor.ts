@@ -78,7 +78,7 @@ export class Actor extends Component {
 
             this.mcollider = this.mKickNode.getComponent(BoxCollider2D) || this.mKickNode.addComponent(BoxCollider2D);
             this.mcollider.sensor = true;
-            this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
+            // this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
         }
 
         if (!this.mcollider) {
@@ -89,16 +89,22 @@ export class Actor extends Component {
 
         this._rigidBody = this.getComponent(RigidBody2D);
         if (this._rigidBody) {
-            Log.log(this.MODULE_NAME, '检测到 RigidBody2D，将使用物理移动');
+            Log.log(this.MODULE_NAME, '检测到1111 RigidBody2D，将使用物理移动');
         }
+        this._rigidBody.gravityScale = 0;
     }
 
     private initCombatEntity() {
         if (!this.mcombatEntity) {
-            this.mcombatEntity = this.node.addComponent(CombatEntity);
-            this.mcombatEntity.entityType = EntityType.BULLET;
+            this.mcombatEntity = this.mKickNode.addComponent(CombatEntity);
+            this.mcombatEntity.entityType = EntityType.PLAYER;
             this.mcombatEntity.faction = Faction.PLAYER;
             this.mcombatEntity.attackPower = 20;
+            this.mcombatEntity.useCustomRule = true;
+            this.mcombatEntity.customCanCollideWith = EntityType.PLAYER | EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF;
+            this.mcombatEntity.customCanDamage = EntityType.ENEMY;
+            this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY;
+            this.mcombatEntity._initCollisionRule();
         }
     }
 
@@ -251,12 +257,17 @@ export class Actor extends Component {
 
     public onAttackStart(): void {
         Log.debug(this.MODULE_NAME, "🔪 攻击开始 → 开启碰撞");
-        if (this.mcollider) this.mcollider.enabled = true;
+        // if (this.mcollider) this.mcollider.enabled = true;
+
+        if(this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = true;
     }
 
     public onAttackEnd(): void {
         Log.debug(this.MODULE_NAME, "🛡️ 攻击结束 → 关闭碰撞");
-        if (this.mcollider) this.mcollider.enabled = false;
+        // if (this.mcollider) this.mcollider.enabled = false;
+
+        if(this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = false;
+
     }
 
     // ========================== 工具方法 ==========================

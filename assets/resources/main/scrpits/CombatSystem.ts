@@ -1,13 +1,14 @@
-import { _decorator, Component, Collider2D, Contact2DType, IPhysics2DContact, Node, Enum, Graphics, Color, UITransform, Vec3 } from 'cc';
+import { _decorator, PhysicsSystem2D, Component, BoxCollider2D, Collider2D, Contact2DType, IPhysics2DContact, Node, Enum, Graphics, Color, UITransform, Vec3 } from 'cc';
 import { Log } from './Logger';
 
-const { ccclass, property } = _decorator;
+const { ccclass, property, executionOrder } = _decorator;
 
 function clamp01(value: number): number {
     return Math.max(0, Math.min(1, value));
 }
 
 function hasFlag(mask: number, flag: number): boolean {
+    Log.warn("test", `mask ${mask} flag ${flag}`);
     return (mask & flag) !== 0;
 }
 
@@ -334,6 +335,7 @@ export class CollisionRules {
  * 挂载到任何需要参与战斗系统的节点上
  */
 @ccclass('CombatEntity')
+@executionOrder(12)
 export class CombatEntity extends Component {
 
     // ---------- Inspector 属性 ----------
@@ -411,10 +413,10 @@ export class CombatEntity extends Component {
     public customCanBeDamagedBy: number = 0;
 
     @property({ tooltip: '启用调试日志' })
-    public enableDebugLog: boolean = false;
+    public enableDebugLog: boolean = true;
 
     @property({ tooltip: '启用碰撞区域调试绘制' })
-    public enableDebugDraw: boolean = false;
+    public enableDebugDraw: boolean = true;
 
     @property({ visible: function() { return this.enableDebugDraw; }, tooltip: '调试绘制颜色' })
     public debugDrawColor: Color = new Color(0, 255, 0, 128);
@@ -425,7 +427,7 @@ export class CombatEntity extends Component {
     // ---------- 私有状态 ----------
 
     private readonly MODULE_NAME = 'CombatEntity';
-    private _collider: Collider2D = null;
+    private _collider: BoxCollider2D = null;
     private _collisionRule: CollisionRule = null;
     private _isAlive: boolean = true;
     private _debugGraphics: Graphics = null;
@@ -444,6 +446,7 @@ export class CombatEntity extends Component {
     // ========== 生命周期 ==========
 
     onLoad() {
+        // PhysicsSystem2D.instance.enable = true;
         this.maxHealth = Math.max(1, this.maxHealth);
         this.currentHealth = this.currentHealth <= 0 ? this.maxHealth : Math.min(this.currentHealth, this.maxHealth);
         this.currentShield = Math.max(0, this.maxShield > 0 ? Math.min(this.currentShield, this.maxShield) : this.currentShield);
@@ -456,14 +459,20 @@ export class CombatEntity extends Component {
         this.destroyDelay = Math.max(0, this.destroyDelay);
         this._isAlive = this.currentHealth > 0;
 
-        this._collider = this.getComponent(Collider2D);
+        this._collider = this.getComponent(BoxCollider2D);
+        this._collider.sensor = false;
+        this.useCustomRule = true;
         if (!this._collider) {
             Log.warn(this.MODULE_NAME, `节点 ${this.node.name} 没有 Collider2D 组件`);
         }
 
+        // this._collider.size.x = 200;
+        // this._collider.size.y = 200;
+
         this._initCollisionRule();
 
         if (this._collider) {
+            Log.warn(this.MODULE_NAME, `节点 ${this.node.name}  regist collider component.`);
             this._collider.on(Contact2DType.BEGIN_CONTACT, this._onCollisionEnter, this);
         }
 
@@ -505,7 +514,7 @@ export class CombatEntity extends Component {
 
     // ========== 初始化 ==========
 
-    private _initCollisionRule() {
+    public _initCollisionRule() {
         if (this.useCustomRule) {
             this._collisionRule = {
                 canCollideWith: this.customCanCollideWith,
@@ -596,9 +605,11 @@ export class CombatEntity extends Component {
     // ========== 碰撞处理 ==========
 
     private _onCollisionEnter(_selfCollider: Collider2D, otherCollider: Collider2D, _contact: IPhysics2DContact) {
+          Log.warn("test", `_onCollisionEnter`);
         const otherEntity = otherCollider.getComponent(CombatEntity);
         if (!otherEntity) return;
 
+        //todo fix bug collider mask error.
         if (!this._canCollideWith(otherEntity)) return;
 
         if (this.enableDebugLog) {

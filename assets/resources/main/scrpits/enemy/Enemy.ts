@@ -13,7 +13,7 @@ enum AIState {
 }
 
 @ccclass('Enemy')
-@executionOrder(10)
+@executionOrder(5)
 export class Enemy extends Component {
 
     private mcollider: BoxCollider2D = null;
@@ -39,6 +39,21 @@ export class Enemy extends Component {
     @property({ tooltip: '动画播放速度' })
     public animationSpeed: number = 1.0;
 
+    @property({ tooltip: '空闲动画名' })
+    public animIdle: string = 'idle';
+
+    @property({ tooltip: '行走动画名' })
+    public animWalk: string = 'walk';
+
+    @property({ tooltip: '攻击动画名' })
+    public animAttack: string = 'splash';
+
+    @property({ tooltip: '防御动画名' })
+    public animDefend: string = 'defend';
+
+    @property({ tooltip: '死亡动画名' })
+    public animDead: string = 'dead';
+
     private _aiState: AIState = AIState.IDLE;
     private _player: Node = null;
     private _patrolDirection: number = 1;
@@ -49,7 +64,7 @@ export class Enemy extends Component {
     private readonly MODULE_NAME = 'Enemy';
 
     protected onLoad(): void {
-        this.initCollider();
+        // this.initCollider();
         this.initCombatEntity();
         this.initAnimation();
     }
@@ -92,7 +107,7 @@ export class Enemy extends Component {
     private initCollider(): void {
         this.mcollider = this.node.addComponent(BoxCollider2D);
         this.mcollider.sensor = true;
-        this.mcollider.enabled = false;
+        this.mcollider.enabled = true;
         this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
     }
 
@@ -102,6 +117,14 @@ export class Enemy extends Component {
         this.mcombatEntity.faction = Faction.ENEMY;
         this.mcombatEntity.attackPower = 10;
         this.mcombatEntity.maxHealth = 100;
+        this.mcombatEntity.enableDebugLog = true;
+
+        this.mcombatEntity.useCustomRule = true;
+        this.mcombatEntity.customCanCollideWith = EntityType.PLAYER | EntityType.ENEMY | EntityType.DEBUFF | EntityType.BUFF;
+        this.mcombatEntity.customCanDamage = EntityType.PLAYER;
+        this.mcombatEntity.customCanBeDamagedBy = EntityType.PLAYER;
+
+         this.mcombatEntity._initCollisionRule();
         // 监听死亡事件，由 CombatEntity 统一管理生命值
         this.mcombatEntity.onDeath(() => this.die());
     }
@@ -136,6 +159,19 @@ export class Enemy extends Component {
         if (this._aiState === newState) return;
         this._aiState = newState;
         Log.debug(this.MODULE_NAME, `AI状态切换: ${AIState[newState]}`);
+        this.playStateAnim(newState);
+    }
+
+    private playStateAnim(state: AIState): void {
+        if (!this.animComp) return;
+        const nameMap: Partial<Record<AIState, string>> = {
+            [AIState.IDLE]:   this.animIdle,
+            [AIState.PATROL]: this.animWalk,
+            [AIState.CHASE]:  this.animWalk,
+            [AIState.DEAD]:   this.animDead,
+        };
+        const name = nameMap[state];
+        if (name) this.animComp.play(name);
     }
 
     private updateAIBehavior(dt: number): void {
@@ -209,10 +245,9 @@ export class Enemy extends Component {
         Log.debug(this.MODULE_NAME, '释放技能（攻击）');
         this.onAttackStart();
         if (this.animComp) {
-            this.animComp.play('splash');
+            this.animComp.play(this.animAttack);
             this.animComp.once(Animation.EventType.FINISHED, () => this.onAttackEnd(), this);
         } else {
-            // 无动画时，短暂开启碰撞后关闭
             this.scheduleOnce(() => this.onAttackEnd(), 0.3);
         }
     }
