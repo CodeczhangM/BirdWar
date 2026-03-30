@@ -178,6 +178,7 @@ export class Enemy extends Component {
     }
 
     private setAIState(newState: AIState): void {
+        Log.debug(this.MODULE_NAME, `setAIState : ${newState}`);
         if (this._aiState === newState) return;
         this._aiState = newState;
         this.playStateAnim(newState);
@@ -317,16 +318,12 @@ export class Enemy extends Component {
         
         if (this.animComp) {
             this.animComp.play(this.animAttack);
-            this.animComp.once(Animation.EventType.FINISHED, () => {
-                this.onAttackEnd();
-            }, this);
-        } else {
-            this.scheduleOnce(() => this.onAttackEnd(), 0.3);
         }
 
-        this.scheduleOnce(() => {
-            this.onAttackBegin();
-        }, 0.1);
+        this.scheduleOnce(()=>{
+            this.onAttackEnd();
+        }, 0.3);
+
     }
 
     private onTriggerEnter(other: Collider2D, _self: Collider2D): void {
