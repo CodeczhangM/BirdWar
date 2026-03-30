@@ -1,8 +1,24 @@
-import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Contact2DType, Collider2D, Animation, AnimationClip, Vec2, Vec3 } from 'cc';
-import { CombatEntity, EntityType, Faction } from '../CombatSystem';
+import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Animation, AnimationClip, Vec2, Vec3 } from 'cc';
+import { CombatEntity, EntityType, Faction, DamageInfo, DamageResult, ActiveStatusEffect, StatusEffectAction } from '../CombatSystem';
 import { Log } from '../Logger';
 import { InputManager, SkillSlot } from '../InputManager';
 const { ccclass, property, executionOrder } = _decorator;
+
+enum ActorState {
+    IDLE   = 0,
+    WALK   = 1,
+    SKILL  = 2,  // 技能/攻击中（不可打断）
+    HIT    = 3,  // 受击
+    DEAD   = 4
+}
+
+// 动画剪辑索引约定（与 Animation 组件 clips 数组顺序对应）
+const ANIM = {
+    IDLE:  5,
+    WALK:  6,
+    HIT:   7,
+    DEAD:  8
+} as const;
 
 @ccclass('Actor')
 @executionOrder(10)
@@ -17,7 +33,6 @@ export class Actor extends Component {
     private _skillUpHandler: ((slot: SkillSlot) => void) | null = null;
     private _inputManager: InputManager = null;
     private _rigidBody: RigidBody2D = null;
-    private _currentFacingAngle: number = 0;
 
     @property({ tooltip: '是否根据移动方向自动调整朝向' })
     public autoFacing: boolean = true;
@@ -25,50 +40,97 @@ export class Actor extends Component {
     @property({ tooltip: '移动速度（像素/秒）' })
     public moveSpeed: number = 1000;
 
-    // 缓存当前角色的所有动画剪辑（自动对应 Skill 0~6）
     private animationClips: AnimationClip[] = [];
 
     @property({ tooltip: '动画播放速度倍数', range: [0.1, 3, 0.1] })
     public animationSpeed: number = 5.0;
 
     private readonly MODULE_NAME = 'Actor';
-    // 最大支持技能数量 0~6
     private readonly MAX_SKILL_COUNT = 7;
 
     private _scale: Vec3 = Vec3.ZERO;
+    private _hitNodeOffsetX: number = 0;
+    private _facing: number = 1;
+    private _moveDir: Vec2 = new Vec2();
+
+    // ── 状态机 ──
+    private _state: ActorState = ActorState.IDLE;
 
     protected onLoad(): void {
-        // 初始化碰撞体
         this.initCollider();
-        // 初始化战斗实体
         this.initCombatEntity();
-        // 初始化动画组件 & 缓存动画剪辑
         this.initAnimation();
-
-        this.playAnimationByIndex(0); // 默认播放第一个动画（待机）
+        this._enterState(ActorState.IDLE);
     }
 
     protected start(): void {
-        Log.debug(this.MODULE_NAME, "Actor onLoad completed, registering input events");
         this.registerInputEvents();
         this._scale = this.node.getScale();
+        if (this.mcollider) {
+            this._hitNodeOffsetX = this.mcollider.offset.x;
+        }
     }
 
-    protected update(dt: number): void {
-        this.setAnimationSpeed(this.animationSpeed);
-
+    protected update(_dt: number): void {
         if (!this._inputManager) return;
-
-        // 每帧读取移动方向，驱动角色移动
         const dir = this._inputManager.getMoveDirection();
-        this._moveCharacter(dir, dt);
+        this._moveDir.x = dir.x;
+        this._moveDir.y = dir.y;
+
+        if (this.autoFacing && this._moveDir.lengthSqr() > 0.01) {
+            this._updateFacing(this._moveDir);
+        }
+
+        this.myfixedUpdate(_dt);
+        // 只在可行动状态下切换 IDLE/WALK
+        if (this._state === ActorState.IDLE || this._state === ActorState.WALK) {
+            if (this._moveDir.lengthSqr() > 0.01) {
+                this._enterState(ActorState.WALK);
+            } else {
+                this._enterState(ActorState.IDLE);
+            }
+        }
+    }
+
+    protected myfixedUpdate(_dt: number): void {  
+        if (!this._rigidBody) return;
+        // 死亡或受击时停止移动
+        if (this._state === ActorState.DEAD || this._state === ActorState.HIT) {
+            this._rigidBody.linearVelocity = Vec2.ZERO;
+            return;
+        }
+
+        if (this._moveDir.lengthSqr() < 0.01) {
+            this._rigidBody.linearVelocity = Vec2.ZERO;
+        } else {
+            const speedMult = this.mcombatEntity ? this.mcombatEntity.getMoveSpeedMultiplier() : 1;
+            this._rigidBody.linearVelocity = new Vec2(
+                this._moveDir.x * this.moveSpeed * speedMult,
+                this._moveDir.y * this.moveSpeed * speedMult
+            );
+        }
     }
 
     protected onDestroy(): void {
         this.unregisterInputEvents();
     }
 
+    // ========================== 状态机 ==========================
+
+    private _enterState(next: ActorState): void {
+        if (this._state === next) return;
+        this._state = next;
+        switch (next) {
+            case ActorState.IDLE:   this._playAnim(ANIM.IDLE);  break;
+            case ActorState.WALK:   this._playAnim(ANIM.WALK);  break;
+            case ActorState.HIT:    this._playAnim(ANIM.HIT);   break;
+            case ActorState.DEAD:   this._playAnim(ANIM.DEAD);  break;
+            case ActorState.SKILL:  /* 由 onSkillDown 指定具体动画索引 */ break;
+        }
+    }
+
     // ========================== 初始化模块 ==========================
+
     private initCollider() {
         if (!this.mKickNode) {
             this.mKickNode = this.node.getChildByName("hitNode");
@@ -76,12 +138,9 @@ export class Actor extends Component {
                 Log.error(this.MODULE_NAME, "get kick node error.");
                 return;
             }
-
             this.mcollider = this.mKickNode.getComponent(BoxCollider2D) || this.mKickNode.addComponent(BoxCollider2D);
             this.mcollider.sensor = true;
-            // this.mcollider.on(Contact2DType.BEGIN_CONTACT, this.onTriggerEnter, this);
         }
-
         if (!this.mcollider) {
             this.mcollider = this.node.addComponent(BoxCollider2D);
             this.mcollider.sensor = true;
@@ -90,9 +149,9 @@ export class Actor extends Component {
 
         this._rigidBody = this.getComponent(RigidBody2D);
         if (this._rigidBody) {
-            Log.log(this.MODULE_NAME, '检测到1111 RigidBody2D，将使用物理移动');
+            this._rigidBody.gravityScale = 0;
+            this._rigidBody.fixedRotation = true;
         }
-        this._rigidBody.gravityScale = 0;
     }
 
     private initCombatEntity() {
@@ -102,14 +161,13 @@ export class Actor extends Component {
             this.mhitcombatEntity.faction = Faction.PLAYER;
             this.mhitcombatEntity.attackPower = 20;
             this.mhitcombatEntity.useCustomRule = true;
-            this.mhitcombatEntity.customCanCollideWith =  EntityType.ENEMY;
+            this.mhitcombatEntity.customCanCollideWith = EntityType.ENEMY;
             this.mhitcombatEntity.customCanDamage = EntityType.ENEMY;
             this.mhitcombatEntity.customCanBeDamagedBy = EntityType.ENEMY;
             this.mhitcombatEntity._initCollisionRule();
-            // this.mhitcombatEntity.onContact(this.onWeaponContact);
         }
 
-        if(!this.mcombatEntity) {
+        if (!this.mcombatEntity) {
             this.mcombatEntity = this.node.addComponent(CombatEntity);
             this.mcombatEntity.entityType = EntityType.PLAYER;
             this.mcombatEntity.faction = Faction.PLAYER;
@@ -120,26 +178,42 @@ export class Actor extends Component {
             this.mcombatEntity.customCanBeDamagedBy = EntityType.ENEMY | EntityType.WEAPON;
             this.mcombatEntity.destroyDelay = 2;
             this.mcombatEntity._initCollisionRule();
-            this.mcombatEntity.onHit((target : CombatEntity) => {
-                this.onHit(target);
+
+            this.mcombatEntity.onHit((target: CombatEntity) => {
+                Log.log(this.MODULE_NAME, `onHit: ${target.node.name}`);
             });
 
-            this.mcombatEntity.onDeath((killer : CombatEntity) => {
-                this.onDeath(killer);
-            })
+            this.mcombatEntity.onDamage((_damage: DamageInfo, _target: CombatEntity, result: DamageResult) => {
+                if (this._state === ActorState.DEAD) return;
+                Log.log(this.MODULE_NAME, `onDamage: ${result.finalAmount} (shield absorbed: ${result.absorbedByShield})`);
+                this._enterState(ActorState.HIT);
+            });
+
+            this.mcombatEntity.onDeath((killer: CombatEntity) => {
+                Log.log(this.MODULE_NAME, `onDeath by: ${killer?.node?.name ?? 'unknown'}`);
+                this._enterState(ActorState.DEAD);
+            });
+
+            this.mcombatEntity.onHeal((requested: number, _source: CombatEntity, actual: number) => {
+                Log.log(this.MODULE_NAME, `onHeal: requested=${requested} actual=${actual}`);
+            });
+
+            this.mcombatEntity.onShieldChange((current: number, delta: number) => {
+                Log.log(this.MODULE_NAME, `onShieldChange: current=${current} delta=${delta}`);
+            });
+
+            this.mcombatEntity.onStatusEffect((effect: ActiveStatusEffect, action: StatusEffectAction) => {
+                Log.log(this.MODULE_NAME, `onStatusEffect: ${effect.type} action=${action}`);
+            });
+
+            this.mcombatEntity.onCollect((collector: CombatEntity) => {
+                Log.log(this.MODULE_NAME, `onCollect by: ${collector.node.name}`);
+            });
+
+            this.mcombatEntity.onContact((weapon: CombatEntity) => {
+                Log.log(this.MODULE_NAME, `onContact weapon: ${weapon.node.name}`);
+            });
         }
-
-    }
-
-    private onDeath(killer : CombatEntity) {
-         Log.log(this.MODULE_NAME, `onDeath`);
-         this.playAnimationByIndex(5);
-    }
-
-    private onHit(target : CombatEntity) {
-        Log.log(this.MODULE_NAME, `onHit : ${target}`);
-        this.playAnimationByIndex(3);
-      
     }
 
     private initAnimation() {
@@ -148,172 +222,82 @@ export class Actor extends Component {
             Log.error(this.MODULE_NAME, "Animation 组件未找到！");
             return;
         }
-
-        // 缓存所有动画剪辑（核心：按数组索引对应技能）
         this.animationClips = this.animComp.clips || [];
-        this.logAllAnimationClips();
-
         this.animComp.playOnLoad = false;
         this.setAnimationSpeed(this.animationSpeed);
-        this.animComp.on(Animation.EventType.FINISHED, this.onAnimationFinished, this);
+        this.animComp.on(Animation.EventType.FINISHED, this._onAnimationFinished, this);
     }
 
     // ========================== 输入事件 ==========================
+
     private registerInputEvents(): void {
         const inputMgr = InputManager.instance;
         this._inputManager = inputMgr;
-        if (!inputMgr) {
-            Log.error(this.MODULE_NAME, 'InputManager not found');
-            return;
-        }
+        if (!inputMgr) { Log.error(this.MODULE_NAME, 'InputManager not found'); return; }
 
-        this._skillDownHandler = (slot: SkillSlot) => this.onSkillDown(slot);
-        this._skillUpHandler = (slot: SkillSlot) => this.onSkillUp(slot);
-
+        this._skillDownHandler = (slot: SkillSlot) => this._onSkillDown(slot);
+        this._skillUpHandler   = (slot: SkillSlot) => this._onSkillUp(slot);
         inputMgr.onSkillDown(this._skillDownHandler);
         inputMgr.onSkillUp(this._skillUpHandler);
-        Log.debug(this.MODULE_NAME, '✅ Input events registered');
     }
 
     private unregisterInputEvents(): void {
         const inputMgr = InputManager.instance;
         if (!inputMgr) return;
-
         if (this._skillDownHandler) inputMgr.offSkillDown(this._skillDownHandler);
-        if (this._skillUpHandler) inputMgr.offSkillUp(this._skillUpHandler);
+        if (this._skillUpHandler)   inputMgr.offSkillUp(this._skillUpHandler);
     }
 
-    private _moveCharacter(dir: Vec2, dt: number) {
-        if (dir.lengthSqr() < 0.01) {
-            // 停止移动时，清除速度
-            if (this._rigidBody) {
-                this._rigidBody.linearVelocity = Vec2.ZERO;
-            }
-            return;
-        }
-
-        // 如果有刚体组件，使用物理移动（支持碰撞检测）
-        if (this._rigidBody) {
-            //设置线性速度，让物理引擎处理碰撞
-            this._rigidBody.linearVelocity = new Vec2(
-                dir.x * this.moveSpeed,
-                dir.y * this.moveSpeed
-            );
-        } else {
-            // 没有刚体时，使用直接位置移动
-            const pos = this.node.position;
-            this.node.setPosition(
-                pos.x + dir.x * this.moveSpeed * dt,
-                pos.y + dir.y * this.moveSpeed * dt,
-                pos.z
-            );
-        }
-
-        // 自动调整朝向
-        if (this.autoFacing) {
-            this._updateFacing(dir, dt);
-        }
-    }
-
-    /** 根据移动方向更新角色朝向 */
-    private _updateFacing(dir: Vec2, dt: number) {
-        // 计算目标角度（弧度）
-        
-        if (dir.x > 0.01) {
-            // 朝右
-            this.node.setScale(Math.abs(this._scale.x), this._scale.y, this._scale.z);
-        } else if (dir.x < -0.01) {
-            // 朝左
-            this.node.setScale(Math.abs(this._scale.x) * -1, this._scale.y, this._scale.z);
-        }
-    }
-
-    /**
-     * 技能按下 → 自动播放对应索引的动画
-     * Skill 0 → clips[0]
-     * Skill 1 → clips[1]
-     * ...
-     * Skill 6 → clips[6]
-     */
-    private onSkillDown(slot: SkillSlot): void {
+    private _onSkillDown(slot: SkillSlot): void {
+        if (this._state === ActorState.DEAD) return;
         const skillIndex = slot as number;
+        if (skillIndex < 0 || skillIndex >= this.MAX_SKILL_COUNT) return;
 
-        // 越界保护
-        if (skillIndex < 0 || skillIndex >= this.MAX_SKILL_COUNT) {
-            Log.warn(this.MODULE_NAME, `技能索引 ${skillIndex} 超出支持范围`);
-            return;
-        }
-
-        Log.debug(this.MODULE_NAME, `🎮 触发技能：${skillIndex}`);
-        this.playAnimationByIndex(skillIndex);
+        this._state = ActorState.SKILL;
+        this._playAnim(skillIndex);
     }
 
-    private onSkillUp(slot: SkillSlot): void {
-        Log.debug(this.MODULE_NAME, `🎮 技能抬起：${slot}`);
-    }
+    private _onSkillUp(_slot: SkillSlot): void {}
 
-    // ========================== 动态动画播放 ==========================
-    /**
-     * 根据索引播放动画（核心方法）
-     */
-    private playAnimationByIndex(index: number) {
-        if (!this.animComp || this.animationClips.length === 0) return;
-        if (index < 0 || index >= this.animationClips.length) {
-            Log.error(this.MODULE_NAME, `❌ 动画索引 ${index} 不存在，当前仅有 ${this.animationClips.length} 个动画`);
-            return;
-        }
+    // ========================== 朝向 ==========================
 
-        const clipName = this.animationClips[index].name;
-        Log.debug(this.MODULE_NAME, `▶️ 播放动画 [索引:${index}] → ${clipName}`);
-
-        // 攻击动画统一开启碰撞（你可以根据索引自定义规则，比如仅 index>0 开启）
-        // if (index > 0) {
-        //     this.onAttackStart();
-        // }
-
-        this.animComp.crossFade(clipName);
-    }
-
-    /**
-     * 动画播放完成
-     */
-    private onAnimationFinished() {
-        Log.debug(this.MODULE_NAME, "✅ 动画播放完成");
-        Log.debug(this.MODULE_NAME, `✅ this.mcombatEntity.isAlive : ${this.mcombatEntity.isAlive()}`);
-        // this.onAttackEnd();
-        // 动画结束后默认回到第一个动画（待机）
-        if(this.mcombatEntity.isAlive()) {
-            this.playAnimationByIndex(0);
+    private _updateFacing(dir: Vec2) {
+        const newFacing = dir.x > 0.01 ? 1 : (dir.x < -0.01 ? -1 : this._facing);
+        if (newFacing === this._facing) return;
+        this._facing = newFacing;
+        this.node.setScale(Math.abs(this._scale.x) * this._facing, this._scale.y, this._scale.z);
+        if (this.mcollider) {
+            const off = this.mcollider.offset;
+            off.x = this._hitNodeOffsetX * this._facing;
+            this.mcollider.offset = off;
         }
     }
 
-    // ========================== 攻击碰撞 ==========================
-    onTriggerEnter(other: Collider2D, self: Collider2D) {
-        Log.debug(this.MODULE_NAME, "🎯 攻击命中：", other.node.name);
+    // ========================== 动画 ==========================
+
+    private _playAnim(index: number) {
+        if (!this.animComp || index < 0 || index >= this.animationClips.length) return;
+        this.animComp.crossFade(this.animationClips[index].name);
     }
+
+    private _onAnimationFinished(): void {
+        if (this._state === ActorState.DEAD) return;
+        // 技能/受击动画结束后回到 IDLE，让 update 决定是否切 WALK
+        this._state = ActorState.IDLE;
+        this._playAnim(ANIM.IDLE);
+    }
+
+    // ========================== 攻击碰撞（动画事件调用）==========================
 
     public onAttackStart(): void {
-        Log.debug(this.MODULE_NAME, "🔪 攻击开始 → 开启碰撞");
-        // if (this.mcollider) this.mcollider.enabled = true;
-
-        if(this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = true;
+        if (this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = true;
     }
 
     public onAttackEnd(): void {
-        Log.debug(this.MODULE_NAME, "🛡️ 攻击结束 → 关闭碰撞");
-        // if (this.mcollider) this.mcollider.enabled = false;
-
-        if(this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = false;
-
+        if (this.mKickNode) this.mKickNode.getComponent(BoxCollider2D).enabled = false;
     }
 
     // ========================== 工具方法 ==========================
-    private logAllAnimationClips() {
-        Log.debug(this.MODULE_NAME, `=== 加载动画总数：${this.animationClips.length} ===`);
-        this.animationClips.forEach((clip, idx) => {
-            Log.debug(this.MODULE_NAME, `[索引 ${idx}] → ${clip.name}`);
-        });
-    }
 
     public setAnimationSpeed(speed: number): void {
         if (!this.animComp) return;
@@ -323,13 +307,7 @@ export class Actor extends Component {
         });
     }
 
-    public calculateAnimationSpeed(baseSpeed: number = 1.0, speedBonus: number = 0): number {
-        return baseSpeed * (1 + speedBonus / 100);
-    }
-
     public applySpeedBonus(speedBonus: number): void {
-        const newSpeed = this.calculateAnimationSpeed(this.animationSpeed, speedBonus);
-        this.setAnimationSpeed(newSpeed);
-        Log.debug(this.MODULE_NAME, `速度加成：${speedBonus}% → ${newSpeed}`);
+        this.setAnimationSpeed(this.animationSpeed * (1 + speedBonus / 100));
     }
 }
