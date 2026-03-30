@@ -178,7 +178,7 @@ export class Enemy extends Component {
     }
 
     private setAIState(newState: AIState): void {
-        Log.debug(this.MODULE_NAME, `setAIState : ${newState}`);
+        // Log.debug(this.MODULE_NAME, `setAIState : ${newState}`);
         if (this._aiState === newState) return;
         this._aiState = newState;
         this.playStateAnim(newState);
