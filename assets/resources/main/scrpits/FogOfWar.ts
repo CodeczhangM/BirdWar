@@ -203,7 +203,7 @@ export class FogOfWar extends Component {
      * 获取玩家在地牢容器坐标系中的局部位置
      */
     private _getPlayerLocalPositionInDungeon(): Vec3 | null {
-        if (!this.playerNode || !this._dungeonContainer) return null;
+        if (!this.playerNode || !this._dungeonContainer || !this.playerNode.isValid) return null;
 
         const localPos = this._worldToLocal(this.playerNode.worldPosition);
         localPos.x += this.playerViewOffsetX;
@@ -243,7 +243,7 @@ export class FogOfWar extends Component {
      * 将世界坐标转换为地牢局部坐标
      */
     private _worldToLocal(worldPos: Vec3): Vec3 {
-        if (!this._dungeonContainer) return worldPos.clone();
+        if (!this._dungeonContainer || !this._dungeonContainer.isValid) return worldPos.clone();
 
         const localPos = new Vec3();
         this._dungeonContainer.inverseTransformPoint(localPos, worldPos);

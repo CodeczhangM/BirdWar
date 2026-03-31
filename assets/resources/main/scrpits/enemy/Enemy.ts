@@ -92,7 +92,8 @@ export class Enemy extends Component {
         this.setAnimationSpeed(this.animationSpeed);
         this._attackTimer -= dt;
 
-        if (!this._player) {
+        if (!this._player || !this._player.isValid) {
+            this._player = null;
             this.findPlayer();
             return;
         }

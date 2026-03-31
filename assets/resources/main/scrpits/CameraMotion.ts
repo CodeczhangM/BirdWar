@@ -109,7 +109,7 @@ export class CameraMotion extends Component {
     }
 
     update(deltaTime: number) {
-        if (!this._initialized || !this.target) {
+        if (!this._initialized || !this.target || !this.target.isValid) {
             return;
         }
 
