@@ -1,7 +1,9 @@
 import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Animation, AnimationClip, Vec2, Vec3 } from 'cc';
-import { CombatEntity, EntityType, Faction, DamageInfo, DamageResult, ActiveStatusEffect, StatusEffectAction } from '../CombatSystem';
+import { CombatEntity, EntityType, Faction, DamageInfo, DamageType, DamageResult, ActiveStatusEffect, StatusEffectAction } from '../CombatSystem';
 import { Log } from '../Logger';
 import { InputManager, SkillSlot } from '../InputManager';
+import { EntityRegistry } from '../EntityRegistry';
+import { SkillManager, RangeType } from './SkillManager';
 const { ccclass, property, executionOrder } = _decorator;
 
 enum ActorState {
@@ -56,9 +58,13 @@ export class Actor extends Component {
     // ── 状态机 ──
     private _state: ActorState = ActorState.IDLE;
 
+    // skill
+    private _skill: SkillManager = null;
+
     protected onLoad(): void {
         this.initCollider();
         this.initCombatEntity();
+        this.initSkillManager();
         this.initAnimation();
         this._enterState(ActorState.IDLE);
     }
@@ -131,6 +137,33 @@ export class Actor extends Component {
 
     // ========================== 初始化模块 ==========================
 
+    private initSkillManager() {
+        if(!this._skill) {
+            this._skill = this.node.addComponent(SkillManager);
+            this._skill.skills = [
+                {
+                    name: '近战攻击',
+                    cooldown: 1.5,
+                    damage: 0,          // 0 = 使用 attackPower
+                    damageType: DamageType.PHYSICAL,
+                    range: { type: RangeType.SECTOR, radius: 100, angle: 90 },
+                    animIndex: 0,
+                    duration: 0,
+                },
+                {
+                    name: '圆形爆炸',
+                    cooldown: 5,
+                    damage: 50,
+                    damageType: DamageType.MAGICAL,
+                    range: { type: RangeType.CIRCLE, radius: 200 },
+                    animIndex: 1,
+                    duration: 0,
+                }
+            ]
+        }
+    }
+
+
     private initCollider() {
         if (!this.mKickNode) {
             this.mKickNode = this.node.getChildByName("hitNode");
@@ -179,6 +212,8 @@ export class Actor extends Component {
             this.mcombatEntity.destroyDelay = 2;
             this.mcombatEntity._initCollisionRule();
 
+            EntityRegistry.instance.register(this.mcombatEntity);
+
             this.mcombatEntity.onHit((target: CombatEntity) => {
                 Log.log(this.MODULE_NAME, `onHit: ${target.node.name}`);
             });
@@ -192,6 +227,7 @@ export class Actor extends Component {
             this.mcombatEntity.onDeath((killer: CombatEntity) => {
                 Log.log(this.MODULE_NAME, `onDeath by: ${killer?.node?.name ?? 'unknown'}`);
                 this._enterState(ActorState.DEAD);
+                EntityRegistry.instance.unregister(this.mcombatEntity);
             });
 
             this.mcombatEntity.onHeal((requested: number, _source: CombatEntity, actual: number) => {
@@ -255,6 +291,9 @@ export class Actor extends Component {
 
         this._state = ActorState.SKILL;
         this._playAnim(skillIndex);
+        
+        Log.debug(this.MODULE_NAME, "onSkill down");
+        if(this._skill) this._skill.useSkill(skillIndex);
     }
 
     private _onSkillUp(_slot: SkillSlot): void {}

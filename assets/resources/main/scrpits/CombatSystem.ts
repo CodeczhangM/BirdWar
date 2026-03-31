@@ -1,5 +1,6 @@
 import { _decorator, PhysicsSystem2D, Component, BoxCollider2D, Collider2D, Contact2DType, IPhysics2DContact, Node, Enum, Graphics, Color, UITransform, Vec3 } from 'cc';
 import { Log } from './Logger';
+import { EntityRegistry } from './EntityRegistry';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -496,12 +497,15 @@ export class CombatEntity extends Component {
             this._initDebugDraw();
         }
 
+        EntityRegistry.instance.register(this);
+
         if (this.enableDebugLog) {
             Log.log(this.MODULE_NAME, `实体初始化: ${this.node.name}, 类型: ${EntityType[this.entityType]}, 阵营: ${Faction[this.faction]}`);
         }
     }
 
     onDestroy() {
+        EntityRegistry.instance.unregister(this);
         if (this._collider) {
             this._collider.off(Contact2DType.BEGIN_CONTACT, this._onCollisionEnter, this);
         }

@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Contact2DType, Collider2D, Animation, Vec2, Vec3 } from 'cc';
 import { CombatEntity, EntityType, Faction } from '../CombatSystem';
 import { Log } from '../Logger';
+import { EntityRegistry } from '../EntityRegistry';
 const { ccclass, property, executionOrder } = _decorator;
 
 /** AI状态 */
@@ -153,6 +154,8 @@ export class Enemy extends Component {
 
         this.mcombatEntity._initCollisionRule();
         this.mcombatEntity.onDeath(() => this.die());
+
+        EntityRegistry.instance.register(this.mcombatEntity);
     }
 
     private initAnimation(): void {
@@ -352,6 +355,7 @@ export class Enemy extends Component {
 
     private die(): void {
         if (this._aiState === AIState.DEAD) return;
+        if (this.mcombatEntity) EntityRegistry.instance.unregister(this.mcombatEntity);
         this.setAIState(AIState.DEAD);
         if (this._rigidBody) this._rigidBody.linearVelocity = Vec2.ZERO;
     }
