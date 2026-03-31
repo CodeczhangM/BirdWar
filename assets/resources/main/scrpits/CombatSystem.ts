@@ -432,7 +432,7 @@ export class CombatEntity extends Component {
     public enableDebugLog: boolean = true;
 
     @property({ tooltip: '启用碰撞区域调试绘制' })
-    public enableDebugDraw: boolean = true;
+    public enableDebugDraw: boolean = false;
 
     @property({ visible: function() { return this.enableDebugDraw; }, tooltip: '调试绘制颜色' })
     public debugDrawColor: Color = new Color(0, 255, 0, 128);

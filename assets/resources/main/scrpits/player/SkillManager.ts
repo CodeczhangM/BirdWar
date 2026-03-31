@@ -1,4 +1,4 @@
-import { _decorator, Component, Vec2 } from 'cc';
+import { _decorator, Component, Vec2, Vec3, Graphics, Color, Node } from 'cc';
 import { CombatEntity, DamageType } from '../CombatSystem';
 import { EntityRegistry } from '../EntityRegistry';
 import { Log } from '../Logger';
@@ -6,10 +6,9 @@ import { Log } from '../Logger';
 const { ccclass } = _decorator;
 
 // ========== 范围类型 ==========
-
 export enum RangeType {
     CIRCLE,   // 圆形 AOE
-    RECT,     // 矩形
+    RECT,     // 矩形（朝向前方延伸）
     SECTOR,   // 扇形（朝向前方）
     SINGLE,   // 单体（最近目标）
 }
@@ -21,126 +20,148 @@ export interface SingleRange  { type: RangeType.SINGLE; maxRange: number }
 export type SkillRange = CircleRange | RectRange | SectorRange | SingleRange
 
 // ========== 技能配置 ==========
-
 export interface SkillConfig {
-    /** 技能名称（调试用） */
     name: string
-    /** 冷却时间（秒） */
     cooldown: number
-    /** 伤害值（0 = 使用 CombatEntity.attackPower） */
     damage: number
-    /** 伤害类型 */
     damageType: DamageType
-    /** 范围配置 */
     range: SkillRange
-    /** 动画索引（-1 = 不播放） */
+    /** 施法距离：技能中点 = 自身位置 + facing * castDistance */
+    castDistance: number
     animIndex: number
-    /** 技能持续时间（秒，0 = 瞬发） */
     duration: number
 }
 
 // ========== SkillManager ==========
-
 const MODULE = 'SkillManager';
+
+// 半透明调试颜色
+const DEBUG_COLORS = {
+    CIRCLE: new Color(0,   255, 255, 80),
+    RECT:   new Color(0,   255, 0,   80),
+    SECTOR: new Color(255, 0,   255, 80),
+    SINGLE: new Color(255, 255, 0,   80),
+};
 
 @ccclass('SkillManager')
 export class SkillManager extends Component {
 
-    /** 技能配置列表，由外部（Actor/Enemy）在 onLoad 中填充 */
     public skills: SkillConfig[] = [];
-
     private _cooldowns: number[] = [];
     private _combatEntity: CombatEntity = null;
     /** 朝向：1 = 右，-1 = 左 */
     public facing: number = 1;
 
+    public openDebug: boolean = true;
+    private _debugShowTime: number = 0;
+    private _skillDebugIndex: number = 0;
+    private _graphics: Graphics | null = null;
+    private _debugDrawNode: Node | null = null;
+    private _scale : Vec3 = Vec3.ZERO;
+
     private readonly MODULE_NAME = 'SkillManager';
 
     protected onLoad(): void {
         this._combatEntity = this.getComponent(CombatEntity);
+        if (this.openDebug) this._createDebugDrawNode();
     }
 
     protected update(dt: number): void {
+        this._scale = this.node.scale;
         for (let i = 0; i < this._cooldowns.length; i++) {
-            if (this._cooldowns[i] > 0) {
-                this._cooldowns[i] -= dt;
+            if (this._cooldowns[i] > 0) this._cooldowns[i] -= dt;
+        }
+
+        if (this.openDebug) {
+            this._debugShowTime += dt;
+            if (this._debugShowTime < 2) {
+                this._drawDebugRange();
+            } else {
+                if (this._graphics) this._graphics.clear();
             }
         }
     }
 
     // ========== 公共接口 ==========
 
-    /**
-     * 使用技能
-     * @param index 技能索引
-     * @returns 是否成功释放
-     */
     public useSkill(index: number): boolean {
-        Log.debug(this.MODULE_NAME, `use skill ${index} , skill size = ${this.skills.length}`)
+        Log.debug(MODULE, `use skill ${index}, skill size = ${this.skills.length}`);
         const skill = this.skills[index];
         if (!skill) return false;
         if (!this._combatEntity || !this._combatEntity.isAlive()) return false;
         if ((this._cooldowns[index] ?? 0) > 0) return false;
 
-        const targets = this._findTargets(skill.range);
-        if (targets.length === 0 && skill.range.type !== RangeType.CIRCLE && skill.range.type !== RangeType.RECT) {
-            // 单体/扇形找不到目标时不消耗冷却
+        const targets = this._findTargets(skill);
+        if (targets.length === 0 &&
+            skill.range.type !== RangeType.CIRCLE &&
+            skill.range.type !== RangeType.RECT) {
             return false;
         }
 
         this._cooldowns[index] = skill.cooldown;
-
         const dmg = skill.damage > 0 ? skill.damage : this._combatEntity.attackPower;
         for (const target of targets) {
             this._combatEntity.attackTarget(target, dmg, skill.damageType);
         }
 
+        if (this.openDebug) { this._debugShowTime = 0; this._skillDebugIndex = index; }
         Log.debug(MODULE, `${this.node.name} 释放技能[${index}] "${skill.name}"，命中 ${targets.length} 个目标`);
         return true;
     }
 
-    /** 查询技能剩余冷却 */
     public getCooldown(index: number): number {
         return Math.max(0, this._cooldowns[index] ?? 0);
     }
 
-    /** 查询技能是否就绪 */
     public isReady(index: number): boolean {
         return this.getCooldown(index) <= 0;
     }
 
     // ========== 目标查找 ==========
 
-    private _findTargets(range: SkillRange): CombatEntity[] {
-        const allEntities = this._getHostileEntities();
-        const selfPos = new Vec2(this.node.worldPosition.x, this.node.worldPosition.y);
+    /** 计算技能中心点（世界坐标） */
+    private _castCenter(skill: SkillConfig): Vec2 {
+        const self = new Vec2(this.node.worldPosition.x, this.node.worldPosition.y);
+        return new Vec2(self.x + this.facing * skill.castDistance, self.y);
+    }
 
+    private _findTargets(skill: SkillConfig): CombatEntity[] {
+        const center = this._castCenter(skill);
+        const range = skill.range;
+        const all = this._getHostileEntities();
+
+        Log.debug(this.MODULE_NAME, `center: ${center}`)
         switch (range.type) {
             case RangeType.CIRCLE:
-                return allEntities.filter(e => {
-                    const d = Vec2.distance(selfPos, new Vec2(e.node.worldPosition.x, e.node.worldPosition.y));
-                    return d <= range.radius;
+                return all.filter(e => {
+                    const ep = new Vec2(e.node.worldPosition.x, e.node.worldPosition.y);
+                    Log.debug(this.MODULE_NAME, `center: ${center}, ep:${ep}, distance:${Vec2.distance(center, ep)}`);
+                    return Vec2.distance(center, ep) <= range.radius;
                 });
 
             case RangeType.RECT: {
+                // 矩形以 center 为中心，沿 facing 方向，宽=width，高=height
+                const hw = range.width / 2;
                 const hh = range.height / 2;
-                return allEntities.filter(e => {
-                    // 矩形沿朝向方向，中心在自身前方 hw 处
+                return all.filter(e => {
                     const ep = new Vec2(e.node.worldPosition.x, e.node.worldPosition.y);
-                    const local = ep.subtract(selfPos);
-                    const lx = local.x * this.facing; // 转换到朝向空间
-                    return lx >= 0 && lx <= range.width && Math.abs(local.y) <= hh;
+                    // 转换到矩形局部空间（facing 为 x 轴正方向）
+                    const dx = (ep.x - center.x) * this.facing;
+                    const dy = ep.y - center.y;
+                    return dx >= -hw && dx <= hw && Math.abs(dy) <= hh;
                 });
             }
 
             case RangeType.SECTOR: {
                 const halfAngle = range.angle / 2;
-                return allEntities.filter(e => {
+                return all.filter(e => {
                     const ep = new Vec2(e.node.worldPosition.x, e.node.worldPosition.y);
-                    const dir = ep.subtract(selfPos);
-                    const dist = dir.length();
+                    const dx = ep.x - center.x;
+                    const dy = ep.y - center.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist > range.radius) return false;
-                    const angleDeg = Math.atan2(dir.y, dir.x * this.facing) * (180 / Math.PI);
+                    // 将 dx 转换到朝向空间（facing=-1 时翻转 x）
+                    const angleDeg = Math.atan2(dy, dx * this.facing) * (180 / Math.PI);
                     return Math.abs(angleDeg) <= halfAngle;
                 });
             }
@@ -148,8 +169,9 @@ export class SkillManager extends Component {
             case RangeType.SINGLE: {
                 let nearest: CombatEntity = null;
                 let minDist = range.maxRange;
-                for (const e of allEntities) {
-                    const d = Vec2.distance(selfPos, new Vec2(e.node.worldPosition.x, e.node.worldPosition.y));
+                for (const e of all) {
+                    const ep = new Vec2(e.node.worldPosition.x, e.node.worldPosition.y);
+                    const d = Vec2.distance(center, ep);
                     if (d < minDist) { minDist = d; nearest = e; }
                 }
                 return nearest ? [nearest] : [];
@@ -157,11 +179,76 @@ export class SkillManager extends Component {
         }
     }
 
-    /** 从注册表获取所有敌对 CombatEntity */
     private _getHostileEntities(): CombatEntity[] {
         if (!this._combatEntity) return [];
         return EntityRegistry.instance.getAll().filter(
             e => e !== this._combatEntity && this._combatEntity.canDamageTarget(e)
         );
+    }
+
+    // ========== Debug 绘制 ==========
+
+    private _createDebugDrawNode(): void {
+        this._debugDrawNode = new Node('__SKILL_DEBUG_DRAW');
+        this._debugDrawNode.layer = this.node.layer;
+        this._graphics = this._debugDrawNode.addComponent(Graphics);
+        this._graphics.lineWidth = 2;
+        this.node.addChild(this._debugDrawNode);
+        this._debugDrawNode.setPosition(0, 0, 0);
+    }
+
+    private _drawDebugRange(): void {
+        if (!this._graphics) return;
+        const skill = this.skills[this._skillDebugIndex];
+        if (!skill) return;
+
+        this._graphics.clear();
+
+        // castCenter 相对于 self 的局部偏移（子节点坐标系）
+        const offsetX = this.facing * skill.castDistance;
+
+        const g = this._graphics;
+        const range = skill.range;
+
+        switch (range.type) {
+            case RangeType.CIRCLE:
+                g.fillColor = DEBUG_COLORS.CIRCLE;
+                g.circle(offsetX, 0, range.radius / this._scale.x);
+                g.fill();
+                break;
+
+            case RangeType.RECT:
+                g.fillColor = DEBUG_COLORS.RECT;
+                // rect(x, y, w, h)：左下角坐标
+                g.rect(offsetX - range.width / 2 * this._scale.x, - range.height / 2 * this._scale.y, range.width / this._scale.x, range.height / this._scale.y);
+                g.fill();
+                break;
+
+            case RangeType.SECTOR:
+                g.fillColor = DEBUG_COLORS.SECTOR;
+                this._drawSector(g, offsetX, 0, range.radius/ this._scale.x, range.angle);
+                g.fill();
+                break;
+
+            case RangeType.SINGLE:
+                g.fillColor = DEBUG_COLORS.SINGLE;
+                g.circle(offsetX, 0, range.maxRange / this._scale.x);
+                g.fill();
+                break;
+        }
+    }
+
+    private _drawSector(g: Graphics, cx: number, cy: number, radius: number, angle: number): void {
+        const half = (angle / 2) * Math.PI / 180;
+        const step = 3 * Math.PI / 180;
+        // facing=-1 时扇形朝左，旋转 180°
+        const baseAngle = this.facing >= 0 ? 0 : Math.PI;
+
+        g.moveTo(cx, cy);
+        for (let a = -half; a <= half + 0.001; a += step) {
+            const rad = baseAngle + a;
+            g.lineTo(cx + Math.cos(rad) * radius, cy + Math.sin(rad) * radius);
+        }
+        g.lineTo(cx, cy);
     }
 }

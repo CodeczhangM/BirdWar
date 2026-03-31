@@ -144,9 +144,10 @@ export class Actor extends Component {
                 {
                     name: '近战攻击',
                     cooldown: 1.5,
-                    damage: 0,          // 0 = 使用 attackPower
+                    damage: 2,          // 0 = 使用 attackPower
                     damageType: DamageType.PHYSICAL,
-                    range: { type: RangeType.SECTOR, radius: 100, angle: 90 },
+                    range: { type: RangeType.SECTOR, radius: 1000, angle: 90 },
+                    castDistance:100,
                     animIndex: 0,
                     duration: 0,
                 },
@@ -155,7 +156,8 @@ export class Actor extends Component {
                     cooldown: 5,
                     damage: 50,
                     damageType: DamageType.MAGICAL,
-                    range: { type: RangeType.CIRCLE, radius: 200 },
+                    range: { type: RangeType.CIRCLE, radius: 600 },
+                    castDistance:100,
                     animIndex: 1,
                     duration: 0,
                 }
@@ -304,6 +306,7 @@ export class Actor extends Component {
         const newFacing = dir.x > 0.01 ? 1 : (dir.x < -0.01 ? -1 : this._facing);
         if (newFacing === this._facing) return;
         this._facing = newFacing;
+        if(this._skill) this._skill.facing = newFacing;
         this.node.setScale(Math.abs(this._scale.x) * this._facing, this._scale.y, this._scale.z);
         if (this.mcollider) {
             const off = this.mcollider.offset;
