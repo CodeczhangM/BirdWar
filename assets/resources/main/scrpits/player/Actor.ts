@@ -146,7 +146,7 @@ export class Actor extends Component {
                     cooldown: 1.5,
                     damage: 2,          // 0 = 使用 attackPower
                     damageType: DamageType.PHYSICAL,
-                    range: { type: RangeType.SECTOR, radius: 1000, angle: 90 },
+                    range: { type: RangeType.SECTOR, radius: 100, angle: 100 },
                     castDistance:100,
                     animIndex: 0,
                     duration: 0,
@@ -156,8 +156,8 @@ export class Actor extends Component {
                     cooldown: 5,
                     damage: 50,
                     damageType: DamageType.MAGICAL,
-                    range: { type: RangeType.CIRCLE, radius: 600 },
-                    castDistance:100,
+                    range: { type: RangeType.CIRCLE, radius: 200 },
+                    castDistance:150,
                     animIndex: 1,
                     duration: 0,
                 }

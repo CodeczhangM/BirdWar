@@ -1,7 +1,8 @@
-import { _decorator, Component, Vec2, Vec3, Graphics, Color, Node } from 'cc';
+import { _decorator, Component, Vec2, Vec3, Graphics, Color, Node, instantiate, Prefab } from 'cc';
 import { CombatEntity, DamageType } from '../CombatSystem';
 import { EntityRegistry } from '../EntityRegistry';
 import { Log } from '../Logger';
+import { SkillRegistry } from './SkillRegistry';
 
 const { ccclass } = _decorator;
 
@@ -48,6 +49,7 @@ export class SkillManager extends Component {
 
     public skills: SkillConfig[] = [];
     private _cooldowns: number[] = [];
+    private _prefabNodes: Map<number, Node> = new Map();
     private _combatEntity: CombatEntity = null;
     /** 朝向：1 = 右，-1 = 左 */
     public facing: number = 1;
@@ -115,6 +117,40 @@ export class SkillManager extends Component {
 
     public isReady(index: number): boolean {
         return this.getCooldown(index) <= 0;
+    }
+
+    // ========== 注册表挂载 / 释放 ==========
+
+    /** 从 SkillRegistry 按 animIndex 挂载技能，返回挂载后的 slot index */
+    public mountFromRegistry(animIndex: number): number {
+        const config = SkillRegistry.instance.getConfig(animIndex);
+        if (!config) { Log.error(MODULE, `SkillRegistry: animIndex ${animIndex} not found`); return -1; }
+        const index = this.skills.length;
+        this.skills.push(config);
+        this._cooldowns.push(0);
+
+        const prefab = SkillRegistry.instance.getPrefab(animIndex);
+        if (prefab) {
+            const node = instantiate(prefab);
+            node.setParent(this.node);
+            this._prefabNodes.set(index, node);
+        }
+        return index;
+    }
+
+    /** 释放指定 slot 的技能（移除配置及对应 prefab 节点） */
+    public releaseSkill(index: number): void {
+        if (index < 0 || index >= this.skills.length) return;
+        this.skills.splice(index, 1);
+        this._cooldowns.splice(index, 1);
+
+        const node = this._prefabNodes.get(index);
+        if (node) { node.destroy(); this._prefabNodes.delete(index); }
+
+        // 重新映射 index > 移除位置的 prefab 节点
+        const updated = new Map<number, Node>();
+        this._prefabNodes.forEach((n, i) => updated.set(i > index ? i - 1 : i, n));
+        this._prefabNodes = updated;
     }
 
     // ========== 目标查找 ==========
@@ -205,7 +241,7 @@ export class SkillManager extends Component {
         this._graphics.clear();
 
         // castCenter 相对于 self 的局部偏移（子节点坐标系）
-        const offsetX = this.facing * skill.castDistance;
+        const offsetX = this.facing * skill.castDistance / this._scale.x;
 
         const g = this._graphics;
         const range = skill.range;
@@ -213,7 +249,7 @@ export class SkillManager extends Component {
         switch (range.type) {
             case RangeType.CIRCLE:
                 g.fillColor = DEBUG_COLORS.CIRCLE;
-                g.circle(offsetX, 0, range.radius / this._scale.x);
+                g.circle(offsetX , 0, range.radius / this._scale.x);
                 g.fill();
                 break;
 
