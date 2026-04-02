@@ -167,6 +167,8 @@ export class SkillManager extends Component {
 
         const node = instantiate(prefab);
         node.setParent(this.node);
+        const offsetX = this.facing * skill.castDistance / this._scale.x;
+        node.setPosition(offsetX, 0, 0);
         this._prefabNodes.set(index, node);
 
         const anim = node.getComponent(Animation);
