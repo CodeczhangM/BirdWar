@@ -141,17 +141,17 @@ export class Actor extends Component {
     private initSkillManager() {
         if (!this._skill) {
             this._skill = this.node.addComponent(SkillManager);
-
+            
             const configs: SkillConfig[] = [
                 {
-                    name: 'player_physical_sk',
+                    name: 'player_firesingle_skill',
                     cooldown: 1.5,
                     damage: 2,
                     damageType: DamageType.PHYSICAL,
                     range: { type: RangeType.SECTOR, radius: 100, angle: 100 },
                     castDistance: 100,
                     animIndex: 0,
-                    duration: 1.5,
+                    duration: 3.5,
                 },
                 {
                     name: 'player_lighting_skill',
@@ -165,6 +165,7 @@ export class Actor extends Component {
                 }
             ];
 
+            Log.debug(this.MODULE_NAME, "initSkillManager");
             resources.loadDir('main/prefebs/skills', Prefab, (err, prefabs) => {
                 if (err) { Log.error(this.MODULE_NAME, `load skill prefabs failed: ${err}`); return; }
                 for (const cfg of configs) {

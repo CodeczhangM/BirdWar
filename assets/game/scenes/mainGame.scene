@@ -378,6 +378,7 @@
     "instance": {
       "__id__": 10
     },
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -2335,7 +2336,7 @@
     "_string": "label",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 23,
+    "_actualFontSize": 20.944444444444446,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2438,7 +2439,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 42.255859375,
+      "width": 42.24687571234665,
       "height": 50.400000000000006
     },
     "_anchorPoint": {
@@ -2538,7 +2539,7 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 42.255859375,
+      "width": 42.24687571234665,
       "height": 50.400000000000006
     }
   },
@@ -2558,7 +2559,7 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 42.255859375,
+      "width": 42.24687571234665,
       "height": 50.400000000000006
     }
   },
