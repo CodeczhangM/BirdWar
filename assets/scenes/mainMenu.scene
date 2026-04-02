@@ -1277,8 +1277,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 785.7783797359358,
-      "height": 252.00000000000003
+      "width": 785.7999320652175,
+      "height": 251.99999999999997
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1310,7 +1310,7 @@
     "_string": "C H I C K e N",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 136.09375,
+    "_actualFontSize": 114.99999999999999,
     "_fontSize": 100,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -1412,7 +1412,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 361.1976176808267,
+      "width": 361.20000424592394,
       "height": 252.00000000000003
     },
     "_anchorPoint": {
@@ -1445,7 +1445,7 @@
     "_string": "War",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 190.53125,
+    "_actualFontSize": 161,
     "_fontSize": 140,
     "_fontFamily": "Arial",
     "_lineHeight": 200,
@@ -3143,8 +3143,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 247.7599609375,
-      "height": 100.8
+      "width": 247.75998322860056,
+      "height": 100.80000000000001
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -3176,7 +3176,7 @@
     "_string": "label",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 100,
+    "_actualFontSize": 92,
     "_fontSize": 80,
     "_fontFamily": "Arial",
     "_lineHeight": 80,
@@ -3613,7 +3613,7 @@
     "_string": "start",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 27.21875,
+    "_actualFontSize": 23,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -3950,8 +3950,7 @@
       "__id__": 168
     },
     "preloadBundles": [
-      "ui",
-      "game"
+      "ui"
     ],
     "remoteBundleUrl": "http://localhost:8080",
     "mainSceneName": "mainMenu",

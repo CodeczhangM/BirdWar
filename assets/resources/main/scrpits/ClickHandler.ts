@@ -206,10 +206,10 @@ export class ClickHandler extends Component {
      * 清理资源
      */
     private cleanup() {
-        if (this._button) {
+        if (this._button && this._button.isValid) {
             this._button.node.off(Button.EventType.CLICK, this.onButtonClick, this);
         } else {
-            this.node.off(Node.EventType.TOUCH_END, this.onNodeTouch, this);
+            if(this.node && this.node.isValid) this.node.off(Node.EventType.TOUCH_END, this.onNodeTouch, this);
         }
 
         if (this.enableDebugLog) {

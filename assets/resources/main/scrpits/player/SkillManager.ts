@@ -1,4 +1,4 @@
-import { _decorator, Component, Vec2, Vec3, Graphics, Color, Node, instantiate, Prefab } from 'cc';
+import { _decorator, Component, Vec2, Vec3, Graphics, Animation, Color, Node, instantiate, Prefab } from 'cc';
 import { CombatEntity, DamageType } from '../CombatSystem';
 import { EntityRegistry } from '../EntityRegistry';
 import { Log } from '../Logger';
@@ -88,6 +88,13 @@ export class SkillManager extends Component {
 
     public useSkill(index: number): boolean {
         Log.debug(MODULE, `use skill ${index}, skill size = ${this.skills.length}`);
+
+        // 若 slot 为空，尝试从注册表按 animIndex 自动挂载
+        if (!this.skills[index]) {
+            const mounted = this.mountFromRegistry(index);
+            if (mounted < 0) return false;
+        }
+
         const skill = this.skills[index];
         if (!skill) return false;
         if (!this._combatEntity || !this._combatEntity.isAlive()) return false;
@@ -105,6 +112,9 @@ export class SkillManager extends Component {
         for (const target of targets) {
             this._combatEntity.attackTarget(target, dmg, skill.damageType);
         }
+
+        // 挂载 prefab 并按 duration 决定存活时间
+        this._spawnSkillPrefab(index, skill);
 
         if (this.openDebug) { this._debugShowTime = 0; this._skillDebugIndex = index; }
         Log.debug(MODULE, `${this.node.name} 释放技能[${index}] "${skill.name}"，命中 ${targets.length} 个目标`);
@@ -128,13 +138,6 @@ export class SkillManager extends Component {
         const index = this.skills.length;
         this.skills.push(config);
         this._cooldowns.push(0);
-
-        const prefab = SkillRegistry.instance.getPrefab(animIndex);
-        if (prefab) {
-            const node = instantiate(prefab);
-            node.setParent(this.node);
-            this._prefabNodes.set(index, node);
-        }
         return index;
     }
 
@@ -151,6 +154,30 @@ export class SkillManager extends Component {
         const updated = new Map<number, Node>();
         this._prefabNodes.forEach((n, i) => updated.set(i > index ? i - 1 : i, n));
         this._prefabNodes = updated;
+    }
+
+    /** 实例化技能 prefab，duration > 0 时到期自动销毁 */
+    private _spawnSkillPrefab(index: number, skill: SkillConfig): void {
+        const prefab = SkillRegistry.instance.getPrefab(skill.animIndex);
+        if (!prefab) return;
+
+        // 销毁上一次同 slot 的残留节点
+        const old = this._prefabNodes.get(index);
+        if (old && old.isValid) old.destroy();
+
+        const node = instantiate(prefab);
+        node.setParent(this.node);
+        this._prefabNodes.set(index, node);
+
+        const anim = node.getComponent(Animation);
+
+        if (skill.duration > 0) {
+            this.scheduleOnce(() => {
+                Log.debug(this.MODULE_NAME, "destory prefeb.");
+                if (node.isValid) node.destroy();
+                this._prefabNodes.delete(index);
+            }, skill.duration);
+        }
     }
 
     // ========== 目标查找 ==========

@@ -58,8 +58,15 @@ export class BundleLoader extends Component {
                 Log.log(this.MODULE_NAME, `Bundle ${bundleName} 加载成功`);
                 this._loadedBundles.add(bundleName);
                 this._loadingPromises.delete(bundleName);
+                if(bundle) {
+                    bundle.preloadDir("animation", (err, datas)=>{
+                        if(err) Log.error(this.MODULE_NAME, `pre load bundle animation 失败:`, err);
+                        else Log.error(this.MODULE_NAME, `pre load bundle animation success`);
+                    })
+                }
                 resolve();
             });
+
         });
 
         this._loadingPromises.set(bundleName, loadPromise);
@@ -98,6 +105,12 @@ export class BundleLoader extends Component {
                 Log.log(this.MODULE_NAME, `远程Bundle ${bundleName} 加载成功`);
                 this._loadedBundles.add(bundleName);
                 this._loadingPromises.delete(bundleName);
+                if(bundle) {
+                    bundle.preloadDir("textures", (err, datas)=>{
+                        if(err) Log.debug(this.MODULE_NAME, `pre load bundle animation 失败:`, err);
+                        else Log.debug(this.MODULE_NAME, `pre load bundle animation success`);
+                    });
+                }
                 resolve();
             });
         });

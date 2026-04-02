@@ -1,9 +1,10 @@
-import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Animation, AnimationClip, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, Node, BoxCollider2D, RigidBody2D, Animation, AnimationClip, Vec2, Vec3, resources, Prefab } from 'cc';
 import { CombatEntity, EntityType, Faction, DamageInfo, DamageType, DamageResult, ActiveStatusEffect, StatusEffectAction } from '../CombatSystem';
 import { Log } from '../Logger';
 import { InputManager, SkillSlot } from '../InputManager';
 import { EntityRegistry } from '../EntityRegistry';
-import { SkillManager, RangeType } from './SkillManager';
+import { SkillManager, RangeType, SkillConfig } from './SkillManager';
+import { SkillRegistry } from './SkillRegistry';
 const { ccclass, property, executionOrder } = _decorator;
 
 enum ActorState {
@@ -138,30 +139,50 @@ export class Actor extends Component {
     // ========================== 初始化模块 ==========================
 
     private initSkillManager() {
-        if(!this._skill) {
+        if (!this._skill) {
             this._skill = this.node.addComponent(SkillManager);
-            this._skill.skills = [
+
+            const configs: SkillConfig[] = [
                 {
-                    name: '近战攻击',
+                    name: 'player_physical_sk',
                     cooldown: 1.5,
-                    damage: 2,          // 0 = 使用 attackPower
+                    damage: 2,
                     damageType: DamageType.PHYSICAL,
                     range: { type: RangeType.SECTOR, radius: 100, angle: 100 },
-                    castDistance:100,
+                    castDistance: 100,
                     animIndex: 0,
-                    duration: 0,
+                    duration: 1.5,
                 },
                 {
-                    name: '圆形爆炸',
+                    name: 'player_lighting_skill',
                     cooldown: 5,
                     damage: 50,
                     damageType: DamageType.MAGICAL,
                     range: { type: RangeType.CIRCLE, radius: 200 },
-                    castDistance:150,
+                    castDistance: 150,
                     animIndex: 1,
-                    duration: 0,
+                    duration: 1.2,
                 }
-            ]
+            ];
+
+            resources.loadDir('main/prefebs/skills', Prefab, (err, prefabs) => {
+                if (err) { Log.error(this.MODULE_NAME, `load skill prefabs failed: ${err}`); return; }
+                for (const cfg of configs) {
+                    const skillPrefab = prefabs.find(p => { 
+                        Log.debug(this.MODULE_NAME, `get prefeb name : ${p.name}`);
+                        if(p.name === cfg.name)
+                        {
+                            return true;
+                        }
+                        return false;
+                    });
+                    Log.debug(this.MODULE_NAME, `find skillPrefab = ${skillPrefab}`);
+                    if (skillPrefab) {
+                        SkillRegistry.instance.register(cfg, skillPrefab);
+                    }
+                }
+                this._skill.skills = configs;
+            });
         }
     }
 

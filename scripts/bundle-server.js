@@ -56,6 +56,7 @@ const server = http.createServer((req, res) => {
     filePath = path.join(filePath, 'index.html');
   }
 
+  console.log(`filepath: ${filePath}`);
   // 读取文件
   fs.readFile(filePath, (err, data) => {
     if (err) {
