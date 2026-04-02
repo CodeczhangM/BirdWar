@@ -552,9 +552,10 @@ export class CombatEntity extends Component {
         debugNode.parent = this.node;
         debugNode.layer = this.node.layer;
 
-        this._debugGraphics = debugNode.addComponent(Graphics);
+        this._debugGraphics = debugNode.getComponent(Graphics);
+        if(!this._debugGraphics) this._debugGraphics = debugNode.addComponent(Graphics);
 
-        const uiTransform = debugNode.addComponent(UITransform);
+        const uiTransform = debugNode.getComponent(UITransform);
         uiTransform.setContentSize(1000, 1000);
         uiTransform.setAnchorPoint(0.5, 0.5);
 
@@ -626,6 +627,7 @@ export class CombatEntity extends Component {
     // ========== 碰撞处理 ==========
 
     private _onCollisionEnter(_selfCollider: Collider2D, otherCollider: Collider2D, _contact: IPhysics2DContact) {
+        Log.log(this.MODULE_NAME,`${this.node.name} is collider in.`);
         const otherEntity = otherCollider.getComponent(CombatEntity);
         if (!otherEntity) return;
 

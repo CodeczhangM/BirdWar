@@ -31,10 +31,19 @@
       },
       {
         "__id__": 8
+      },
+      {
+        "__id__": 10
+      },
+      {
+        "__id__": 12
+      },
+      {
+        "__id__": 14
       }
     ],
     "_prefab": {
-      "__id__": 10
+      "__id__": 16
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -192,6 +201,127 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "d2rIiTjDJAHJNxUgDlTGJA"
+  },
+  {
+    "__type__": "cc.BoxCollider2D",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 11
+    },
+    "tag": 0,
+    "_group": 16,
+    "_density": 1,
+    "_sensor": true,
+    "_friction": 0.2,
+    "_restitution": 0,
+    "_offset": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_size": {
+      "__type__": "cc.Size",
+      "width": 58,
+      "height": 17
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "07+DNKVeBGdZu9y49P6ywW"
+  },
+  {
+    "__type__": "43a97U9AMxJxKZ/ETZho8Oj",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 13
+    },
+    "entityType": 256,
+    "faction": 1,
+    "teamId": "",
+    "maxHealth": 100,
+    "currentHealth": 0,
+    "attackPower": 30,
+    "defense": 0,
+    "maxShield": 0,
+    "currentShield": 0,
+    "physicalResistance": 0,
+    "magicalResistance": 0,
+    "outgoingDamageMultiplier": 1,
+    "incomingDamageMultiplier": 1,
+    "criticalRate": 0,
+    "criticalMultiplier": 2,
+    "allowFriendlyFire": false,
+    "invincible": false,
+    "isWeapon": true,
+    "destroyOnHit": true,
+    "autoDestroyOnDeath": true,
+    "destroyDelay": 2,
+    "useCustomRule": true,
+    "customCanCollideWith": 2,
+    "customCanDamage": 2,
+    "customCanBeDamagedBy": 2,
+    "enableDebugLog": true,
+    "enableDebugDraw": true,
+    "debugDrawColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 58,
+      "b": 245,
+      "a": 128
+    },
+    "debugDrawLineWidth": 2,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "2aYQeb/KlFiKuqCeitW5Nk"
+  },
+  {
+    "__type__": "cc.RigidBody2D",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 15
+    },
+    "enabledContactListener": true,
+    "bullet": false,
+    "awakeOnLoad": true,
+    "_group": 1,
+    "_type": 1,
+    "_allowSleep": true,
+    "_gravityScale": 0,
+    "_linearDamping": 0,
+    "_angularDamping": 0,
+    "_linearVelocity": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_angularVelocity": 0,
+    "_fixedRotation": false,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "3doxCLI0hD34y3/OCUyEES"
   },
   {
     "__type__": "cc.PrefabInfo",

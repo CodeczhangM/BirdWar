@@ -1,4 +1,5 @@
-import { _decorator, Component, Node, Vec3, CCFloat } from 'cc';
+import { _decorator, Component, Node, Vec3, CCFloat, BoxCollider, Collider2D, BoxCollider2D } from 'cc';
+import { Log } from '../Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('SkillWithTargetOrDir')
@@ -16,6 +17,13 @@ export class SkillWithTargetOrDir extends Component {
 
     /* 内部参数 */
     private currentSpeed: number = 0; // 当前实时速度
+
+    private MODULE_NAME : string = "SkillWithTargetOrDir";
+
+    protected onLoad(): void {
+   
+    }
+
 
     start() {
         // 初始化：归一化方向向量（保证方向正确，不受长度影响）
