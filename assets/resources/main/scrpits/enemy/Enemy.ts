@@ -10,7 +10,8 @@ enum AIState {
     PATROL = 1,
     CHASE = 2,
     ATTACK = 3,
-    DEAD = 4
+    DEAD = 4,
+    HURT = 5
 }
 
 @ccclass('Enemy')
@@ -56,6 +57,12 @@ export class Enemy extends Component {
     @property({ tooltip: '死亡动画名' })
     public animDead: string = 'dead';
 
+    @property({ tooltip: '受伤动画名' })
+    public animHurt: string = 'hurt';
+
+    @property({ tooltip: '受伤持续时间' })
+    public hurtLastTime: number = 0.8;
+
     private _aiState: AIState = AIState.IDLE;
     private _player: Node = null;
     private _patrolDirection: number = 1;
@@ -63,6 +70,7 @@ export class Enemy extends Component {
     private _attackTimer: number = 0;
     private _scale: Vec3 = Vec3.ZERO;
     private _hitNode : Node = null;
+    private _hurtBlockTime : number = 0;
 
     // 攻击时禁止移动（优化手感）
     private _isAttacking: boolean = false;
@@ -108,6 +116,8 @@ export class Enemy extends Component {
             this.setAIState(AIState.ATTACK);
         } else if (distToPlayer < this.chaseRange) {
             this.setAIState(AIState.CHASE);
+        } else if(this._hurtBlockTime > 0) {
+            this.setAIState(AIState.HURT);
         } else {
             this.setAIState(AIState.PATROL);
         }
@@ -154,6 +164,9 @@ export class Enemy extends Component {
 
         this.mcombatEntity._initCollisionRule();
         this.mcombatEntity.onDeath(() => this.die());
+        this.mcombatEntity.onDamage((damage)=>{
+            this._hurtBlockTime = this.hurtLastTime;
+        })
 
         EntityRegistry.instance.register(this.mcombatEntity);
     }
@@ -195,6 +208,7 @@ export class Enemy extends Component {
             [AIState.PATROL]: this.animWalk,
             [AIState.CHASE]:  this.animWalk,
             [AIState.DEAD]:   this.animDead,
+            [AIState.HURT]:   this.animHurt
         };
         const name = nameMap[state];
         if (name) this.animComp.play(name);
@@ -205,6 +219,13 @@ export class Enemy extends Component {
             case AIState.PATROL: this.patrol(); break;
             case AIState.CHASE: this.chase(dt); break;
             case AIState.ATTACK: this.attack(); break;
+            case AIState.HURT: this.hurt(dt); break;
+        }
+    }
+
+    private hurt(dt: number):void {
+        if(this._hurtBlockTime > 0) {
+            this._hurtBlockTime -= dt;
         }
     }
 

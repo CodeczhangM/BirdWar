@@ -13,13 +13,15 @@ export enum RangeType {
     RECT,     // 矩形（朝向前方延伸）
     SECTOR,   // 扇形（朝向前方）
     SINGLE,   // 单体（最近目标）
+    EMIT      // 触发类型
 }
 
 export interface CircleRange  { type: RangeType.CIRCLE; radius: number }
 export interface RectRange    { type: RangeType.RECT;   width: number; height: number }
 export interface SectorRange  { type: RangeType.SECTOR; radius: number; angle: number }
 export interface SingleRange  { type: RangeType.SINGLE; maxRange: number }
-export type SkillRange = CircleRange | RectRange | SectorRange | SingleRange
+export interface EmitRange    { type: RangeType.EMIT;}
+export type SkillRange = CircleRange | RectRange | SectorRange | SingleRange | EmitRange
 
 // ========== 技能配置 ==========
 export interface SkillConfig {
@@ -264,6 +266,10 @@ export class SkillManager extends Component {
                     if (d < minDist) { minDist = d; nearest = e; }
                 }
                 return nearest ? [nearest] : [];
+            }
+
+            case RangeType.EMIT: {
+                return [];
             }
         }
     }

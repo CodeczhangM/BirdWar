@@ -325,6 +325,8 @@
     "animAttack": "splash",
     "animDefend": "defend",
     "animDead": "dead",
+    "animHurt": "hurt",
+    "hurtLastTime": 0.8,
     "_id": ""
   },
   {
@@ -355,6 +357,14 @@
       },
       {
         "__uuid__": "af9c60a0-2c33-439d-b0c7-4074a83f7b20",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "6e99a2e6-7788-4146-a56f-b18de6cf60a2",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "a10dba42-39d7-4141-95cd-6525e6bfee32",
         "__expectedType__": "cc.AnimationClip"
       }
     ],
@@ -445,6 +455,7 @@
       "__id__": 0
     },
     "fileId": "2947Wn1qBNG7JpdAa6egMi",
+    "instance": null,
     "targetOverrides": null
   }
 ]
