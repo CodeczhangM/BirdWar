@@ -483,9 +483,6 @@ export class CombatEntity extends Component {
             Log.warn(this.MODULE_NAME, `节点 ${this.node.name} 没有 Collider2D 组件`);
         }
 
-        // this._collider.size.x = 200;
-        // this._collider.size.y = 200;
-
         this._initCollisionRule();
 
         if (this._collider) {
@@ -639,7 +636,8 @@ export class CombatEntity extends Component {
 
         // 武器：只触发对方的 onContact 事件，不造成伤害
         if (this.isWeapon) {
-            otherEntity._fireContact(this);
+           this.attackTarget(otherEntity);
+
             if (this.destroyOnHit && this.node && this.node.isValid) {
                 this.node.destroy();
             }
@@ -830,6 +828,7 @@ export class CombatEntity extends Component {
 
     /** 主动攻击目标 */
     public attackTarget(target: CombatEntity, amount: number = this.attackPower, type: DamageType = DamageType.PHYSICAL, overrides: Partial<DamageInfo> = {}): DamageResult | null {
+        Log.debug(this.MODULE_NAME, `attackTarget name : ${target.name}`);
         if (!target) return null;
 
         if (!this.canDamageTarget(target)) {
@@ -838,7 +837,7 @@ export class CombatEntity extends Component {
             }
             return null;
         }
-
+        
         const damage = this.createDamage(amount, type, overrides);
         return target.takeDamage(damage);
     }

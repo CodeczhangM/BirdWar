@@ -1,8 +1,9 @@
-import { _decorator, Component, Vec2, Vec3, Graphics, Animation, Color, Node, instantiate, Prefab } from 'cc';
+import { _decorator, Component, Vec2, Vec3, UITransform, Graphics, Animation, Color, Node, instantiate, Prefab } from 'cc';
 import { CombatEntity, DamageType } from '../CombatSystem';
 import { EntityRegistry } from '../EntityRegistry';
 import { Log } from '../Logger';
 import { SkillRegistry } from './SkillRegistry';
+import { SkillWithTargetOrDir } from './SkillWithTargetOrDir';
 
 const { ccclass } = _decorator;
 
@@ -54,12 +55,14 @@ export class SkillManager extends Component {
     /** 朝向：1 = 右，-1 = 左 */
     public facing: number = 1;
 
+
     public openDebug: boolean = true;
     private _debugShowTime: number = 0;
     private _skillDebugIndex: number = 0;
     private _graphics: Graphics | null = null;
     private _debugDrawNode: Node | null = null;
     private _scale : Vec3 = Vec3.ZERO;
+    // private _SkillWithTargetDirection : SkillWithTargetOrDir = null;
 
     private readonly MODULE_NAME = 'SkillManager';
 
@@ -100,22 +103,26 @@ export class SkillManager extends Component {
         if (!this._combatEntity || !this._combatEntity.isAlive()) return false;
         if ((this._cooldowns[index] ?? 0) > 0) return false;
 
+        //1. 挂载 prefab 并按 duration 决定存活时间, step 展现技能
+        this._spawnSkillPrefab(index, skill);
+
+        //2.step 进入cooldown
+        this._cooldowns[index] = skill.cooldown;
+
+        //3.找敌人
         const targets = this._findTargets(skill);
         if (targets.length === 0 &&
             skill.range.type !== RangeType.CIRCLE &&
             skill.range.type !== RangeType.RECT) {
             return false;
         }
-
-        this._cooldowns[index] = skill.cooldown;
+        //4.计算伤害，并实施
         const dmg = skill.damage > 0 ? skill.damage : this._combatEntity.attackPower;
         for (const target of targets) {
             this._combatEntity.attackTarget(target, dmg, skill.damageType);
         }
 
-        // 挂载 prefab 并按 duration 决定存活时间
-        this._spawnSkillPrefab(index, skill);
-
+        //5. 调试
         if (this.openDebug) { this._debugShowTime = 0; this._skillDebugIndex = index; }
         Log.debug(MODULE, `${this.node.name} 释放技能[${index}] "${skill.name}"，命中 ${targets.length} 个目标`);
         return true;
@@ -166,11 +173,21 @@ export class SkillManager extends Component {
         if (old && old.isValid) old.destroy();
 
         const node = instantiate(prefab);
-        node.setParent(this.node);
-        const offsetX = this.facing * skill.castDistance / this._scale.x;
-        node.setPosition(offsetX, 0, 0);
-        this._prefabNodes.set(index, node);
+        // 不作为 player 的子节点，以避免跟随 player 旋转，直接挂载到场景中或指定的层级（这里使用 director.getScene() 作为父节点，或者 player 的父节点）
+        node.setParent(this.node.parent);
+        
+        // 如果原本需要根据 player 的 scale 设置 scale
+        const parent = this.node.parent;
+        const localPos = parent!.getComponent(UITransform)?.convertToNodeSpaceAR(this.node.worldPosition);
 
+        if (localPos) {
+            localPos.x += this.facing * skill.castDistance;
+            node.setPosition(localPos);
+        }
+        
+        node.setScale(this.facing, 1);
+        this._prefabNodes.set(index, node);
+        
         const anim = node.getComponent(Animation);
 
         if (skill.duration > 0) {
@@ -180,6 +197,13 @@ export class SkillManager extends Component {
                 this._prefabNodes.delete(index);
             }, skill.duration);
         }
+
+        // const _SkillWithTargetDirection: SkillWithTargetOrDir = node.getComponent(SkillWithTargetOrDir);
+        // if(_SkillWithTargetDirection) {
+            // _SkillWithTargetDirection.moveDir = new Vec3(this.facing, 0 , 0);
+        // }
+
+       
     }
 
     // ========== 目标查找 ==========
