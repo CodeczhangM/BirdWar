@@ -171,10 +171,8 @@ export class InputManager extends Component {
             }
         }
 
-        // PC 平台：每帧从键盘状态更新移动方向
-        if (this._platform === InputPlatform.PC) {
-            this._updatePCDirection();
-        }
+        // 每帧从键盘状态更新移动方向（允许在任何平台通过键盘操作）
+        this._updatePCDirection();
     }
 
     // ========== 初始化 ==========
@@ -204,10 +202,11 @@ export class InputManager extends Component {
     }
 
     private _registerInputEvents() {
-        if (this._platform === InputPlatform.PC) {
-            input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
-            input.on(Input.EventType.KEY_UP,   this._onKeyUp,   this);
-        } else {
+        // 始终监听键盘事件，兼顾部分能用键盘的设备/Web
+        input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
+        input.on(Input.EventType.KEY_UP,   this._onKeyUp,   this);
+
+        if (this._platform === InputPlatform.MOBILE) {
             // 触摸事件挂在 node 上，确保全屏接收
             this.node.on(Input.EventType.TOUCH_START, this._onTouchStart, this);
             this.node.on(Input.EventType.TOUCH_MOVE,  this._onTouchMove,  this);
@@ -219,10 +218,12 @@ export class InputManager extends Component {
     private _unregisterInputEvents() {
         input.off(Input.EventType.KEY_DOWN, this._onKeyDown, this);
         input.off(Input.EventType.KEY_UP,   this._onKeyUp,   this);
-        this.node.off(Input.EventType.TOUCH_START, this._onTouchStart, this);
-        this.node.off(Input.EventType.TOUCH_MOVE,  this._onTouchMove,  this);
-        this.node.off(Input.EventType.TOUCH_END,   this._onTouchEnd,   this);
-        this.node.off(Input.EventType.TOUCH_CANCEL,this._onTouchEnd,   this);
+        if (this._platform === InputPlatform.MOBILE) {
+            this.node.off(Input.EventType.TOUCH_START, this._onTouchStart, this);
+            this.node.off(Input.EventType.TOUCH_MOVE,  this._onTouchMove,  this);
+            this.node.off(Input.EventType.TOUCH_END,   this._onTouchEnd,   this);
+            this.node.off(Input.EventType.TOUCH_CANCEL,this._onTouchEnd,   this);
+        }
     }
 
     // ========== PC 键盘处理 ==========
