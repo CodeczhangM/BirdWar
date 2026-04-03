@@ -33,6 +33,11 @@ export class BootInit extends Component {
     private _initStartTime: number = 0;
     private readonly MODULE_NAME = 'BootInit';
 
+    onLoad(): void {
+        Log.log(this.MODULE_NAME, '游戏启动初始化开始');
+        this.initializeBootSequence();
+    }
+
     start() {
         this._initStartTime = Date.now();
         
@@ -43,9 +48,6 @@ export class BootInit extends Component {
         
         // 启用 2D 物理系统
         this._enablePhysics2D();
-        
-        Log.log(this.MODULE_NAME, '游戏启动初始化开始');
-        this.initializeBootSequence();
     }
 
     /**
