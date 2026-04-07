@@ -51,7 +51,7 @@ export class MultiCamManager extends Component {
         // this.subCamera.visibility = 1 << 18; // 只渲染 18 号层级（UI_Sub）
 
         // 3. 适配屏幕分辨率变化
-        view.on('canvas-resize', this.adjustSubCameraViewport, this);
+        // view.on('canvas-resize', this.adjustSubCameraViewport, this);
 
         console.log('[MultiCamManager] 多相机配置完成');
         console.log('  主相机 viewport:', this.mainCamera.camera.viewport);
