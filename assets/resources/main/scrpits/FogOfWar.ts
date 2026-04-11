@@ -385,6 +385,70 @@ export class FogOfWar extends Component {
     }
 
     /**
+     * 供 RogueRoomManager 调用：按像素房间尺寸初始化迷雾。
+     * roomNode 为当前房间根节点，迷雾遮罩将挂在其下。
+     * visionRadius 单位变为像素。
+     */
+    public initForRoom(roomNode: Node, roomWidth: number, roomHeight: number) {
+        // 销毁旧纹理
+        if (this._texture2D) {
+            this._texture2D.destroy();
+            this._texture2D = null;
+        }
+
+        this._tileSize = 1; // 每像素一格
+        this._mapWidth = roomWidth;
+        this._mapHeight = roomHeight;
+        this._textureWidth = roomWidth;
+        this._textureHeight = roomHeight;
+        this._exploredTiles.clear();
+        this._lastPlayerTilePos.set(-1, -1);
+        this._dungeonContainer = roomNode;
+
+        // 迷雾节点重新挂到新房间
+        if (this.fogMaskNode && this.fogMaskNode.isValid) {
+            this.fogMaskNode.setParent(roomNode);
+        } else {
+            this.fogMaskNode = new Node('FogMask');
+            this._fogSprite = this.fogMaskNode.addComponent(Sprite);
+        }
+        this.fogMaskNode.setParent(roomNode);
+        if (!this._fogSprite) {
+            this._fogSprite = this.fogMaskNode.getComponent(Sprite) || this.fogMaskNode.addComponent(Sprite);
+        }
+
+        if (!sys.isBrowser) { Log.error(this.MODULE_NAME, '当前环境不支持 Canvas'); return; }
+        if (!this._canvas) {
+            this._canvas = document.createElement('canvas');
+            this._ctx = this._canvas.getContext('2d', { willReadFrequently: true });
+        }
+        this._canvas.width = roomWidth;
+        this._canvas.height = roomHeight;
+
+        this._fillFog();
+
+        this._texture2D = new Texture2D();
+        this._texture2D.reset({ width: roomWidth, height: roomHeight, format: Texture2D.PixelFormat.RGBA8888 });
+        this._updateTexture();
+
+        const sf = new SpriteFrame();
+        sf.texture = this._texture2D;
+        sf.rect = new Rect(0, 0, roomWidth, roomHeight);
+        this._fogSprite.spriteFrame = sf;
+        this._fogSprite.sizeMode = Sprite.SizeMode.CUSTOM;
+
+        const ut = this.fogMaskNode.getComponent(UITransform) || this.fogMaskNode.addComponent(UITransform);
+        ut.anchorX = 0.5;
+        ut.anchorY = 0.5;
+        ut.setContentSize(roomWidth, roomHeight);
+        this.fogMaskNode.setPosition(0, 0, 0);
+        this.fogMaskNode.setSiblingIndex(roomNode.children.length - 1);
+
+        this.node.active = true;
+        Log.log(this.MODULE_NAME, `房间迷雾初始化: ${roomWidth}x${roomHeight}`);
+    }
+
+    /**
      * 设置玩家节点
      */
     public setPlayer(player: Node) {

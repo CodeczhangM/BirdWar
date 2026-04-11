@@ -22,6 +22,8 @@ export class EnemyManager extends Component {
 
     private _spawnTimer: number = 0;
     private _spawnedCount: number = 0;
+    private _aliveEnemies: Node[] = [];
+    private _onAllDeadCb: (() => void) | null = null;
     private readonly MODULE_NAME = 'EnemyManager';
 
     protected start(): void {
@@ -54,6 +56,13 @@ export class EnemyManager extends Component {
 
         enemy.setPosition(randomX, randomY, 0);
         this.node.addChild(enemy);
+        this._aliveEnemies.push(enemy);
+
+        // 监听死亡
+        const combatEntity = enemy.getComponent('CombatEntity') as any;
+        if (combatEntity) {
+            combatEntity.onDeath(() => this._onEnemyDead(enemy));
+        }
 
         Log.debug(this.MODULE_NAME, `生成敌人 [${this._spawnedCount + 1}/${this.enemyCount}]`);
         this._spawnedCount++;
@@ -65,7 +74,31 @@ export class EnemyManager extends Component {
         const enemy = instantiate(this.enemyPrefab);
         enemy.setPosition(pos);
         this.node.addChild(enemy);
+        this._aliveEnemies.push(enemy);
+
+        const combatEntity = enemy.getComponent('CombatEntity') as any;
+        if (combatEntity) {
+            combatEntity.onDeath(() => this._onEnemyDead(enemy));
+        }
 
         Log.debug(this.MODULE_NAME, `在位置生成敌人: ${pos}`);
+    }
+
+    private _onEnemyDead(enemy: Node) {
+        this._aliveEnemies = this._aliveEnemies.filter(e => e && e.isValid && e !== enemy);
+        if (this._aliveEnemies.length === 0 && this._onAllDeadCb) {
+            this._onAllDeadCb();
+        }
+    }
+
+    /** 注册全部敌人死亡回调 */
+    public onAllDead(cb: () => void) {
+        this._onAllDeadCb = cb;
+    }
+
+    /** 获取当前存活敌人数量 */
+    public getAliveCount(): number {
+        this._aliveEnemies = this._aliveEnemies.filter(e => e && e.isValid);
+        return this._aliveEnemies.length;
     }
 }

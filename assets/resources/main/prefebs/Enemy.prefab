@@ -293,6 +293,7 @@
     "keepAspectRatio": true,
     "minSize": 16,
     "maxSize": 128,
+    "targetSize": 50,
     "autoResizeOnStart": true,
     "addPhysicsCollider": true,
     "colliderSizeRatio": 0.9,

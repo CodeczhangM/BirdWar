@@ -27,6 +27,9 @@ export class ActorAutoResize extends Component {
     @property({ tooltip: '最大尺寸限制' })
     maxSize: number = 128;
 
+    @property({ tooltip: '目标尺寸'})
+    targetSize: number = 50;
+
     @property({ tooltip: '是否在 start 时自动调整' })
     autoResizeOnStart: boolean = true;
 
@@ -62,12 +65,6 @@ export class ActorAutoResize extends Component {
             Log.warn(this.MODULE_NAME, 'UITransform 组件未找到，使用默认尺寸 100x100');
         }
         
-        Log.log(this.MODULE_NAME, `节点初始缩放: ${this.node.scale}`);
-    }
-
-    start() {
-        Log.log(this.MODULE_NAME, '=== ActorAutoResize start ===');
-        
         if (this.autoResizeOnStart) {
             Log.log(this.MODULE_NAME, '自动调整已启用');
             this.resizeToTileSize();
@@ -75,6 +72,13 @@ export class ActorAutoResize extends Component {
             Log.log(this.MODULE_NAME, '自动调整已禁用');
         }
 
+
+        Log.log(this.MODULE_NAME, `节点初始缩放: ${this.node.scale}`);
+    }
+
+    start() {
+        Log.log(this.MODULE_NAME, '=== ActorAutoResize start ===');
+        
         // 添加物理碰撞体
         if (this.addPhysicsCollider) {
             this._setupPhysicsCollider();
@@ -88,15 +92,15 @@ export class ActorAutoResize extends Component {
         Log.log(this.MODULE_NAME, '=== 开始调整角色尺寸 ===');
         
         // 获取地牢控制器
-        if (!this._dungeonController) {
-            this._dungeonController = this._findDungeonController();
-            if (!this._dungeonController) {
-                Log.error(this.MODULE_NAME, '未找到 DungeonController');
-                return false;
-            }
-        }
+        // if (!this._dungeonController) {
+        //     this._dungeonController = this._findDungeonController();
+        //     if (!this._dungeonController) {
+        //         Log.error(this.MODULE_NAME, '未找到 DungeonController');
+        //         return false;
+        //     }
+        // }
 
-        const tileSize = this._dungeonController.tileSize;
+        const tileSize = this.targetSize;
         Log.log(this.MODULE_NAME, `地牢格子大小: ${tileSize}`);
         
         if (!tileSize || tileSize <= 0) {
@@ -146,7 +150,7 @@ export class ActorAutoResize extends Component {
         this.node.setScale(scaleX, scaleY, 1);
         
         Log.log(this.MODULE_NAME, `最终缩放: (${scaleX}, ${scaleY})`);
-        Log.log(this.MODULE_NAME, `节点当前缩放: ${this.node.scale}`);
+        Log.log(this.MODULE_NAME, `节点当前缩放: ${this.node.name} , ${this.node.scale}`);
         Log.log(this.MODULE_NAME, '=== 调整完成 ===');
         
         return true;
